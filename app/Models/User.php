@@ -57,4 +57,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Campaign::class);
     }
+
+    public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Offer::class, 'from_user_id');
+    }
+
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function follows(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Follow::class);
+    }
 }

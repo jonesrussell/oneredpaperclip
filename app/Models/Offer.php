@@ -27,4 +27,24 @@ class Offer extends Model
     {
         return $this->belongsTo(Campaign::class);
     }
+
+    public function fromUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'from_user_id');
+    }
+
+    public function offeredItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Item::class, 'offered_item_id');
+    }
+
+    public function forCampaignItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Item::class, 'for_campaign_item_id');
+    }
+
+    public function trade(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Trade::class);
+    }
 }

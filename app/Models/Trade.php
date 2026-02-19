@@ -29,4 +29,19 @@ class Trade extends Model
     {
         return $this->belongsTo(Campaign::class);
     }
+
+    public function offer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Offer::class);
+    }
+
+    public function offeredItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Item::class, 'offered_item_id');
+    }
+
+    public function receivedItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Item::class, 'received_item_id');
+    }
 }
