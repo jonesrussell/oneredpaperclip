@@ -1,0 +1,8 @@
+# Vite dev server: proxied at https://vite.oneredpaperclip.ddev.site
+# Run "ddev vite" to start the Vite dev server, then visit https://oneredpaperclip.ddev.site
+additional_hostnames:
+  - vite.oneredpaperclip
+web_environment:
+  - VITE_SERVER_URI=https://vite.oneredpaperclip.ddev.site
+  - LARAVEL_APP_URL=https://oneredpaperclip.ddev.site
+  - VITE_PACKAGE_MANAGER=npm
