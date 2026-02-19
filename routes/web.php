@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\ItemMediaController;
+use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -16,6 +18,14 @@ Route::get('campaigns/create', [CampaignController::class, 'create'])->name('cam
     ->middleware(['auth', 'verified']);
 Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
 Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store')
+    ->middleware(['auth', 'verified']);
+Route::post('campaigns/{campaign}/offers', [OfferController::class, 'store'])->name('campaigns.offers.store')
+    ->middleware(['auth', 'verified']);
+Route::post('offers/{offer}/accept', [OfferController::class, 'accept'])->name('offers.accept')
+    ->middleware(['auth', 'verified']);
+Route::post('offers/{offer}/decline', [OfferController::class, 'decline'])->name('offers.decline')
+    ->middleware(['auth', 'verified']);
+Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('items.media.store')
     ->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified'])->group(function () {

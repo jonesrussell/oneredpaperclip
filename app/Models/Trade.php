@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TradeStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Trade extends Model
@@ -20,6 +21,7 @@ class Trade extends Model
     protected function casts(): array
     {
         return [
+            'status' => TradeStatus::class,
             'confirmed_by_offerer_at' => 'datetime',
             'confirmed_by_owner_at' => 'datetime',
         ];
