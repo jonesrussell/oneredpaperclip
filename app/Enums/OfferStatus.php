@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Enums;
+
+enum OfferStatus: string
+{
+    case Pending = 'pending';
+    case Accepted = 'accepted';
+    case Declined = 'declined';
+    case Withdrawn = 'withdrawn';
+    case Expired = 'expired';
+}
