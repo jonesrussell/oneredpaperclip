@@ -3,6 +3,7 @@
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\TradeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -24,6 +25,8 @@ Route::post('campaigns/{campaign}/offers', [OfferController::class, 'store'])->n
 Route::post('offers/{offer}/accept', [OfferController::class, 'accept'])->name('offers.accept')
     ->middleware(['auth', 'verified']);
 Route::post('offers/{offer}/decline', [OfferController::class, 'decline'])->name('offers.decline')
+    ->middleware(['auth', 'verified']);
+Route::post('trades/{trade}/confirm', [TradeController::class, 'confirm'])->name('trades.confirm')
     ->middleware(['auth', 'verified']);
 Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('items.media.store')
     ->middleware(['auth', 'verified']);
