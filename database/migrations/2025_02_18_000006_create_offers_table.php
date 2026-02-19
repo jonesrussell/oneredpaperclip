@@ -22,8 +22,6 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();
 
-            $table->index('campaign_id');
-            $table->index('from_user_id');
             $table->index('status');
         });
     }

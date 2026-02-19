@@ -24,8 +24,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['campaign_id', 'position']);
-            $table->index('campaign_id');
-            $table->index('offer_id');
         });
     }
 
