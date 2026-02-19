@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'reputation_score',
+        'verified_at',
     ];
 
     /**
@@ -47,6 +49,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
+    }
+
+    public function campaigns(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Campaign::class);
     }
 }
