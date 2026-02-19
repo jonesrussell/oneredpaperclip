@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CampaignStatus;
+use App\Enums\CampaignVisibility;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,13 +60,21 @@ class Campaign extends Model
         return $this->hasMany(Trade::class);
     }
 
+    protected function casts(): array
+    {
+        return [
+            'status' => CampaignStatus::class,
+            'visibility' => CampaignVisibility::class,
+        ];
+    }
+
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', 'active');
+        return $query->where('status', CampaignStatus::Active);
     }
 
     public function scopePublicVisibility(Builder $query): Builder
     {
-        return $query->where('visibility', 'public');
+        return $query->where('visibility', CampaignVisibility::Public);
     }
 }
