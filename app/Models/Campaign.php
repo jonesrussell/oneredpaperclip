@@ -60,6 +60,11 @@ class Campaign extends Model
         return $this->hasMany(Trade::class);
     }
 
+    public function comments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
     protected function casts(): array
     {
         return [
