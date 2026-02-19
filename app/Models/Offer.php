@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OfferStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Offer extends Model
@@ -19,6 +20,7 @@ class Offer extends Model
     protected function casts(): array
     {
         return [
+            'status' => OfferStatus::class,
             'expires_at' => 'datetime',
         ];
     }
