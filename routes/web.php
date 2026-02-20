@@ -4,13 +4,28 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\TradeController;
+use App\Models\Campaign;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
+    try {
+        $featuredCampaigns = Campaign::query()
+            ->publicVisibility()
+            ->active()
+            ->with(['user', 'currentItem', 'goalItem'])
+            ->latest()
+            ->limit(6)
+            ->get();
+    } catch (\Throwable $e) {
+        report($e);
+        $featuredCampaigns = collect();
+    }
+
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),
+        'featuredCampaigns' => $featuredCampaigns,
     ]);
 })->name('home');
 

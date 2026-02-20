@@ -17,7 +17,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Create Campaign" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <div
+            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+        >
             <h1 class="text-xl font-semibold">Create Campaign</h1>
         </div>
     </AppLayout>

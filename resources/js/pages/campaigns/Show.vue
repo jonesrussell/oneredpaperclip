@@ -10,7 +10,10 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Campaigns', href: '/campaigns' },
-    { title: props.campaign.title ?? 'Campaign', href: `/campaigns/${props.campaign.id}` },
+    {
+        title: props.campaign.title ?? 'Campaign',
+        href: `/campaigns/${props.campaign.id}`,
+    },
 ];
 </script>
 
@@ -18,8 +21,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head :title="campaign.title ?? 'Campaign'" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-            <h1 class="text-xl font-semibold">{{ campaign.title ?? 'Campaign' }}</h1>
+        <div
+            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+        >
+            <h1 class="text-xl font-semibold">
+                {{ campaign.title ?? 'Campaign' }}
+            </h1>
         </div>
     </AppLayout>
 </template>

@@ -12,6 +12,7 @@
         Instrument Sans, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-display: Fraunces, ui-serif, Georgia, serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -87,9 +88,17 @@
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
     }
+    .font-display {
+        font-family: var(--font-display);
+    }
 }
 
 :root {
+    --brand-red: hsl(0 95% 45%);
+    --brand-red-hover: hsl(0 95% 38%);
+    --paper: hsl(38 33% 97%);
+    --ink: hsl(24 10% 12%);
+    --ink-muted: hsl(24 6% 38%);
     --background: hsl(0 0% 100%);
     --foreground: hsl(0 0% 3.9%);
     --card: hsl(0 0% 100%);
@@ -127,6 +136,11 @@
 }
 
 .dark {
+    --brand-red: hsl(0 90% 55%);
+    --brand-red-hover: hsl(0 90% 62%);
+    --paper: hsl(24 10% 8%);
+    --ink: hsl(38 20% 95%);
+    --ink-muted: hsl(24 6% 58%);
     --background: hsl(0 0% 3.9%);
     --foreground: hsl(0 0% 98%);
     --card: hsl(0 0% 3.9%);

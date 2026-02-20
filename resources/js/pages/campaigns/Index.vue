@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem } from '@/types';
+import { Badge } from '@/components/ui/badge';
 import {
     Card,
     CardContent,
@@ -9,7 +8,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
 
 type CampaignItem = {
     id: number;
@@ -39,7 +39,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Campaigns" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+        <div
+            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+        >
             <h1 class="text-xl font-semibold">Campaigns</h1>
 
             <div
@@ -79,7 +81,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     </Badge>
                                     <span
                                         v-if="campaign.user?.name"
-                                        class="text-muted-foreground text-xs"
+                                        class="text-xs text-muted-foreground"
                                     >
                                         {{ campaign.user.name }}
                                     </span>

@@ -13,8 +13,8 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import UserInfo from '@/components/UserInfo.vue';
-import UserMenuContent from './UserMenuContent.vue';
 import { login, register } from '@/routes';
+import UserMenuContent from './UserMenuContent.vue';
 
 const page = usePage();
 const user = page.props.auth.user;
@@ -68,7 +68,7 @@ const { isMobile, state } = useSidebar();
                 <div class="px-2 py-1">
                     <Link
                         :href="register()"
-                        class="text-muted-foreground hover:text-foreground text-xs underline"
+                        class="text-xs text-muted-foreground underline hover:text-foreground"
                         >Create account</Link
                     >
                 </div>
