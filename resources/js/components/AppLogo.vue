@@ -1,16 +1,25 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import { Link } from '@inertiajs/vue3';
+import PaperclipIcon from '@/components/PaperclipIcon.vue';
+import { dashboard } from '@/routes';
+
+const href = dashboard().url;
 </script>
 
 <template>
-    <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
+    <Link
+        :href="href"
+        class="flex items-center gap-2 rounded-md outline-none ring-sidebar-ring focus-visible:ring-2"
     >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold"
-            >Laravel Starter Kit</span
+        <div
+            class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-[var(--brand-red)] text-white"
         >
-    </div>
+            <PaperclipIcon class="size-5" />
+        </div>
+        <span
+            class="font-display truncate text-sm font-semibold leading-tight text-sidebar-foreground"
+        >
+            One Red Paperclip
+        </span>
+    </Link>
 </template>

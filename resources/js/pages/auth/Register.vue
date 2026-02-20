@@ -84,6 +84,7 @@ import { store } from '@/routes/register';
 
                 <Button
                     type="submit"
+                    variant="brand"
                     class="mt-2 w-full"
                     tabindex="5"
                     :disabled="processing"
@@ -94,7 +95,7 @@ import { store } from '@/routes/register';
                 </Button>
             </div>
 
-            <div class="text-center text-sm text-muted-foreground">
+            <div class="text-center text-sm text-[var(--ink-muted)]">
                 Already have an account?
                 <TextLink
                     :href="login()"

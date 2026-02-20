@@ -64,8 +64,9 @@ class CampaignController extends Controller
     {
         $campaign->load([
             'items',
-            'trades' => fn ($q) => $q->orderBy('position'),
-            'offers' => fn ($q) => $q->where('status', OfferStatus::Pending),
+            'trades' => fn ($q) => $q->with(['offeredItem', 'receivedItem'])->orderBy('position'),
+            'offers' => fn ($q) => $q->where('status', OfferStatus::Pending)
+                ->with(['fromUser', 'offeredItem', 'forCampaignItem']),
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',
             'category',

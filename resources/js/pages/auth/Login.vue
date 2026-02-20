@@ -88,6 +88,7 @@ defineProps<{
 
                 <Button
                     type="submit"
+                    variant="brand"
                     class="mt-4 w-full"
                     :tabindex="4"
                     :disabled="processing"
@@ -99,7 +100,7 @@ defineProps<{
             </div>
 
             <div
-                class="text-center text-sm text-muted-foreground"
+                class="text-center text-sm text-[var(--ink-muted)]"
                 v-if="canRegister"
             >
                 Don't have an account?
