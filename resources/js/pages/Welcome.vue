@@ -46,20 +46,39 @@ const howItWorksSteps = [
     {
         title: 'Start',
         body: 'Create a campaign with something you have and something you want.',
+        color: 'coral',
     },
     {
         title: 'Offer',
         body: 'Others browse and submit offers: they propose a trade for your current item.',
+        color: 'yellow',
     },
     {
         title: 'Trade',
         body: 'Accept an offer. Both parties confirm the trade to complete it.',
+        color: 'mint',
     },
     {
         title: 'Goal',
         body: 'Your current item updates. Keep trading until you reach your goal—or beyond.',
+        color: 'brand',
     },
 ];
+
+function stepNodeColor(color: string): string {
+    switch (color) {
+        case 'coral':
+            return 'bg-[var(--hot-coral)]';
+        case 'yellow':
+            return 'bg-[var(--sunny-yellow)]';
+        case 'mint':
+            return 'bg-[var(--electric-mint)]';
+        case 'brand':
+            return 'bg-[var(--brand-red)]';
+        default:
+            return 'bg-[var(--brand-red)]';
+    }
+}
 </script>
 
 <template>
@@ -191,86 +210,103 @@ const howItWorksSteps = [
             </div>
         </section>
 
-        <!-- How it works -->
+        <!-- How it works + Inspired by (one story-led section) -->
         <section
             id="how-it-works"
-            class="border-t border-[var(--ink)]/10 bg-[var(--ink)]/[0.02] py-16 sm:py-24"
+            class="border-t border-[var(--ink)]/10 bg-[var(--ink)]/[0.02] py-16 sm:py-20"
         >
-            <div class="mx-auto max-w-6xl px-4 sm:px-6">
-                <h2
-                    class="font-display text-2xl font-semibold tracking-tight text-[var(--ink)] sm:text-3xl"
-                >
-                    How it works
-                </h2>
-                <p class="mt-2 max-w-xl text-[var(--ink-muted)]">
-                    The same idea that took a red paperclip to a house.
-                </p>
-                <ul
-                    class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
-                    role="list"
-                >
-                    <li
-                        v-for="(step, i) in howItWorksSteps"
-                        :key="step.title"
-                        class="relative rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] p-6 shadow-sm transition-shadow hover:shadow-md"
-                        :style="{
-                            animation: 'welcome-fade-in 0.5s ease-out both',
-                            animationDelay: `${200 + i * 60}ms`,
-                        }"
+            <div class="mx-auto max-w-4xl px-4 sm:px-6">
+                <!-- Intro: true story + bridge to path -->
+                <div class="text-center">
+                    <span
+                        class="text-xs font-semibold tracking-wider text-[var(--brand-red)] uppercase"
                     >
-                        <span
-                            class="absolute -top-2 -left-2 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand-red)] font-display text-sm font-semibold text-white"
-                        >
-                            {{ i + 1 }}
-                        </span>
-                        <h3
-                            class="font-display text-lg font-semibold text-[var(--ink)]"
-                        >
-                            {{ step.title }}
-                        </h3>
-                        <p
-                            class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
-                        >
-                            {{ step.body }}
-                        </p>
-                    </li>
-                </ul>
-            </div>
-        </section>
+                        Inspired by a true story
+                    </span>
+                    <p
+                        class="mt-3 text-base leading-relaxed text-[var(--ink-muted)] sm:text-lg"
+                    >
+                        In 2005, Kyle MacDonald traded a single red paperclip
+                        through 14 swaps until he owned a house—all in one year.
+                        Same idea here. Here’s how it works:
+                    </p>
+                </div>
 
-        <!-- Inspired by a true story -->
-        <section class="border-t border-[var(--ink)]/10 py-12 sm:py-16">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6">
-                <div
-                    class="relative overflow-hidden rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-8 shadow-sm sm:p-10"
-                >
+                <!-- Path: vertical line with alternating nodes (Duolingo-style) -->
+                <div class="relative mt-14 sm:mt-16">
+                    <!-- Vertical track (line through the middle) -->
                     <div
-                        class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-[var(--brand-red)]/5 blur-2xl"
+                        class="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 rounded-full bg-gradient-to-b from-[var(--hot-coral)] via-[var(--sunny-yellow)] to-[var(--brand-red)] opacity-40 sm:w-1.5"
                         aria-hidden="true"
                     />
-                    <div class="relative max-w-xl">
-                        <span
-                            class="text-xs font-semibold tracking-wider text-[var(--brand-red)] uppercase"
+
+                    <ul class="relative space-y-0" role="list">
+                        <li
+                            v-for="(step, i) in howItWorksSteps"
+                            :key="step.title"
+                            class="flex flex-col items-center gap-6 py-6 sm:flex-row sm:gap-6 sm:py-8"
+                            :style="{
+                                animation:
+                                    'welcome-path-in 0.6s ease-out both',
+                                animationDelay: `${280 + i * 100}ms`,
+                            }"
                         >
-                            Inspired by a true story
-                        </span>
-                        <p
-                            class="mt-3 text-base leading-relaxed text-[var(--ink-muted)]"
-                        >
-                            In 2005, Kyle MacDonald traded a single red
-                            paperclip through 14 swaps until he owned a
-                            house—all in one year. His experiment proved that
-                            small trades can lead to big things.
-                        </p>
-                        <Link
-                            :href="about().url"
-                            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--brand-red)] transition-colors hover:underline"
-                        >
-                            Read the full story
-                            <span aria-hidden="true">&rarr;</span>
-                        </Link>
-                    </div>
+                            <!-- Content card: order 1 on left (even i), order 3 on right (odd i) -->
+                            <div
+                                class="w-full flex-1 sm:max-w-[calc(50%-2.5rem)]"
+                                :class="[
+                                    i % 2 === 0
+                                        ? 'sm:order-1 sm:pr-3 sm:text-right'
+                                        : 'sm:order-3 sm:pl-3 sm:text-left',
+                                ]"
+                            >
+                                <div
+                                    class="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6"
+                                >
+                                    <h3
+                                        class="font-display text-lg font-semibold text-[var(--ink)] sm:text-xl"
+                                    >
+                                        {{ step.title }}
+                                    </h3>
+                                    <p
+                                        class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
+                                    >
+                                        {{ step.body }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Node on the path (always center) -->
+                            <div
+                                class="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-white shadow-lg ring-4 ring-[var(--paper)] sm:order-2 sm:h-16 sm:w-16 sm:ring-[6px]"
+                                :class="stepNodeColor(step.color)"
+                            >
+                                <span
+                                    class="font-display text-xl font-bold sm:text-2xl"
+                                >
+                                    {{ i + 1 }}
+                                </span>
+                            </div>
+
+                            <!-- Spacer so card alternates left/right -->
+                            <div
+                                class="hidden flex-1 sm:block sm:max-w-[calc(50%-2.5rem)]"
+                                :class="i % 2 === 0 ? 'sm:order-3' : 'sm:order-1'"
+                            />
+                        </li>
+                    </ul>
                 </div>
+
+                <!-- CTA: full story -->
+                <p class="mt-10 text-center">
+                    <Link
+                        :href="about().url"
+                        class="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--brand-red)] transition-colors hover:underline"
+                    >
+                        Read the full story
+                        <span aria-hidden="true">&rarr;</span>
+                    </Link>
+                </p>
             </div>
         </section>
 
@@ -362,14 +398,14 @@ const howItWorksSteps = [
 </template>
 
 <style scoped>
-@keyframes welcome-fade-in {
+@keyframes welcome-path-in {
     from {
         opacity: 0;
-        transform: translateY(0.5rem);
+        transform: translateY(0.75rem) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 </style>
