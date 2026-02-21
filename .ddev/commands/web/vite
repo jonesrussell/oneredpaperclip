@@ -41,7 +41,7 @@ fi
 echo "Using $PACKAGE_MANAGER to run vite..."
 
 if [[ $COMMAND == "dev" ]] || [[ $COMMAND == "serve" ]] || [[ $COMMAND == "preview" ]]; then
-    $PACKAGE_MANAGER_COMMAND $COMMAND --host --port 5173 --strictPort $OPTIONS
+    $PACKAGE_MANAGER_COMMAND $COMMAND --host --port 5174 --strictPort $OPTIONS
 else
     $PACKAGE_MANAGER_COMMAND $COMMAND $OPTIONS
 fi

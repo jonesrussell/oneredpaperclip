@@ -1,11 +1,11 @@
-# Vite dev server: available at https://oneredpaperclip.ddev.site:5173
-# Run "ddev vite" or "ddev npm run dev" then visit https://oneredpaperclip.ddev.site
+# Vite dev server: available at https://oneredpaperclip.ddev.site:5174
+# Run "ddev composer dev:ddev" (or ddev npm run dev) then visit https://oneredpaperclip.ddev.site
 web_extra_exposed_ports:
   - name: vite
-    container_port: 5173
+    container_port: 5174
     http_port: 5172
-    https_port: 5173
+    https_port: 5174
 web_environment:
-  - VITE_SERVER_URI=https://oneredpaperclip.ddev.site:5173
+  - VITE_SERVER_URI=https://oneredpaperclip.ddev.site:5174
   - LARAVEL_APP_URL=https://oneredpaperclip.ddev.site
   - VITE_PACKAGE_MANAGER=npm

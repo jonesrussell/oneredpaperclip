@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 composer dev                # Start server + queue + Pail logs + Vite (all-in-one)
+composer dev:ddev           # Same but no PHP server (use with DDEV; DDEV serves the app)
 composer test               # Pint lint check + Pest tests
 php artisan test --compact  # Run all tests
 php artisan test --compact --filter=CampaignControllerTest  # Run specific test file

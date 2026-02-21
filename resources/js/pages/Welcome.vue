@@ -56,7 +56,7 @@ const howItWorksSteps = [
         <!-- Hero -->
         <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-32">
             <div
-                class="grid gap-10 md:grid-cols-[1fr,auto] md:items-center md:gap-16"
+                class="grid gap-10 md:grid-cols-[1fr,auto] md:items-start md:gap-16"
             >
                 <div class="max-w-xl">
                     <h1
