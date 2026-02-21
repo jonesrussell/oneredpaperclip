@@ -43,20 +43,24 @@ jobs:
           fi
           echo "Loaded keys:"
           ssh-add -l
+          if [ $(ssh-add -l | wc -l) -eq 0 ]; then
+            echo "::error::No SSH key loaded. Add SSH_PRIVATE_KEY or SSH_PRIVATE_KEY_BASE64 to this repo's Actions secrets (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_PRIVATE_KEY_BASE64: ${{ secrets.SSH_PRIVATE_KEY_BASE64 }}
 
       - name: Add Host Key
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -T 5 -H coforge.xyz >> ~/.ssh/known_hosts
-          cat >> ~/.ssh/config << EOF
-          Host coforge.xyz
-            User deployer
-            StrictHostKeyChecking no
-          EOF
-          chmod 600 ~/.ssh/config
+          mkdir -p "$HOME/.ssh"
+          ssh-keyscan -T 10 -H coforge.xyz >> "$HOME/.ssh/known_hosts" 2>/dev/null || true
+          {
+            echo "Host coforge.xyz"
+            echo "  User deployer"
+            echo "  StrictHostKeyChecking no"
+          } >> "$HOME/.ssh/config"
+          chmod 600 "$HOME/.ssh/config"
 
       - name: Test SSH connection
         run: |
