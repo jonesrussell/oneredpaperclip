@@ -69,7 +69,20 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
 ### Frontend
 
 - **UI library:** shadcn-vue (new-york-v4 style, reka-ui primitives, lucide icons)
-- **Layouts:** `AppLayout` (wraps `AppSidebarLayout`) for authenticated pages, `AuthLayout` for auth pages, settings has its own `Layout`
+- **Design:** "Swap Shop" aesthetic — vibrant marketplace feel (Depop meets Duolingo), warm cream backgrounds, fun accent colors
+- **Fonts:** DM Sans (body), Fredoka (display headings), JetBrains Mono (stats/data) — loaded via Bunny Fonts
+- **Design tokens:** CSS variables in `resources/css/app.css` — `--brand-red`, `--electric-mint`, `--sunny-yellow`, `--hot-coral`, `--soft-lavender`, `--sky-blue`, `--paper`, `--ink`
+- **Layouts:**
+  - `PublicLayout` — public pages (Welcome, campaign browsing): sticky header, decorative blobs, mobile bottom tab bar, footer
+  - `AppLayout` (wraps `AppSidebarLayout`) — authenticated pages: sidebar on desktop, bottom tab bar on mobile
+  - `AuthLayout` — auth pages: centered card with accent blobs
+  - Settings has its own `Layout`
+- **Custom components:**
+  - `CampaignCard` — reusable card with category accent strip, progress ring, trade count badge
+  - `ProgressRing` — SVG circular progress indicator, color changes by completion (coral/yellow/mint)
+  - `MilestoneTimeline` — horizontal trade timeline with completed/current/future nodes
+  - `BottomTabBar` — mobile navigation (Home, Explore, Create[elevated], Activity, Profile)
+- **Button variants:** default, brand, destructive, outline, secondary, ghost, link, success (mint), social (sky blue)
 - **Pages:** `resources/js/pages/` — Inertia Vue components
 - **Wayfinder:** TypeScript route helpers generated at `resources/js/actions/` and `resources/js/routes/`. Import routes from `@/actions/` (controllers) or `@/routes/` (named routes).
 - **ESLint enforces:** alphabetical imports, `import type` for type-only imports, prettier compatibility
@@ -97,5 +110,11 @@ Form Requests use **array-style** rules (not pipe-delimited strings). Check `Sto
 These are referenced in code but don't exist yet:
 - `CreateOffer` action (referenced in `OfferController@store`)
 - `ItemMediaController` (referenced in `routes/web.php` and Wayfinder)
-- `campaigns/Create.vue` and `campaigns/Show.vue` are shells without full UI
 - No model factories for Campaign, Item, Offer, Trade (tests use `Model::create()` directly)
+
+## Design Documentation
+
+- `docs/plans/2026-02-20-swap-shop-redesign-design.md` — Swap Shop design system (colors, typography, components, page layouts)
+- `docs/plans/2026-02-20-swap-shop-implementation.md` — implementation plan for the redesign
+- `docs/plans/2025-02-18-tradeup-design.md` — original TradeUp product architecture and data model
+- `docs/plans/2025-02-18-tradeup-mvp-implementation.md` — original MVP implementation plan

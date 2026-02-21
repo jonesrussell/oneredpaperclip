@@ -1,21 +1,31 @@
 # One Red Paperclip
 
-A Laravel application for running trade-up campaigns: create campaigns, list items, receive and manage offers, and confirm trades. Inspired by the “one red paperclip” barter experiment.
+A trade-up platform where users create campaigns with a start item and goal item, receive offers from other users, and confirm trades that advance the campaign toward the goal. Inspired by Kyle MacDonald's “one red paperclip” barter experiment.
 
 ## Stack
 
-- **Backend:** Laravel 12, PHP 8.4
+- **Backend:** Laravel 12, PHP 8.4, MariaDB
 - **Frontend:** Inertia.js v2, Vue 3, TypeScript, Tailwind CSS v4
+- **UI:** shadcn-vue (new-york-v4 style), Lucide icons
 - **Auth:** Laravel Fortify (login, registration, 2FA, profile)
 - **Routes:** Laravel Wayfinder (type-safe route helpers)
 - **Testing:** Pest v4
 - **Local dev:** DDEV (optional) or `composer dev`
 
+## Design
+
+“Swap Shop” aesthetic — a vibrant trading marketplace inspired by Depop and Duolingo, targeting young adults (18–35).
+
+- **Fonts:** DM Sans (body), Fredoka (display headings), JetBrains Mono (stats/data)
+- **Colors:** Warm cream backgrounds with brand red, electric mint, sunny yellow, hot coral, sky blue accents
+- **Mobile-first:** Bottom tab bar on mobile, sidebar on desktop
+- **Gamification:** Circular progress rings, milestone timelines, campaign cards with category accent strips
+
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.4+
 - Composer, Node.js, npm
-- SQLite (default) or MySQL/MariaDB
+- MariaDB (or MySQL)
 - For DDEV: [DDEV](https://ddev.com/) installed
 
 ## Setup
@@ -75,12 +85,18 @@ This starts the PHP server, queue worker, Pail logs, and Vite.
 ## Project structure
 
 - **Routes:** `routes/web.php` (campaigns, offers, trades), `routes/settings.php` (Fortify profile/settings)
-- **Pages:** `resources/js/pages/` (Inertia/Vue: Welcome, Dashboard, campaigns, auth, settings)
+- **Actions:** `app/Actions/` — business logic (CreateCampaign, AcceptOffer, DeclineOffer, ConfirmTrade)
+- **Layouts:**
+  - `PublicLayout` — public pages (Welcome, campaign browsing): sticky header, bottom tab bar, decorative blobs
+  - `AppLayout` — authenticated pages: sidebar on desktop, bottom tab bar on mobile
+  - `AuthLayout` — auth pages: centered card
+- **Pages:** `resources/js/pages/` (Welcome, Dashboard, campaigns/Index/Create/Show, auth, settings)
+- **Components:** `resources/js/components/` (CampaignCard, ProgressRing, MilestoneTimeline, BottomTabBar, shadcn-vue primitives)
 - **Auth:** Fortify headless (login, register, 2FA, password reset, profile) — no Blade auth views
 
 ## Environment
 
-Default `.env` uses SQLite and `QUEUE_CONNECTION=database`. For DDEV, point `DB_*` to the DDEV database if not using SQLite. Run the queue worker (via `composer dev` or `php artisan queue:listen`) when using queues.
+Default `QUEUE_CONNECTION=database`. MariaDB for the database. Run the queue worker (via `composer dev` or `php artisan queue:listen`) when using queues.
 
 ## License
 
