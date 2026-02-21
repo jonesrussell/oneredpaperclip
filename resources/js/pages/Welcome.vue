@@ -333,7 +333,7 @@ const howItWorksSteps = [
                 >
                     <Link
                         :href="campaigns.index().url"
-                        class="inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
+                        class="surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
                     >
                         Browse campaigns
                     </Link>

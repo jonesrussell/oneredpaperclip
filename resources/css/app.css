@@ -144,6 +144,15 @@
     --sky-blue: hsl(205 85% 65%);
 }
 
+/*
+ * Use on elements that are always light (e.g. white cards, white buttons)
+ * so text stays dark and readable in dark mode.
+ */
+.surface-light {
+    --ink: hsl(28 25% 16%);
+    --ink-muted: hsl(28 15% 35%);
+}
+
 .dark {
     --brand-red: hsl(0 90% 55%);
     --brand-red-hover: hsl(0 90% 62%);

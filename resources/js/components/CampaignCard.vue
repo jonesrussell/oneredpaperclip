@@ -50,7 +50,7 @@ function getStatusClasses(status: string): string {
 <template>
     <Link
         :href="campaigns.show({ campaign: campaign.id }).url"
-        class="group block overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        class="surface-light group block overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
         prefetch
     >
         <!-- Category accent strip -->
