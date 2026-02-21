@@ -53,21 +53,52 @@ const howItWorksSteps = [
         title="One Red Paperclip — Trade up from one thing to something better"
     />
     <PublicLayout>
-        <!-- Hero -->
+        <!-- Hero: 2x2 grid on desktop — col 1 = headline + copy/buttons, col 2 = paperclip (span 2 rows, middle-aligned) -->
         <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-32">
             <div
-                class="grid gap-10 md:grid-cols-[1fr,auto] md:items-start md:gap-16"
+                class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
             >
-                <div class="max-w-xl">
-                    <h1
-                        class="animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:text-6xl"
-                        style="animation-delay: 0ms"
+                <h1
+                    class="order-1 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:row-start-1 md:col-start-1 md:text-6xl"
+                    style="animation-delay: 0ms"
+                >
+                    Start with one thing.
+                    <span class="text-[var(--brand-red)]">Trade up.</span>
+                </h1>
+                <!-- Paperclip: own column, spans both rows, vertically centered to left column -->
+                <div
+                    class="order-3 relative flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:row-start-1 md:row-span-2 md:col-start-2 md:h-full md:items-center md:justify-end"
+                    style="animation-delay: 120ms"
+                >
+                    <div
+                        class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
+                        aria-hidden="true"
+                    />
+                    <div
+                        class="relative flex h-48 w-48 shrink-0 items-center justify-center rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-lg dark:border-white/10"
                     >
-                        Start with one thing.
-                        <span class="text-[var(--brand-red)]">Trade up.</span>
-                    </h1>
+                        <svg
+                            class="h-24 w-24 text-[var(--brand-red)]"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+                            />
+                        </svg>
+                    </div>
+                </div>
+                <div
+                    class="order-2 max-w-xl md:order-none md:row-start-2 md:col-start-1"
+                >
                     <p
-                        class="mt-5 animate-in text-lg leading-relaxed text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4"
+                        class="mt-5 animate-in text-lg leading-relaxed text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:mt-0"
                         style="animation-delay: 80ms"
                     >
                         Create a campaign with a start item and a goal. Others
@@ -98,35 +129,6 @@ const howItWorksSteps = [
                         >
                             Create an account
                         </Link>
-                    </div>
-                </div>
-                <!-- Hero visual: paperclip + gradient orb -->
-                <div
-                    class="relative flex animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:justify-end"
-                    style="animation-delay: 120ms"
-                >
-                    <div
-                        class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
-                        aria-hidden="true"
-                    />
-                    <div
-                        class="relative flex h-48 w-48 items-center justify-center rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-lg dark:border-white/10"
-                    >
-                        <svg
-                            class="h-24 w-24 text-[var(--brand-red)]"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
-                            />
-                        </svg>
                     </div>
                 </div>
             </div>
