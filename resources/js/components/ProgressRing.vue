@@ -1,20 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = withDefaults(defineProps<{
-    percent: number;
-    size?: number;
-    strokeWidth?: number;
-    showLabel?: boolean;
-}>(), {
-    size: 48,
-    strokeWidth: 4,
-    showLabel: true,
-});
+const props = withDefaults(
+    defineProps<{
+        percent: number;
+        size?: number;
+        strokeWidth?: number;
+        showLabel?: boolean;
+    }>(),
+    {
+        size: 48,
+        strokeWidth: 4,
+        showLabel: true,
+    },
+);
 
 const radius = computed(() => (props.size - props.strokeWidth) / 2);
 const circumference = computed(() => 2 * Math.PI * radius.value);
-const offset = computed(() => circumference.value - (props.percent / 100) * circumference.value);
+const offset = computed(
+    () => circumference.value - (props.percent / 100) * circumference.value,
+);
 const center = computed(() => props.size / 2);
 
 const color = computed(() => {
@@ -25,7 +30,10 @@ const color = computed(() => {
 </script>
 
 <template>
-    <div class="relative inline-flex items-center justify-center" :style="{ width: `${size}px`, height: `${size}px` }">
+    <div
+        class="relative inline-flex items-center justify-center"
+        :style="{ width: `${size}px`, height: `${size}px` }"
+    >
         <svg :width="size" :height="size" class="-rotate-90">
             <circle
                 :cx="center"

@@ -9,9 +9,8 @@
 
 @theme inline {
     --font-sans:
-        'DM Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-display: Fraunces, ui-serif, Georgia, serif;
 
@@ -195,18 +194,33 @@
 }
 
 @keyframes slide-up {
-    from { opacity: 0; transform: translateY(1rem); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes progress-fill {
-    from { stroke-dashoffset: var(--circumference); }
-    to { stroke-dashoffset: var(--target-offset); }
+    from {
+        stroke-dashoffset: var(--circumference);
+    }
+    to {
+        stroke-dashoffset: var(--target-offset);
+    }
 }
 
 @keyframes pulse-ring {
-    0%, 100% { box-shadow: 0 0 0 0 var(--pulse-color, rgba(239, 68, 68, 0.4)); }
-    50% { box-shadow: 0 0 0 6px var(--pulse-color, rgba(239, 68, 68, 0)); }
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 var(--pulse-color, rgba(239, 68, 68, 0.4));
+    }
+    50% {
+        box-shadow: 0 0 0 6px var(--pulse-color, rgba(239, 68, 68, 0));
+    }
 }
 
 .animate-slide-up {
@@ -220,8 +234,15 @@
 }
 
 @keyframes blob-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.08); }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.08);
+    }
 }
 .animate-blob-pulse {
     animation: blob-pulse 6s ease-in-out infinite;

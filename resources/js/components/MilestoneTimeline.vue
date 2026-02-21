@@ -17,18 +17,27 @@ defineProps<{
                 <div
                     class="flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-all"
                     :class="{
-                        'border-[var(--electric-mint)] bg-[var(--electric-mint)] text-white': milestone.status === 'completed',
-                        'border-[var(--hot-coral)] bg-[var(--hot-coral)]/10 text-[var(--hot-coral)] animate-pulse': milestone.status === 'current',
-                        'border-[var(--border)] bg-white text-[var(--ink-muted)]': milestone.status === 'future',
+                        'border-[var(--electric-mint)] bg-[var(--electric-mint)] text-white':
+                            milestone.status === 'completed',
+                        'animate-pulse border-[var(--hot-coral)] bg-[var(--hot-coral)]/10 text-[var(--hot-coral)]':
+                            milestone.status === 'current',
+                        'border-[var(--border)] bg-white text-[var(--ink-muted)]':
+                            milestone.status === 'future',
                     }"
                 >
-                    <span v-if="milestone.status === 'completed'">&#10003;</span>
+                    <span v-if="milestone.status === 'completed'"
+                        >&#10003;</span
+                    >
                     <span v-else>{{ i + 1 }}</span>
                 </div>
                 <!-- Label -->
                 <span
-                    class="max-w-16 truncate text-center text-[10px] font-medium leading-tight"
-                    :class="milestone.status === 'current' ? 'text-[var(--hot-coral)]' : 'text-[var(--ink-muted)]'"
+                    class="max-w-16 truncate text-center text-[10px] leading-tight font-medium"
+                    :class="
+                        milestone.status === 'current'
+                            ? 'text-[var(--hot-coral)]'
+                            : 'text-[var(--ink-muted)]'
+                    "
                 >
                     {{ milestone.label }}
                 </span>
@@ -37,7 +46,11 @@ defineProps<{
             <div
                 v-if="i < milestones.length - 1"
                 class="mb-5 h-0.5 w-8 shrink-0"
-                :class="milestone.status === 'completed' ? 'bg-[var(--electric-mint)]' : 'bg-[var(--border)]'"
+                :class="
+                    milestone.status === 'completed'
+                        ? 'bg-[var(--electric-mint)]'
+                        : 'bg-[var(--border)]'
+                "
             />
         </template>
     </div>

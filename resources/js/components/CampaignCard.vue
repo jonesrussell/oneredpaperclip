@@ -56,13 +56,19 @@ function getStatusClasses(status: string): string {
         <!-- Category accent strip -->
         <div
             class="h-1.5 w-full"
-            :style="{ backgroundColor: getCategoryColor(campaign.category?.name) }"
+            :style="{
+                backgroundColor: getCategoryColor(campaign.category?.name),
+            }"
         />
 
         <div class="relative p-4">
             <!-- Progress ring -->
-            <div v-if="progress != null" class="absolute right-4 top-4">
-                <ProgressRing :percent="progress" :size="40" :stroke-width="3" />
+            <div v-if="progress != null" class="absolute top-4 right-4">
+                <ProgressRing
+                    :percent="progress"
+                    :size="40"
+                    :stroke-width="3"
+                />
             </div>
 
             <!-- Title -->
@@ -89,7 +95,9 @@ function getStatusClasses(status: string): string {
                     variant="secondary"
                     class="rounded-full bg-[var(--muted)] text-xs font-medium"
                 >
-                    {{ campaign.trades_count }} trade{{ campaign.trades_count === 1 ? '' : 's' }}
+                    {{ campaign.trades_count }} trade{{
+                        campaign.trades_count === 1 ? '' : 's'
+                    }}
                 </Badge>
                 <span class="flex-1" />
                 <span

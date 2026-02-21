@@ -13,8 +13,8 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import UserInfo from '@/components/UserInfo.vue';
-import { login, register } from '@/routes';
 import UserMenuContent from './UserMenuContent.vue';
+import { login, register } from '@/routes';
 
 const page = usePage();
 const user = page.props.auth.user;

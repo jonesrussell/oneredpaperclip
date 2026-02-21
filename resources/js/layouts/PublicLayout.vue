@@ -20,14 +20,14 @@ const canRegister = computed(
             aria-hidden="true"
         >
             <div
-                class="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-[var(--hot-coral)]/20 blur-3xl animate-blob-pulse"
+                class="animate-blob-pulse absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[var(--hot-coral)]/20 blur-3xl"
             />
             <div
-                class="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--sunny-yellow)]/15 blur-3xl animate-blob-pulse"
+                class="animate-blob-pulse absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--sunny-yellow)]/15 blur-3xl"
                 style="animation-delay: -2s"
             />
             <div
-                class="absolute right-1/3 top-1/2 h-64 w-64 rounded-full bg-[var(--electric-mint)]/10 blur-3xl animate-blob-pulse"
+                class="animate-blob-pulse absolute top-1/2 right-1/3 h-64 w-64 rounded-full bg-[var(--electric-mint)]/10 blur-3xl"
                 style="animation-delay: -4s"
             />
         </div>
@@ -74,7 +74,7 @@ const canRegister = computed(
                     <template v-if="user">
                         <Link
                             :href="dashboard().url"
-                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[var(--brand-red-hover)] hover:shadow-lg hover:-translate-y-0.5"
+                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)] hover:shadow-lg"
                         >
                             Dashboard
                         </Link>
@@ -89,7 +89,7 @@ const canRegister = computed(
                         <Link
                             v-if="canRegister"
                             :href="register().url"
-                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:bg-[var(--brand-red-hover)] hover:shadow-lg hover:-translate-y-0.5"
+                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)] hover:shadow-lg"
                         >
                             Get started
                         </Link>
