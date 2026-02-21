@@ -23,6 +23,8 @@ export const buttonVariants = cva(
           "bg-[var(--electric-mint)] text-white shadow-md hover:bg-[var(--electric-mint)]/90 hover:shadow-lg hover:-translate-y-0.5",
         social:
           "bg-[var(--sky-blue)] text-white shadow-md hover:bg-[var(--sky-blue)]/90 hover:shadow-lg hover:-translate-y-0.5",
+        brand:
+          "bg-[var(--brand-red)] text-white shadow-md hover:bg-[var(--brand-red-hover)] hover:shadow-lg hover:-translate-y-0.5",
       },
       size: {
         "default": "h-9 px-4 py-2 has-[>svg]:px-3",
