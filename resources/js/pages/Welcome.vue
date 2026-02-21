@@ -364,7 +364,7 @@ function stepNodeColor(color: string): string {
 
         <!-- CTA strip -->
         <section
-            class="border-t border-white/10 bg-[hsl(24_10%_12%)] py-16 text-center sm:py-20"
+            class="border-t border-white/10 bg-[hsl(0_0%_11%)] py-16 text-center sm:py-20 dark:bg-background"
         >
             <div class="mx-auto max-w-2xl px-4 sm:px-6">
                 <h2
@@ -399,27 +399,33 @@ function stepNodeColor(color: string): string {
 </template>
 
 <style scoped>
-/* House shape: roof peak + rectangular body (one red paperclip → house) */
+/* House shape: roof peak + body + chimney; chimney left edge on same roof line as peak→eave */
 .hero-house {
     clip-path: polygon(
         50% 4%,
-        92% 38%,
-        92% 96%,
-        8% 96%,
-        8% 38%
+        82% 29%,
+        82% 16%,
+        94% 16%,
+        94% 38%,
+        94% 96%,
+        6% 96%,
+        6% 38%
     );
     -webkit-clip-path: polygon(
         50% 4%,
-        92% 38%,
-        92% 96%,
-        8% 96%,
-        8% 38%
+        82% 29%,
+        82% 16%,
+        94% 16%,
+        94% 38%,
+        94% 96%,
+        6% 96%,
+        6% 38%
     );
 }
 
 /* Center paperclip in the square body of the house (roof ends at 38%) */
 .hero-house-paperclip {
-    transform: translateY(17%);
+    transform: translateY(24%);
 }
 
 @keyframes welcome-path-in {
