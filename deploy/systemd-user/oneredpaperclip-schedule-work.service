@@ -1,0 +1,14 @@
+[Unit]
+Description=One Red Paperclip schedule:work
+After=network.target
+ConditionPathExists=/home/deployer/oneredpaperclip/current
+
+[Service]
+Type=simple
+WorkingDirectory=/home/deployer/oneredpaperclip/current
+ExecStart=/usr/bin/php artisan schedule:work
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=default.target
