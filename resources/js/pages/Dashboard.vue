@@ -4,9 +4,9 @@ import { Compass, PlusCircle } from 'lucide-vue-next';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import campaigns from '@/routes/campaigns';
+import type { BreadcrumbItem } from '@/types';
 
 const page = usePage();
 const user = page.props.auth.user;

@@ -19,7 +19,10 @@ defineProps<Props>();
 
 function isExternal(href: NonNullable<NavItem['href']>): boolean {
     const url = typeof href === 'string' ? href : href?.url;
-    return typeof url === 'string' && (url.startsWith('http://') || url.startsWith('https://'));
+    return (
+        typeof url === 'string' &&
+        (url.startsWith('http://') || url.startsWith('https://'))
+    );
 }
 </script>
 
@@ -37,8 +40,14 @@ function isExternal(href: NonNullable<NavItem['href']>): boolean {
                         <component
                             :is="isExternal(item.href) ? 'a' : Link"
                             :href="toUrl(item.href)"
-                            :target="isExternal(item.href) ? '_blank' : undefined"
-                            :rel="isExternal(item.href) ? 'noopener noreferrer' : undefined"
+                            :target="
+                                isExternal(item.href) ? '_blank' : undefined
+                            "
+                            :rel="
+                                isExternal(item.href)
+                                    ? 'noopener noreferrer'
+                                    : undefined
+                            "
                         >
                             <component :is="item.icon" />
                             <span>{{ item.title }}</span>

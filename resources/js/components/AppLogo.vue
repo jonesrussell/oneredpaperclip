@@ -9,15 +9,11 @@ const href = dashboard().url;
 <template>
     <Link
         :href="href"
-        class="flex items-center gap-2 rounded-md outline-none ring-sidebar-ring focus-visible:ring-2"
+        class="flex items-center gap-2 rounded-md ring-sidebar-ring outline-none focus-visible:ring-2"
     >
-        <div
-            class="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-[var(--brand-red)] text-white"
-        >
-            <PaperclipIcon class="size-5" />
-        </div>
+        <PaperclipIcon class="size-7 shrink-0 text-[var(--brand-red)]" />
         <span
-            class="font-display truncate text-sm font-semibold leading-tight text-sidebar-foreground"
+            class="truncate font-display text-sm leading-tight font-semibold text-sidebar-foreground"
         >
             One Red Paperclip
         </span>

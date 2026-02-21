@@ -15,8 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem } from '@/types';
 import campaigns from '@/routes/campaigns';
+import type { BreadcrumbItem } from '@/types';
 
 defineProps<{
     categories: { id: number; name: string; slug: string }[];

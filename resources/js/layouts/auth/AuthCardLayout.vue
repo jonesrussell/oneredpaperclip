@@ -25,11 +25,11 @@ defineProps<{
                 :href="home()"
                 class="flex items-center gap-2 self-center font-medium"
             >
-                <div class="flex h-9 w-9 items-center justify-center">
-                    <AppLogoIcon
-                        class="size-9 fill-current text-black dark:text-white"
-                    />
-                </div>
+                <AppLogoIcon class="size-8 text-[var(--brand-red)]" />
+                <span
+                    class="font-display text-base font-bold tracking-tight text-[var(--ink)]"
+                    >One Red Paperclip</span
+                >
             </Link>
 
             <div class="flex flex-col gap-6">
