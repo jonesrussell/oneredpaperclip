@@ -11,9 +11,14 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
+        class="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden bg-background p-6 md:p-10"
     >
-        <div class="w-full max-w-sm">
+        <!-- Soft background blobs -->
+        <div class="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--hot-coral)]/30 blur-3xl animate-blob-pulse" />
+        <div class="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-[var(--electric-mint)]/20 blur-3xl animate-blob-pulse" style="animation-delay: -2s" />
+        <div class="absolute left-1/2 top-1/4 h-40 w-40 rounded-full bg-[var(--sunny-yellow)]/15 blur-3xl animate-blob-pulse" style="animation-delay: -4s" />
+
+        <div class="relative w-full max-w-sm">
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col items-center gap-4">
                     <Link
