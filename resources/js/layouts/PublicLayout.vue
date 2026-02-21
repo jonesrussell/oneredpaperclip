@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
 import { about, dashboard, home, login, register } from '@/routes';
 import campaigns from '@/routes/campaigns';
@@ -20,15 +21,19 @@ const canRegister = computed(
             aria-hidden="true"
         >
             <div
-                class="animate-blob-pulse absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[var(--hot-coral)]/20 blur-3xl"
+                class="animate-blob-pulse absolute -top-32 -right-32 h-[28rem] w-[28rem] rounded-full bg-[var(--hot-coral)]/35 blur-3xl"
             />
             <div
-                class="animate-blob-pulse absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--sunny-yellow)]/15 blur-3xl"
+                class="animate-blob-pulse absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--sunny-yellow)]/30 blur-3xl"
                 style="animation-delay: -2s"
             />
             <div
-                class="animate-blob-pulse absolute top-1/2 right-1/3 h-64 w-64 rounded-full bg-[var(--electric-mint)]/10 blur-3xl"
+                class="animate-blob-pulse absolute top-1/2 right-1/3 h-72 w-72 rounded-full bg-[var(--electric-mint)]/25 blur-3xl"
                 style="animation-delay: -4s"
+            />
+            <div
+                class="animate-blob-pulse absolute top-1/3 -left-20 h-64 w-64 rounded-full bg-[var(--soft-lavender)]/20 blur-3xl"
+                style="animation-delay: -1s"
             />
         </div>
 
@@ -40,7 +45,7 @@ const canRegister = computed(
 
         <!-- Sticky top header -->
         <header
-            class="sticky top-0 z-40 border-b border-[var(--border)] bg-white/85 backdrop-blur-md dark:bg-[var(--paper)]/90"
+            class="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur-md dark:bg-[var(--paper)]/90"
         >
             <div
                 class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
@@ -77,6 +82,8 @@ const canRegister = computed(
                         Explore
                     </Link>
 
+                    <AppearanceToggle class="ml-2" />
+
                     <template v-if="user">
                         <Link
                             :href="dashboard().url"
@@ -111,7 +118,7 @@ const canRegister = computed(
 
         <!-- Footer -->
         <footer
-            class="relative z-10 border-t border-[var(--border)] bg-white/60 py-8 pb-24 dark:bg-[var(--paper)]/80 lg:pb-8"
+            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-24 dark:bg-[var(--paper)]/80 lg:pb-8"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6"

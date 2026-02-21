@@ -18,9 +18,24 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10"
+        class="relative flex min-h-svh flex-col items-center justify-center gap-6 overflow-hidden bg-[var(--paper)] p-6 md:p-10"
     >
-        <div class="flex w-full max-w-md flex-col gap-6">
+        <!-- Decorative blobs -->
+        <div
+            class="animate-blob-pulse pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full bg-[var(--hot-coral)]/25 blur-3xl"
+            aria-hidden="true"
+        />
+        <div
+            class="animate-blob-pulse pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-[var(--sunny-yellow)]/20 blur-3xl"
+            aria-hidden="true"
+            style="animation-delay: -2s"
+        />
+        <div
+            class="animate-blob-pulse pointer-events-none absolute top-1/2 left-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--electric-mint)]/15 blur-3xl"
+            aria-hidden="true"
+            style="animation-delay: -4s"
+        />
+        <div class="relative z-10 flex w-full max-w-md flex-col gap-6">
             <Link
                 :href="home()"
                 class="flex items-center gap-2 self-center font-medium"

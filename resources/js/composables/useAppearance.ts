@@ -48,12 +48,27 @@ const mediaQuery = () => {
     return window.matchMedia('(prefers-color-scheme: dark)');
 };
 
-const getStoredAppearance = () => {
+const getStoredAppearance = (): Appearance | null => {
     if (typeof window === 'undefined') {
         return null;
     }
 
-    return localStorage.getItem('appearance') as Appearance | null;
+    const fromStorage = localStorage.getItem('appearance') as Appearance | null;
+    if (fromStorage) {
+        return fromStorage;
+    }
+
+    const match = document.cookie.match(/appearance=([^;]+)/);
+    const fromCookie = match?.[1] as Appearance | null;
+    if (
+        fromCookie === 'light' ||
+        fromCookie === 'dark' ||
+        fromCookie === 'system'
+    ) {
+        return fromCookie;
+    }
+
+    return null;
 };
 
 const prefersDark = (): boolean => {
@@ -87,9 +102,7 @@ const appearance = ref<Appearance>('system');
 
 export function useAppearance(): UseAppearanceReturn {
     onMounted(() => {
-        const savedAppearance = localStorage.getItem(
-            'appearance',
-        ) as Appearance | null;
+        const savedAppearance = getStoredAppearance();
 
         if (savedAppearance) {
             appearance.value = savedAppearance;

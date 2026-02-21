@@ -68,7 +68,15 @@ const howItWorksSteps = [
     />
     <PublicLayout>
         <!-- Hero: 2x2 grid on desktop — col 1 = headline + copy/buttons, col 2 = paperclip (span 2 rows, middle-aligned) -->
-        <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-32">
+        <section
+            class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-32"
+        >
+            <!-- Warm hero gradient -->
+            <div
+                class="pointer-events-none absolute inset-0 -top-8 rounded-b-3xl bg-gradient-to-br from-[var(--hot-coral)]/12 via-transparent to-[var(--sunny-yellow)]/10"
+                aria-hidden="true"
+            />
+            <div class="relative">
             <div
                 class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
             >
@@ -146,11 +154,12 @@ const howItWorksSteps = [
                     </div>
                 </div>
             </div>
+            </div>
         </section>
 
         <!-- Social proof stats -->
         <section
-            class="border-y border-[var(--border)] bg-white/40 py-8 dark:bg-white/5"
+            class="border-y border-[var(--border)] bg-[var(--card)]/80 py-8 dark:bg-white/5"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-8 px-4 sm:gap-16 sm:px-6"
