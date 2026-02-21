@@ -40,7 +40,7 @@ const canRegister = computed(
 
         <!-- Sticky top header -->
         <header
-            class="sticky top-0 z-40 border-b border-[var(--border)] bg-white/85 backdrop-blur-md"
+            class="sticky top-0 z-40 border-b border-[var(--border)] bg-white/85 backdrop-blur-md dark:bg-[var(--paper)]/90"
         >
             <div
                 class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
@@ -111,7 +111,7 @@ const canRegister = computed(
 
         <!-- Footer -->
         <footer
-            class="relative z-10 border-t border-[var(--border)] bg-white/60 py-8 pb-24 lg:pb-8"
+            class="relative z-10 border-t border-[var(--border)] bg-white/60 py-8 pb-24 dark:bg-[var(--paper)]/80 lg:pb-8"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6"

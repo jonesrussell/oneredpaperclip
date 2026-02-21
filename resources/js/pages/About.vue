@@ -13,7 +13,7 @@ import campaigns from '@/routes/campaigns';
         <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24">
             <div class="text-center">
                 <span
-                    class="inline-block rounded-full bg-[var(--brand-red)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--brand-red)]"
+                    class="inline-block rounded-full bg-[var(--brand-red)]/10 px-4 py-1.5 text-sm font-semibold text-[var(--brand-red)] dark:bg-[var(--brand-red)]/20 dark:text-[var(--brand-red-muted)]"
                 >
                     The origin story
                 </span>
@@ -35,7 +35,7 @@ import campaigns from '@/routes/campaigns';
 
         <!-- Kyle's Story -->
         <section
-            class="border-t border-[var(--ink)]/10 bg-white/50 py-16 sm:py-24"
+            class="border-t border-[var(--ink)]/10 bg-white/50 py-16 dark:bg-[var(--paper)] sm:py-24"
         >
             <div class="mx-auto max-w-4xl px-4 sm:px-6">
                 <div class="grid gap-12 md:grid-cols-[1fr,auto] md:items-start">

@@ -133,7 +133,9 @@ const howItWorksSteps = [
         </section>
 
         <!-- Social proof stats -->
-        <section class="border-y border-[var(--border)] bg-white/40 py-8">
+        <section
+            class="border-y border-[var(--border)] bg-white/40 py-8 dark:bg-white/5"
+        >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-8 px-4 sm:gap-16 sm:px-6"
             >

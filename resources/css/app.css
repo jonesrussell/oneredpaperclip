@@ -99,6 +99,7 @@
 :root {
     --brand-red: hsl(0 95% 45%);
     --brand-red-hover: hsl(0 95% 38%);
+    --brand-red-muted: var(--brand-red);
     --paper: hsl(28 60% 98%);
     --ink: hsl(28 25% 16%);
     --ink-muted: hsl(28 15% 35%);
@@ -146,9 +147,10 @@
 .dark {
     --brand-red: hsl(0 90% 55%);
     --brand-red-hover: hsl(0 90% 62%);
+    --brand-red-muted: hsl(0 90% 70%);
     --paper: hsl(24 10% 8%);
     --ink: hsl(38 20% 95%);
-    --ink-muted: hsl(24 6% 58%);
+    --ink-muted: hsl(24 8% 75%);
     --background: hsl(0 0% 3.9%);
     --foreground: hsl(0 0% 98%);
     --card: hsl(0 0% 3.9%);
