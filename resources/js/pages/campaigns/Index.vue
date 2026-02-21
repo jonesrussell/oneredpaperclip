@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+import CampaignCard from '@/components/CampaignCard.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -15,12 +10,14 @@ type CampaignItem = {
     id: number;
     title: string | null;
     status: string;
+    trades_count?: number;
     user?: { id: number; name: string } | null;
     current_item?: { id: number; title: string } | null;
     goal_item?: { id: number; title: string } | null;
+    category?: { id: number; name: string } | null;
 };
 
-defineProps<{
+const props = defineProps<{
     campaigns: {
         data: CampaignItem[];
         current_page: number;
@@ -33,6 +30,19 @@ defineProps<{
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Campaigns', href: '/campaigns' },
 ];
+
+const campaignList = ref(props.campaigns.data);
+const categoryList = ref(props.categories);
+const activeCategory = ref<number | null>(null);
+
+function filterByCategory(categoryId: number | null): void {
+    activeCategory.value = categoryId;
+    router.get(
+        '/campaigns',
+        categoryId != null ? { category_id: categoryId } : {},
+        { preserveState: true },
+    );
+}
 </script>
 
 <template>
@@ -44,54 +54,62 @@ const breadcrumbs: BreadcrumbItem[] = [
         >
             <h1 class="text-xl font-semibold">Campaigns</h1>
 
+            <!-- Category filter pills -->
             <div
-                v-if="campaigns.data.length === 0"
-                class="rounded-xl border border-dashed py-12 text-center text-muted-foreground"
+                v-if="categoryList.length > 0"
+                class="flex gap-2 overflow-x-auto pb-1"
+                role="group"
+                aria-label="Filter by category"
             >
-                No campaigns yet. Be the first to start a trade-up.
+                <button
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors"
+                    :class="
+                        !activeCategory
+                            ? 'border-[var(--brand-red)] bg-[var(--brand-red)]/10 text-[var(--brand-red)]'
+                            : 'border-[var(--border)] text-[var(--ink-muted)] hover:bg-[var(--accent)]'
+                    "
+                    @click="filterByCategory(null)"
+                >
+                    All
+                </button>
+                <button
+                    v-for="cat in categoryList"
+                    :key="cat.id"
+                    class="inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors"
+                    :class="
+                        activeCategory === cat.id
+                            ? 'border-[var(--brand-red)] bg-[var(--brand-red)]/10 text-[var(--brand-red)]'
+                            : 'border-[var(--border)] text-[var(--ink-muted)] hover:bg-[var(--accent)]'
+                    "
+                    @click="filterByCategory(cat.id)"
+                >
+                    {{ cat.name }}
+                </button>
             </div>
 
+            <!-- Empty state -->
+            <div
+                v-if="campaignList.length === 0"
+                class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-16 text-center text-[var(--ink-muted)]"
+            >
+                No campaigns yet. Be the first to start a trade-up.
+                <br />
+                <Link
+                    href="/campaigns/create"
+                    class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
+                >
+                    Create a campaign
+                </Link>
+            </div>
+
+            <!-- Campaign grid -->
             <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <li v-for="campaign in campaigns.data" :key="campaign.id">
-                    <Link
-                        :href="`/campaigns/${campaign.id}`"
-                        class="block transition-opacity hover:opacity-90"
-                        prefetch
-                    >
-                        <Card class="h-full">
-                            <CardHeader class="pb-2">
-                                <CardTitle class="line-clamp-2 text-base">
-                                    {{ campaign.title ?? 'Untitled campaign' }}
-                                </CardTitle>
-                                <CardDescription
-                                    v-if="
-                                        campaign.current_item?.title &&
-                                        campaign.goal_item?.title
-                                    "
-                                    class="line-clamp-1 text-xs"
-                                >
-                                    {{ campaign.current_item.title }} →
-                                    {{ campaign.goal_item.title }}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent class="pt-0">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <Badge variant="secondary" class="text-xs">
-                                        {{ campaign.status }}
-                                    </Badge>
-                                    <span
-                                        v-if="campaign.user?.name"
-                                        class="text-xs text-muted-foreground"
-                                    >
-                                        {{ campaign.user.name }}
-                                    </span>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </Link>
+                <li v-for="campaign in campaignList" :key="campaign.id">
+                    <CampaignCard :campaign="campaign" />
                 </li>
             </ul>
 
+            <!-- Pagination -->
             <nav
                 v-if="campaigns.last_page > 1"
                 class="flex flex-wrap items-center justify-center gap-2 pt-4"
