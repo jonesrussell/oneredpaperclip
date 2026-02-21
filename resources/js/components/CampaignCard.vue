@@ -38,11 +38,11 @@ function getCategoryColor(name?: string): string {
 function getStatusClasses(status: string): string {
     switch (status) {
         case 'completed':
-            return 'bg-[var(--electric-mint)]/15 text-[var(--electric-mint)]';
+            return 'bg-[var(--electric-mint)]/15 text-emerald-800';
         case 'active':
-            return 'bg-[var(--electric-mint)]/10 text-emerald-700';
+            return 'bg-[var(--electric-mint)]/10 text-emerald-800';
         default:
-            return 'bg-[var(--muted)]';
+            return 'bg-[var(--muted)] text-[var(--ink-muted)]';
     }
 }
 </script>
