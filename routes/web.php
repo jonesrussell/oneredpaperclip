@@ -29,6 +29,8 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('about', fn () => Inertia::render('About'))->name('about');
+
 Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
 Route::get('campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create')
     ->middleware(['auth', 'verified']);

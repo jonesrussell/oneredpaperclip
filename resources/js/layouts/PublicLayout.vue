@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
-import { dashboard, home, login, register } from '@/routes';
+import { about, dashboard, home, login, register } from '@/routes';
 import campaigns from '@/routes/campaigns';
 
 const page = usePage();
@@ -65,6 +65,12 @@ const canRegister = computed(
                         How it works
                     </a>
                     <Link
+                        :href="about().url"
+                        class="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--ink)]"
+                    >
+                        About
+                    </Link>
+                    <Link
                         :href="campaigns.index().url"
                         class="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--ink)]"
                     >
@@ -123,6 +129,9 @@ const canRegister = computed(
                     <a href="#how-it-works" class="hover:text-[var(--ink)]">
                         How it works
                     </a>
+                    <Link :href="about().url" class="hover:text-[var(--ink)]">
+                        About
+                    </Link>
                     <Link
                         :href="campaigns.index().url"
                         class="hover:text-[var(--ink)]"

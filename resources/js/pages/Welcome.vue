@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 
 import CampaignCard from '@/components/CampaignCard.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { register } from '@/routes';
+import { about, register } from '@/routes';
 import campaigns from '@/routes/campaigns';
 
 type FeaturedCampaign = {
@@ -208,6 +208,42 @@ const howItWorksSteps = [
                         </p>
                     </li>
                 </ul>
+            </div>
+        </section>
+
+        <!-- Inspired by a true story -->
+        <section class="border-t border-[var(--ink)]/10 py-12 sm:py-16">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6">
+                <div
+                    class="relative overflow-hidden rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-8 shadow-sm sm:p-10"
+                >
+                    <div
+                        class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-[var(--brand-red)]/5 blur-2xl"
+                        aria-hidden="true"
+                    />
+                    <div class="relative max-w-xl">
+                        <span
+                            class="text-xs font-semibold tracking-wider text-[var(--brand-red)] uppercase"
+                        >
+                            Inspired by a true story
+                        </span>
+                        <p
+                            class="mt-3 text-base leading-relaxed text-[var(--ink-muted)]"
+                        >
+                            In 2005, Kyle MacDonald traded a single red
+                            paperclip through 14 swaps until he owned a
+                            house—all in one year. His experiment proved that
+                            small trades can lead to big things.
+                        </p>
+                        <Link
+                            :href="about().url"
+                            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--brand-red)] transition-colors hover:underline"
+                        >
+                            Read the full story
+                            <span aria-hidden="true">&rarr;</span>
+                        </Link>
+                    </div>
+                </div>
             </div>
         </section>
 
