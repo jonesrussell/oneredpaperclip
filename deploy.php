@@ -9,6 +9,11 @@ require 'recipe/laravel.php';
 set('repository', 'git@github.com:jonesrussell/oneredpaperclip.git');
 set('keep_releases', 5);
 
+// Timestamp-based release names avoid "release already exists" after a failed deploy.
+set('release_name', function (): string {
+    return date('YmdHis');
+});
+
 add('shared_files', [
     '.env',
     'database/database.sqlite',
@@ -20,9 +25,11 @@ add('writable_dirs', [
     'database',
 ]);
 
-// PHP-FPM runs as www-data; ensure it can write to storage and cache (no shared group).
+// PHP-FPM runs as www-data (in deployer group); ensure group can write.
+// Storage is shared (symlink); some files may be owned by www-data, so chmod can fail — ignore.
 task('deploy:writable_web', function (): void {
-    run('chmod -R 0777 {{release_path}}/storage {{release_path}}/bootstrap/cache');
+    run('chgrp -R deployer {{release_path}}/storage {{release_path}}/bootstrap/cache || true');
+    run('chmod -R g+rwX {{release_path}}/storage {{release_path}}/bootstrap/cache || true');
 });
 after('deploy:writable', 'deploy:writable_web');
 
