@@ -21,12 +21,26 @@ const props = withDefaults(
     defineProps<{
         canRegister: boolean;
         featuredCampaigns: FeaturedCampaign[];
+        stats: {
+            campaignsCount: number;
+            tradesCount: number;
+            usersCount: number;
+        };
     }>(),
     {
         canRegister: true,
         featuredCampaigns: () => [],
+        stats: () => ({
+            campaignsCount: 0,
+            tradesCount: 0,
+            usersCount: 0,
+        }),
     },
 );
+
+function formatStat(count: number): string {
+    return `${count.toLocaleString()}+`;
+}
 
 const howItWorksSteps = [
     {
@@ -145,7 +159,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--brand-red)]"
                     >
-                        500+
+                        {{ formatStat(props.stats.campaignsCount) }}
                     </p>
                     <p class="text-sm text-[var(--ink-muted)]">Campaigns</p>
                 </div>
@@ -153,7 +167,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--electric-mint)]"
                     >
-                        1,200+
+                        {{ formatStat(props.stats.tradesCount) }}
                     </p>
                     <p class="text-sm text-[var(--ink-muted)]">Trades</p>
                 </div>
@@ -161,7 +175,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--sunny-yellow)]"
                     >
-                        Growing
+                        {{ formatStat(props.stats.usersCount) }}
                     </p>
                     <p class="text-sm text-[var(--ink-muted)]">Community</p>
                 </div>

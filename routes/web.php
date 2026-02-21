@@ -5,6 +5,8 @@ use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\TradeController;
 use App\Models\Campaign;
+use App\Models\Trade;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -23,9 +25,16 @@ Route::get('/', function () {
         $featuredCampaigns = collect();
     }
 
+    $stats = [
+        'campaignsCount' => Campaign::query()->count(),
+        'tradesCount' => Trade::query()->count(),
+        'usersCount' => User::query()->count(),
+    ];
+
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),
         'featuredCampaigns' => $featuredCampaigns,
+        'stats' => $stats,
     ]);
 })->name('home');
 
