@@ -20,6 +20,12 @@ add('writable_dirs', [
     'database',
 ]);
 
+// PHP-FPM runs as www-data; ensure it can write to storage and cache (no shared group).
+task('deploy:writable_web', function (): void {
+    run('chmod -R 0777 {{release_path}}/storage {{release_path}}/bootstrap/cache');
+});
+after('deploy:writable', 'deploy:writable_web');
+
 // Hosts
 
 host('coforge.xyz')
