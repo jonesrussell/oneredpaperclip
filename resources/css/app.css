@@ -9,9 +9,9 @@
 
 @theme inline {
     --font-sans:
-        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
     --font-display: Fraunces, ui-serif, Georgia, serif;
 
     --radius-lg: var(--radius);
@@ -84,22 +84,25 @@
     body,
     html {
         --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'DM Sans', ui-sans-serif, system-ui, sans-serif,
             'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
             'Noto Color Emoji';
     }
     .font-display {
         font-family: var(--font-display);
     }
+    .font-mono {
+        font-family: var(--font-mono);
+    }
 }
 
 :root {
     --brand-red: hsl(0 95% 45%);
     --brand-red-hover: hsl(0 95% 38%);
-    --paper: hsl(38 33% 97%);
-    --ink: hsl(24 10% 12%);
-    --ink-muted: hsl(24 6% 38%);
-    --background: hsl(0 0% 100%);
+    --paper: hsl(28 60% 98%);
+    --ink: hsl(28 25% 16%);
+    --ink-muted: hsl(28 15% 45%);
+    --background: hsl(28 55% 99%);
     --foreground: hsl(0 0% 3.9%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(0 0% 3.9%);
@@ -123,7 +126,7 @@
     --chart-3: hsl(197 37% 24%);
     --chart-4: hsl(43 74% 66%);
     --chart-5: hsl(27 87% 67%);
-    --radius: 0.5rem;
+    --radius: 1rem;
     --sidebar-background: hsl(0 0% 98%);
     --sidebar-foreground: hsl(240 5.3% 26.1%);
     --sidebar-primary: hsl(0 0% 10%);
@@ -133,6 +136,11 @@
     --sidebar-border: hsl(0 0% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
     --sidebar: hsl(0 0% 98%);
+    --electric-mint: hsl(162 65% 52%);
+    --sunny-yellow: hsl(45 95% 60%);
+    --hot-coral: hsl(12 90% 65%);
+    --soft-lavender: hsl(265 55% 75%);
+    --sky-blue: hsl(205 85% 65%);
 }
 
 .dark {
@@ -183,4 +191,59 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes progress-fill {
+    from {
+        stroke-dashoffset: var(--circumference);
+    }
+    to {
+        stroke-dashoffset: var(--target-offset);
+    }
+}
+
+@keyframes pulse-ring {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 var(--pulse-color, rgba(239, 68, 68, 0.4));
+    }
+    50% {
+        box-shadow: 0 0 0 6px var(--pulse-color, rgba(239, 68, 68, 0));
+    }
+}
+
+.animate-slide-up {
+    animation: slide-up 0.5s ease-out both;
+}
+.animate-progress-fill {
+    animation: progress-fill 0.7s ease-out both;
+}
+.animate-pulse-ring {
+    animation: pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes blob-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.08);
+    }
+}
+.animate-blob-pulse {
+    animation: blob-pulse 6s ease-in-out infinite;
 }

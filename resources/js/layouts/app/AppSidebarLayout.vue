@@ -3,6 +3,7 @@ import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import BottomTabBar from '@/components/BottomTabBar.vue';
 import type { BreadcrumbItem } from '@/types';
 
 type Props = {
@@ -19,10 +20,11 @@ withDefaults(defineProps<Props>(), {
         <AppSidebar />
         <AppContent
             variant="sidebar"
-            class="overflow-x-hidden bg-[var(--paper)] text-[var(--ink)]"
+            class="overflow-x-hidden bg-[var(--paper)] pb-20 text-[var(--ink)] lg:pb-0"
         >
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />
         </AppContent>
+        <BottomTabBar />
     </AppShell>
 </template>

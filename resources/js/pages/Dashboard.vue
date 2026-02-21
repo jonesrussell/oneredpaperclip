@@ -1,23 +1,43 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Compass, PlusCircle } from 'lucide-vue-next';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
 import { dashboard } from '@/routes';
 import campaigns from '@/routes/campaigns';
-import { type BreadcrumbItem } from '@/types';
-import { Megaphone, Plus, Sparkles } from 'lucide-vue-next';
+
+const page = usePage();
+const user = page.props.auth.user;
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
         href: dashboard().url,
+    },
+];
+
+const howItWorksSteps = [
+    {
+        step: '1',
+        title: 'Start',
+        body: 'Create a campaign with something you have and something you want.',
+    },
+    {
+        step: '2',
+        title: 'Offer',
+        body: 'Others browse and submit offers to trade for your current item.',
+    },
+    {
+        step: '3',
+        title: 'Trade',
+        body: 'Accept an offer. Both parties confirm to complete the trade.',
+    },
+    {
+        step: '4',
+        title: 'Goal',
+        body: 'Your item updates. Keep trading until you reach your goal.',
     },
 ];
 </script>
@@ -26,93 +46,138 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div
-            class="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-4 md:p-6"
-        >
+        <div class="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4 sm:p-6">
+            <!-- Greeting -->
             <div>
                 <h1
-                    class="font-display text-2xl font-semibold tracking-tight text-[var(--ink)] sm:text-3xl"
+                    class="font-display text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl"
                 >
-                    Your trading desk
+                    Hey {{ user?.name?.split(' ')[0] ?? 'there' }}!
                 </h1>
-                <p class="mt-1 text-[var(--ink-muted)]">
-                    Start a campaign or discover what others are trading.
+                <p class="mt-1 text-sm text-[var(--ink-muted)]">
+                    Your trading desk
                 </p>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2">
-                <Link :href="campaigns.create()" class="block transition-opacity hover:opacity-90">
-                    <Card
-                        class="h-full border-[var(--ink)]/10 transition-shadow hover:shadow-md"
+            <!-- Quick stats -->
+            <div class="grid grid-cols-3 gap-3">
+                <div
+                    class="rounded-2xl border border-[var(--border)] bg-white p-4 text-center"
+                >
+                    <p
+                        class="font-mono text-2xl font-bold text-[var(--hot-coral)]"
                     >
-                        <CardHeader class="pb-2">
+                        0
+                    </p>
+                    <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
+                        Active Campaigns
+                    </p>
+                </div>
+                <div
+                    class="rounded-2xl border border-[var(--border)] bg-white p-4 text-center"
+                >
+                    <p
+                        class="font-mono text-2xl font-bold text-[var(--sunny-yellow)]"
+                    >
+                        0
+                    </p>
+                    <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
+                        Pending Offers
+                    </p>
+                </div>
+                <div
+                    class="rounded-2xl border border-[var(--border)] bg-white p-4 text-center"
+                >
+                    <p
+                        class="font-mono text-2xl font-bold text-[var(--electric-mint)]"
+                    >
+                        0
+                    </p>
+                    <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
+                        Completed Trades
+                    </p>
+                </div>
+            </div>
+
+            <!-- Shortcut cards -->
+            <div class="grid gap-4 sm:grid-cols-2">
+                <Link :href="campaigns.create().url" class="block">
+                    <Card class="h-full">
+                        <CardHeader>
                             <div
-                                class="mb-2 flex size-10 items-center justify-center rounded-lg bg-[var(--brand-red)]/10 text-[var(--brand-red)]"
+                                class="flex size-10 items-center justify-center rounded-xl bg-[var(--hot-coral)]/10 text-[var(--hot-coral)]"
                             >
-                                <Plus class="size-5" />
+                                <PlusCircle class="size-5" />
                             </div>
-                            <CardTitle class="font-display text-lg">
+                            <CardTitle class="mt-2">
                                 Start a campaign
                             </CardTitle>
-                            <CardDescription class="text-[var(--ink-muted)]">
-                                Set your start item and goal. Others will make
-                                offers—trade up step by step.
-                            </CardDescription>
                         </CardHeader>
-                        <CardContent class="pt-0">
-                            <Button variant="brand" size="sm">
-                                Create campaign
-                            </Button>
+                        <CardContent>
+                            <p class="text-sm text-[var(--ink-muted)]">
+                                Pick a start item and a goal. See how far you
+                                can trade up.
+                            </p>
                         </CardContent>
                     </Card>
                 </Link>
-                <Link
-                    :href="campaigns.index()"
-                    class="block transition-opacity hover:opacity-90"
-                >
-                    <Card
-                        class="h-full border-[var(--ink)]/10 transition-shadow hover:shadow-md"
-                    >
-                        <CardHeader class="pb-2">
+
+                <Link :href="campaigns.index().url" class="block">
+                    <Card class="h-full">
+                        <CardHeader>
                             <div
-                                class="mb-2 flex size-10 items-center justify-center rounded-lg bg-[var(--ink)]/10 text-[var(--ink)]"
+                                class="flex size-10 items-center justify-center rounded-xl bg-[var(--electric-mint)]/10 text-[var(--electric-mint)]"
                             >
-                                <Megaphone class="size-5" />
+                                <Compass class="size-5" />
                             </div>
-                            <CardTitle class="font-display text-lg">
+                            <CardTitle class="mt-2">
                                 Browse campaigns
                             </CardTitle>
-                            <CardDescription class="text-[var(--ink-muted)]">
-                                See active trade-up campaigns. Make an offer and
-                                help someone get closer to their goal.
-                            </CardDescription>
                         </CardHeader>
-                        <CardContent class="pt-0">
-                            <Button variant="outline" size="sm">
-                                View all campaigns
-                            </Button>
+                        <CardContent>
+                            <p class="text-sm text-[var(--ink-muted)]">
+                                Explore active campaigns and make an offer on
+                                something you like.
+                            </p>
                         </CardContent>
                     </Card>
                 </Link>
             </div>
 
-            <Card class="border-[var(--ink)]/10">
-                <CardHeader class="pb-2">
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-lg bg-[var(--brand-red)]/10 text-[var(--brand-red)]"
+            <!-- How it works -->
+            <Card>
+                <CardHeader>
+                    <CardTitle
+                        class="font-display text-lg font-semibold text-[var(--ink)]"
                     >
-                        <Sparkles class="size-5" />
-                    </div>
-                    <CardTitle class="font-display text-lg">
                         How it works
                     </CardTitle>
-                    <CardDescription class="text-[var(--ink-muted)]">
-                        Create a campaign with something you have and something
-                        you want. Others offer trades for your current item.
-                        Accept, confirm together, and your current item updates.
-                        Keep trading until you reach your goal—or beyond.
-                    </CardDescription>
                 </CardHeader>
+                <CardContent>
+                    <ol class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <li
+                            v-for="step in howItWorksSteps"
+                            :key="step.step"
+                            class="relative rounded-xl border border-[var(--border)] p-4"
+                        >
+                            <span
+                                class="absolute -top-2 -left-2 flex size-6 items-center justify-center rounded-full bg-[var(--brand-red)] text-xs font-bold text-white"
+                            >
+                                {{ step.step }}
+                            </span>
+                            <h4
+                                class="font-display font-semibold text-[var(--ink)]"
+                            >
+                                {{ step.title }}
+                            </h4>
+                            <p
+                                class="mt-1 text-sm leading-relaxed text-[var(--ink-muted)]"
+                            >
+                                {{ step.body }}
+                            </p>
+                        </li>
+                    </ol>
+                </CardContent>
             </Card>
         </div>
     </AppLayout>
