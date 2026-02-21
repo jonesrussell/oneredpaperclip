@@ -23,6 +23,7 @@
         <style>
             html {
                 background-color: hsl(28 60% 98%);
+                transition: background-color 0.2s ease;
             }
 
             html.dark {

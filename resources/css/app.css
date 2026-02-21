@@ -153,19 +153,22 @@
     --ink-muted: hsl(0 0% 45%);
 }
 
-/* Obsidian dark theme: purple-black base, purple accent, pink secondary, cyan highlight */
+/* Obsidian dark theme: purple-black base, purple accent, pink secondary, cyan highlight.
+ * Follows dark mode best practices: no pure white text, surface hierarchy, card shadows, image dimming. */
 .dark {
     --brand-red: hsl(0 90% 55%);
     --brand-red-hover: hsl(0 90% 62%);
     --brand-red-muted: hsl(0 90% 70%);
-    /* Obsidian palette */
-    --obsidian-bg: 260 24% 9%; /* #13111C Purple-Black */
-    --obsidian-surface: 252 21% 13%; /* #1E1B29 Purple-Gray */
+    /* Obsidian palette – text is off-white (#F5F5F5-ish) for comfort, not pure white */
+    --obsidian-bg: 260 24% 9%; /* #13111C Purple-Black (base) */
+    --obsidian-surface: 252 21% 13%; /* #1E1B29 Level 1 cards */
+    --obsidian-surface-2: 252 18% 17%; /* Level 2 modals/popovers */
+    --obsidian-surface-3: 252 16% 21%; /* Level 3 tooltips/dropdowns */
     --obsidian-accent: 263 90% 66%; /* #8B5CF6 Purple 500 */
     --obsidian-secondary: 330 81% 60%; /* #EC4899 Pink 500 */
     --obsidian-highlight: 187 94% 43%; /* #06B6D4 Cyan 500 */
-    --obsidian-text: 270 100% 98%; /* #FAF5FF Purple 50 */
-    --obsidian-text-muted: 252 95% 85%; /* #C4B5FD Purple 300 */
+    --obsidian-text: 0 0% 96%; /* ~#F5F5F5 comfortable, not pure white */
+    --obsidian-text-muted: 252 30% 78%; /* Softer than Purple 300 for hierarchy */
     --paper: hsl(var(--obsidian-surface));
     --ink: hsl(var(--obsidian-text));
     --ink-muted: hsl(var(--obsidian-text-muted));
@@ -173,7 +176,7 @@
     --foreground: hsl(var(--obsidian-text));
     --card: hsl(var(--obsidian-surface));
     --card-foreground: hsl(var(--obsidian-text));
-    --popover: hsl(var(--obsidian-surface));
+    --popover: hsl(var(--obsidian-surface-2));
     --popover-foreground: hsl(var(--obsidian-text));
     --primary: hsl(var(--obsidian-accent));
     --primary-foreground: hsl(0 0% 100%);
@@ -181,7 +184,7 @@
     --secondary-foreground: hsl(var(--obsidian-text));
     --muted: hsl(252 18% 16%);
     --muted-foreground: hsl(var(--obsidian-text-muted));
-    --accent: hsl(263 50% 22%);
+    --accent: hsl(263 45% 24%);
     --accent-foreground: hsl(var(--obsidian-text));
     --destructive: hsl(0 84% 60%);
     --destructive-foreground: hsl(0 0% 98%);
@@ -197,7 +200,7 @@
     --sidebar-foreground: hsl(var(--obsidian-text));
     --sidebar-primary: hsl(var(--obsidian-accent));
     --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(263 50% 22%);
+    --sidebar-accent: hsl(263 45% 24%);
     --sidebar-accent-foreground: hsl(var(--obsidian-text));
     --sidebar-border: hsl(252 15% 22%);
     --sidebar-ring: hsl(var(--obsidian-highlight));
@@ -207,6 +210,9 @@
     --hot-coral: hsl(12 90% 65%);
     --soft-lavender: hsl(265 55% 75%);
     --sky-blue: hsl(205 85% 65%);
+    /* Elevation: subtle shadow for cards in dark mode */
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
+        0 2px 4px -2px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
@@ -215,6 +221,19 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* Dark mode: image dimming, card elevation, visible focus (best practices) */
+    .dark img {
+        opacity: 0.9;
+        filter: brightness(0.92) contrast(1.05);
+    }
+    .dark .bg-card {
+        box-shadow: var(--shadow-card) !important;
+    }
+    .dark *:focus-visible {
+        outline: 2px solid hsl(var(--obsidian-highlight));
+        outline-offset: 2px;
     }
 }
 
