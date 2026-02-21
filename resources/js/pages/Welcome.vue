@@ -86,15 +86,14 @@ function stepNodeColor(color: string): string {
         title="One Red Paperclip — Trade up from one thing to something better"
     />
     <PublicLayout>
-        <!-- Hero: 2x2 grid on desktop — col 1 = headline + copy/buttons, col 2 = paperclip (span 2 rows, middle-aligned) -->
-        <section
-            class="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-32"
-        >
-            <!-- Warm hero gradient -->
+        <!-- Hero: full-bleed background, content centered -->
+        <section class="relative w-full py-16 sm:py-24 md:py-32">
+            <!-- Full-bleed hero gradient (edge to edge, no rounded corners) -->
             <div
-                class="pointer-events-none absolute inset-0 -top-8 rounded-b-3xl bg-gradient-to-br from-[var(--hot-coral)]/12 via-transparent to-[var(--sunny-yellow)]/10"
+                class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--hot-coral)]/12 via-transparent to-[var(--sunny-yellow)]/10"
                 aria-hidden="true"
             />
+            <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
             <div class="relative">
             <div
                 class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
@@ -172,6 +171,7 @@ function stepNodeColor(color: string): string {
                         </Link>
                     </div>
                 </div>
+            </div>
             </div>
             </div>
         </section>
