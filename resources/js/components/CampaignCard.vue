@@ -2,7 +2,6 @@
 import { Link } from '@inertiajs/vue3';
 
 import ProgressRing from '@/components/ProgressRing.vue';
-import { Badge } from '@/components/ui/badge';
 import campaigns from '@/routes/campaigns';
 
 defineProps<{
@@ -35,12 +34,23 @@ function getCategoryColor(name?: string): string {
     return categoryColors[name ?? ''] ?? 'var(--border)';
 }
 
-function getStatusClasses(status: string): string {
+function statusLabel(status: string): string {
     switch (status) {
         case 'completed':
-            return 'bg-[var(--electric-mint)]/15 text-emerald-800';
+            return 'Completed';
         case 'active':
-            return 'bg-[var(--electric-mint)]/10 text-emerald-800';
+            return 'Active';
+        default:
+            return status;
+    }
+}
+
+function statusStyles(status: string): string {
+    switch (status) {
+        case 'completed':
+            return 'bg-[var(--electric-mint)]/20 text-[var(--electric-mint)]';
+        case 'active':
+            return 'bg-[var(--electric-mint)]/15 text-emerald-700';
         default:
             return 'bg-[var(--muted)] text-[var(--ink-muted)]';
     }
@@ -50,19 +60,21 @@ function getStatusClasses(status: string): string {
 <template>
     <Link
         :href="campaigns.show({ campaign: campaign.id }).url"
-        class="surface-light group block overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        class="surface-light group relative block overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
+        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
         prefetch
     >
-        <!-- Category accent strip -->
+        <!-- Left-edge category accent -->
         <div
-            class="h-1.5 w-full"
+            class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
             :style="{
                 backgroundColor: getCategoryColor(campaign.category?.name),
             }"
+            aria-hidden="true"
         />
 
-        <div class="relative p-4">
-            <!-- Progress ring -->
+        <div class="relative p-4 pl-5">
+            <!-- Progress ring (when provided) -->
             <div v-if="progress != null" class="absolute top-4 right-4">
                 <ProgressRing
                     :percent="progress"
@@ -73,46 +85,52 @@ function getStatusClasses(status: string): string {
 
             <!-- Title -->
             <h3
-                class="line-clamp-2 pr-12 font-display text-base font-bold text-[var(--ink)] transition-colors group-hover:text-[var(--brand-red)]"
+                class="line-clamp-2 pr-12 font-display text-lg font-semibold leading-snug text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
             >
                 {{ campaign.title ?? 'Untitled campaign' }}
             </h3>
 
-            <!-- Current -> Goal -->
+            <!-- Journey: current → goal -->
             <p
                 v-if="campaign.current_item?.title && campaign.goal_item?.title"
-                class="mt-2 line-clamp-1 text-sm text-[var(--ink-muted)]"
+                class="mt-2.5 line-clamp-1 flex items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
             >
-                {{ campaign.current_item.title }}
-                <span class="mx-1 text-[var(--brand-red)]">&rarr;</span>
-                {{ campaign.goal_item.title }}
+                <span class="truncate">{{ campaign.current_item.title }}</span>
+                <span
+                    class="shrink-0 font-mono text-[var(--brand-red)]"
+                    aria-hidden="true"
+                >
+                    →
+                </span>
+                <span class="truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]">
+                    {{ campaign.goal_item.title }}
+                </span>
             </p>
 
-            <!-- Footer: trade count + user + status -->
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-                <Badge
-                    v-if="campaign.trades_count"
-                    variant="secondary"
-                    class="rounded-full bg-[var(--muted)] text-xs font-medium"
+            <!-- Footer: trade count, user, status -->
+            <div
+                class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-[var(--ink)]/5 pt-3"
+            >
+                <span
+                    v-if="campaign.trades_count != null && campaign.trades_count > 0"
+                    class="font-mono text-xs font-semibold text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
-                    {{ campaign.trades_count }} trade{{
-                        campaign.trades_count === 1 ? '' : 's'
-                    }}
-                </Badge>
-                <span class="flex-1" />
+                    {{ campaign.trades_count }}
+                    {{ campaign.trades_count === 1 ? 'trade' : 'trades' }}
+                </span>
                 <span
                     v-if="campaign.user?.name"
-                    class="text-xs text-[var(--ink-muted)]"
+                    class="text-xs text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
                     {{ campaign.user.name }}
                 </span>
-                <Badge
-                    variant="secondary"
-                    class="rounded-full text-xs capitalize"
-                    :class="getStatusClasses(campaign.status)"
+                <span class="flex-1" />
+                <span
+                    class="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+                    :class="statusStyles(campaign.status)"
                 >
-                    {{ campaign.status }}
-                </Badge>
+                    {{ statusLabel(campaign.status) }}
+                </span>
             </div>
         </div>
     </Link>

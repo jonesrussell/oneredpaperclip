@@ -266,7 +266,7 @@ const howItWorksSteps = [
         </section>
 
         <!-- Featured campaigns -->
-        <section class="py-16 sm:py-24">
+        <section class="border-t border-[var(--ink)]/8 py-16 sm:py-24">
             <div class="mx-auto max-w-6xl px-4 sm:px-6">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <div>
@@ -288,7 +288,7 @@ const howItWorksSteps = [
                 </div>
                 <div
                     v-if="props.featuredCampaigns.length === 0"
-                    class="mt-10 rounded-xl border border-dashed border-[var(--ink)]/20 py-16 text-center text-[var(--ink-muted)]"
+                    class="mt-10 rounded-xl border border-dashed border-[var(--ink)]/20 bg-[var(--paper)]/60 py-16 text-center text-[var(--ink-muted)]"
                 >
                     No public campaigns yet. Be the first to start one.
                     <Link
@@ -301,12 +301,14 @@ const howItWorksSteps = [
                 </div>
                 <ul
                     v-else
-                    class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                    class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
                     role="list"
                 >
                     <li
-                        v-for="campaign in props.featuredCampaigns"
+                        v-for="(campaign, i) in props.featuredCampaigns"
                         :key="campaign.id"
+                        class="animate-in fade-in slide-in-from-bottom-3 [animation-duration:0.45s] [animation-fill-mode:both]"
+                        :style="{ animationDelay: `${120 + i * 50}ms` }"
                     >
                         <CampaignCard :campaign="campaign" />
                     </li>
