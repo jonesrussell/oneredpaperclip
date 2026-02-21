@@ -114,11 +114,12 @@ function stepNodeColor(color: string): string {
                         class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
                         aria-hidden="true"
                     />
+                    <!-- House-shaped container: one red paperclip → house -->
                     <div
-                        class="relative flex h-48 w-48 shrink-0 items-center justify-center rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] shadow-lg dark:border-white/10"
+                        class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
                     >
                         <svg
-                            class="h-24 w-24 text-[var(--brand-red)]"
+                            class="hero-house-paperclip h-24 w-24 text-[var(--brand-red)]"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -398,6 +399,29 @@ function stepNodeColor(color: string): string {
 </template>
 
 <style scoped>
+/* House shape: roof peak + rectangular body (one red paperclip → house) */
+.hero-house {
+    clip-path: polygon(
+        50% 4%,
+        92% 38%,
+        92% 96%,
+        8% 96%,
+        8% 38%
+    );
+    -webkit-clip-path: polygon(
+        50% 4%,
+        92% 38%,
+        92% 96%,
+        8% 96%,
+        8% 38%
+    );
+}
+
+/* Center paperclip in the square body of the house (roof ends at 38%) */
+.hero-house-paperclip {
+    transform: translateY(17%);
+}
+
 @keyframes welcome-path-in {
     from {
         opacity: 0;
