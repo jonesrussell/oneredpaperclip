@@ -4,6 +4,31 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        @php
+            $pageMeta = $page['props']['meta'] ?? [];
+            $metaTitle = $pageMeta['title'] ?? config('app.name');
+            $metaDescription = $pageMeta['description'] ?? config('seo.description');
+            $metaImage = $pageMeta['image'] ?? config('seo.og_image') ?? (config('app.url') . '/favicon.svg');
+            $canonicalUrl = $pageMeta['canonical'] ?? url()->current();
+        @endphp
+        <meta name="description" content="{{ $metaDescription }}">
+        <link rel="canonical" href="{{ $canonicalUrl }}">
+
+        {{-- Open Graph --}}
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ config('app.name') }}">
+        <meta property="og:title" content="{{ $metaTitle }}">
+        <meta property="og:description" content="{{ $metaDescription }}">
+        <meta property="og:image" content="{{ $metaImage }}">
+        <meta property="og:url" content="{{ $canonicalUrl }}">
+        <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+        {{-- Twitter Card --}}
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $metaTitle }}">
+        <meta name="twitter:description" content="{{ $metaDescription }}">
+        <meta name="twitter:image" content="{{ $metaImage }}">
+
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {

@@ -39,10 +39,19 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
         'featuredCampaigns' => $featuredCampaigns,
         'stats' => $stats,
+        'meta' => [
+            'title' => 'One Red Paperclip — Trade up from one thing to something better',
+            'description' => config('seo.description'),
+        ],
     ]);
 })->name('home');
 
-Route::get('about', fn () => Inertia::render('About'))->name('about');
+Route::get('about', fn () => Inertia::render('About', [
+    'meta' => [
+        'title' => 'About — One Red Paperclip',
+        'description' => 'The story behind One Red Paperclip: from Kyle MacDonald\'s red paperclip to a house, and the trade-up platform it inspired.',
+    ],
+]))->name('about');
 
 Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
 Route::get('campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create')

@@ -146,7 +146,7 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="campaign.title ?? 'Campaign'" />
+    <Head :title="`${campaign.title ?? 'Campaign'} — ${page.props.name ?? 'One Red Paperclip'}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="min-h-full bg-background">

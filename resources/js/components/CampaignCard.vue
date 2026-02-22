@@ -2,6 +2,8 @@
 import { Link } from '@inertiajs/vue3';
 
 import ProgressRing from '@/components/ProgressRing.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useInitials } from '@/composables/useInitials';
 import campaigns from '@/routes/campaigns';
 
 defineProps<{
@@ -10,13 +12,15 @@ defineProps<{
         title: string | null;
         status: string;
         trades_count?: number;
-        user?: { id: number; name: string } | null;
+        user?: { id: number; name: string; avatar?: string | null } | null;
         current_item?: { id: number; title: string } | null;
         goal_item?: { id: number; title: string } | null;
         category?: { id: number; name: string } | null;
     };
     progress?: number;
 }>();
+
+const { getInitials } = useInitials();
 
 const categoryColors: Record<string, string> = {
     Electronics: 'var(--sky-blue)',
@@ -120,8 +124,18 @@ function statusStyles(status: string): string {
                 </span>
                 <span
                     v-if="campaign.user?.name"
-                    class="text-xs text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
+                    class="flex items-center gap-2 text-xs text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
+                    <Avatar class="h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                        <AvatarImage
+                            v-if="campaign.user.avatar"
+                            :src="campaign.user.avatar"
+                            :alt="campaign.user.name"
+                        />
+                        <AvatarFallback class="rounded-lg text-black dark:text-white">
+                            {{ getInitials(campaign.user.name) }}
+                        </AvatarFallback>
+                    </Avatar>
                     {{ campaign.user.name }}
                 </span>
                 <span class="flex-1" />

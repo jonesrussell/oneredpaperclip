@@ -136,9 +136,21 @@ class CampaignController extends Controller
                 ->exists()
             : false;
 
+        $description = $campaign->story
+            ? \Illuminate\Support\Str::limit(strip_tags($campaign->story), 160)
+            : sprintf(
+                '%s → %s',
+                $campaign->currentItem?->title ?? 'Start',
+                $campaign->goalItem?->title ?? 'Goal'
+            );
+
         return Inertia::render('campaigns/Show', [
             'campaign' => $campaign,
             'isFollowing' => $isFollowing,
+            'meta' => [
+                'title' => ($campaign->title ?? 'Campaign').' — '.config('app.name'),
+                'description' => $description,
+            ],
         ]);
     }
 }
