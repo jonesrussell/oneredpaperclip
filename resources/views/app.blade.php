@@ -40,6 +40,17 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700|fredoka:400,500,600,700|jetbrains-mono:400,500" rel="stylesheet" />
 
+        @env('production')
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMJMS3L9PG"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XMJMS3L9PG');
+        </script>
+        @endenv
+
         @vite(['resources/js/app.ts'])
         @inertiaHead
     </head>
