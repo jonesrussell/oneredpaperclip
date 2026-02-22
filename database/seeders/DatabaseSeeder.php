@@ -15,12 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CategorySeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            ['name' => 'Test User']
+        );
 
-        User::factory(4)->create();
+        if (User::count() < 5) {
+            User::factory(5 - User::count())->create();
+        }
 
         $this->call(CampaignSeeder::class);
     }
