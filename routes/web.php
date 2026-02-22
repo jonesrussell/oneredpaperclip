@@ -29,7 +29,7 @@ Route::get('/', function () {
     }
 
     $stats = [
-        'campaignsCount' => Campaign::query()->count(),
+        'campaignsCount' => Campaign::query()->publicVisibility()->active()->count(),
         'tradesCount' => Trade::query()->count(),
         'usersCount' => User::query()->count(),
     ];
