@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CampaignApiController;
 use App\Http\Controllers\Api\OfferApiController;
 use App\Http\Controllers\Api\TradeApiController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\TradeController;
@@ -65,9 +66,7 @@ Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('
     ->middleware(['auth', 'verified']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('dashboard/campaigns', [CampaignController::class, 'myCampaigns'])->name('dashboard.campaigns');
 });
 

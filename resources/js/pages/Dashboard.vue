@@ -11,6 +11,12 @@ import type { BreadcrumbItem } from '@/types';
 const page = usePage();
 const user = page.props.auth.user;
 
+const props = defineProps<{
+    activeCampaignsCount: number;
+    completedTradesCount: number;
+    pendingOffersCount: number;
+}>();
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -67,7 +73,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--hot-coral)]"
                     >
-                        0
+                        {{ props.activeCampaignsCount }}
                     </p>
                     <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
                         Active Campaigns
@@ -79,7 +85,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--sunny-yellow)]"
                     >
-                        0
+                        {{ props.pendingOffersCount }}
                     </p>
                     <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
                         Pending Offers
@@ -91,7 +97,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--electric-mint)]"
                     >
-                        0
+                        {{ props.completedTradesCount }}
                     </p>
                     <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
                         Completed Trades
