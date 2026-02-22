@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 
 import CampaignCard from '@/components/CampaignCard.vue';
+import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
 import campaigns from '@/routes/campaigns';
@@ -118,21 +119,9 @@ function stepNodeColor(color: string): string {
                     <div
                         class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
                     >
-                        <svg
+                        <PaperclipIcon
                             class="hero-house-paperclip h-24 w-24 text-[var(--brand-red)]"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
-                            />
-                        </svg>
+                        />
                     </div>
                 </div>
                 <div

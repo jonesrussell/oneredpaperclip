@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import {
     Card,
     CardContent,
@@ -40,7 +40,7 @@ defineProps<{
                 :href="home()"
                 class="flex items-center gap-2 self-center font-medium"
             >
-                <AppLogoIcon class="size-8 text-[var(--brand-red)]" />
+                <PaperclipIcon class="size-8 text-[var(--brand-red)]" />
                 <span
                     class="font-display text-base font-bold tracking-tight text-[var(--ink)]"
                     >One Red Paperclip</span

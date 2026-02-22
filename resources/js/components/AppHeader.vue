@@ -4,8 +4,8 @@ import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import AppLogo from '@/components/AppLogo.vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -97,7 +97,7 @@ const rightNavItems: NavItem[] = [
                                 >Navigation Menu</SheetTitle
                             >
                             <SheetHeader class="flex justify-start text-left">
-                                <AppLogoIcon
+                                <PaperclipIcon
                                     class="size-6 text-[var(--brand-red)]"
                                 />
                             </SheetHeader>

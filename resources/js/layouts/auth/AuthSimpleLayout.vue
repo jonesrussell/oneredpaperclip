@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -33,7 +33,7 @@ defineProps<{
                         :href="home()"
                         class="flex flex-col items-center gap-2 font-medium"
                     >
-                        <AppLogoIcon
+                        <PaperclipIcon
                             class="mb-1 size-10 text-[var(--brand-red)]"
                         />
                         <span
