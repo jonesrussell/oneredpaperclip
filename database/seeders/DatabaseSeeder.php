@@ -15,10 +15,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(CategorySeeder::class);
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            ['name' => 'Test User']
-        );
+        if (! User::where('email', 'test@example.com')->exists()) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
 
         if (User::count() < 5) {
             User::factory(5 - User::count())->create();
