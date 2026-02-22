@@ -7,6 +7,9 @@ require 'recipe/laravel.php';
 // Config
 
 set('repository', 'git@github.com:jonesrussell/oneredpaperclip.git');
+
+// NorthCloud/SendGrid require ext-gmp. Allow deploy when server lacks it; install php8.4-gmp on production.
+set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader --ignore-platform-req=ext-gmp');
 set('keep_releases', 5);
 
 // Timestamp-based release names avoid "release already exists" after a failed deploy.
