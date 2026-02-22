@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreateCampaign;
+use App\Enums\CampaignStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCampaignRequest;
 use App\Models\Campaign;
@@ -49,10 +50,16 @@ class CampaignApiController extends Controller
     }
 
     /**
-     * Show a single campaign by ID (public).
+     * Show a single campaign by ID (public; drafts only for owner).
      */
-    public function show(Campaign $campaign): JsonResponse
+    public function show(Request $request, Campaign $campaign): JsonResponse
     {
+        if ($campaign->status === CampaignStatus::Draft) {
+            if (! $request->user() || $request->user()->id !== $campaign->user_id) {
+                abort(404);
+            }
+        }
+
         $campaign->load(['currentItem:id,title,description', 'goalItem:id,title,description', 'user:id,name']);
 
         $pendingOffersCount = $campaign->offers()->where('status', 'pending')->count();

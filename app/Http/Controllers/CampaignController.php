@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreateCampaign;
+use App\Enums\CampaignStatus;
 use App\Enums\OfferStatus;
 use App\Http\Requests\StoreCampaignRequest;
 use App\Models\Campaign;
@@ -21,6 +22,7 @@ class CampaignController extends Controller
     public function index(Request $request): Response
     {
         $query = Campaign::query()
+            ->notDraft()
             ->when($request->filled('category_id'), fn ($q) => $q->where('category_id', $request->integer('category_id')))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->with(['user', 'currentItem', 'goalItem'])
@@ -79,6 +81,12 @@ class CampaignController extends Controller
      */
     public function show(Request $request, Campaign $campaign): Response
     {
+        if ($campaign->status === CampaignStatus::Draft) {
+            if (! $request->user() || $request->user()->id !== $campaign->user_id) {
+                abort(404);
+            }
+        }
+
         $campaign->load([
             'items',
             'trades' => fn ($q) => $q->with('offeredItem')->orderBy('position'),

@@ -66,6 +66,24 @@ test('get api campaign show returns json campaign with items and pending offers 
     $response->assertJsonStructure(['campaign' => ['pending_offers_count']]);
 });
 
+test('get api campaign show returns 404 for draft when not owner', function () {
+    $this->campaign->update(['status' => 'draft']);
+
+    $response = $this->getJson(route('api.campaigns.show', $this->campaign));
+
+    $response->assertNotFound();
+});
+
+test('get api campaign show returns draft when owner', function () {
+    $this->campaign->update(['status' => 'draft']);
+
+    $response = $this->actingAs($this->user)->getJson(route('api.campaigns.show', $this->campaign));
+
+    $response->assertOk();
+    $response->assertJsonPath('campaign.id', $this->campaign->id);
+    $response->assertJsonPath('campaign.status', 'draft');
+});
+
 test('get api campaigns mine requires auth', function () {
     $response = $this->getJson(route('api.campaigns.mine'));
 

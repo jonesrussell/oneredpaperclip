@@ -78,6 +78,11 @@ class Campaign extends Model
         return $query->where('status', CampaignStatus::Active);
     }
 
+    public function scopeNotDraft(Builder $query): Builder
+    {
+        return $query->where('status', '!=', CampaignStatus::Draft);
+    }
+
     public function scopePublicVisibility(Builder $query): Builder
     {
         return $query->where('visibility', CampaignVisibility::Public);

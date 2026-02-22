@@ -172,3 +172,77 @@ test('dashboard campaigns page shows only current user campaigns', function () {
         ->where('campaigns.data.0.id', $myCampaign->id)
     );
 });
+
+test('campaigns index does not include draft campaigns', function () {
+    $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
+    $activeCampaign = Campaign::create([
+        'user_id' => $this->user->id,
+        'category_id' => $category->id,
+        'status' => 'active',
+        'visibility' => 'public',
+        'title' => 'Active campaign',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+    $draftCampaign = Campaign::create([
+        'user_id' => $this->user->id,
+        'category_id' => $category->id,
+        'status' => 'draft',
+        'visibility' => 'public',
+        'title' => 'Draft campaign',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+
+    $response = $this->get(route('campaigns.index'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('campaigns/Index')
+        ->has('campaigns.data', 1)
+        ->where('campaigns.data.0.id', $activeCampaign->id)
+    );
+});
+
+test('guest gets 404 when viewing draft campaign', function () {
+    $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
+    $campaign = Campaign::create([
+        'user_id' => $this->user->id,
+        'category_id' => $category->id,
+        'status' => 'draft',
+        'visibility' => 'public',
+        'title' => 'Draft campaign',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+
+    $response = $this->get(route('campaigns.show', $campaign));
+
+    $response->assertNotFound();
+});
+
+test('owner can view their own draft campaign', function () {
+    $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
+    $campaign = Campaign::create([
+        'user_id' => $this->user->id,
+        'category_id' => $category->id,
+        'status' => 'draft',
+        'visibility' => 'public',
+        'title' => 'My draft',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+
+    $response = $this->actingAs($this->user)->get(route('campaigns.show', $campaign));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('campaigns/Show')
+        ->where('campaign.id', $campaign->id)
+        ->where('campaign.title', 'My draft')
+    );
+});
