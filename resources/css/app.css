@@ -104,6 +104,14 @@
     .font-mono {
         font-family: var(--font-mono);
     }
+    /* Hide native scrollbar while keeping scroll (touch/trackpad still works) */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 :root {

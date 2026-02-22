@@ -57,7 +57,7 @@ function filterByCategory(categoryId: number | null): void {
             <!-- Category filter pills -->
             <div
                 v-if="categoryList.length > 0"
-                class="flex gap-2 overflow-x-auto pb-1"
+                class="flex gap-2 overflow-x-auto scrollbar-hide pb-1"
                 role="group"
                 aria-label="Filter by category"
             >
