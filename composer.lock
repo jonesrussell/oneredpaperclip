@@ -1229,16 +1229,16 @@
         },
         {
             "name": "jonesrussell/northcloud-laravel",
-            "version": "0.7.0",
+            "version": "0.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jonesrussell/northcloud-laravel.git",
-                "reference": "7302ddd1ee097722bab0f759c9d51c870cb71687"
+                "reference": "eed6484020ad835f477a9dca3fdaeed070dbc205"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jonesrussell/northcloud-laravel/zipball/7302ddd1ee097722bab0f759c9d51c870cb71687",
-                "reference": "7302ddd1ee097722bab0f759c9d51c870cb71687",
+                "url": "https://api.github.com/repos/jonesrussell/northcloud-laravel/zipball/eed6484020ad835f477a9dca3fdaeed070dbc205",
+                "reference": "eed6484020ad835f477a9dca3fdaeed070dbc205",
                 "shasum": ""
             },
             "require": {
@@ -1283,9 +1283,9 @@
             "description": "Shared article ingestion pipeline for North Cloud-connected Laravel sites",
             "support": {
                 "issues": "https://github.com/jonesrussell/northcloud-laravel/issues",
-                "source": "https://github.com/jonesrussell/northcloud-laravel/tree/v0.7.0"
+                "source": "https://github.com/jonesrussell/northcloud-laravel/tree/v0.7.1"
             },
-            "time": "2026-02-19T01:10:42+00:00"
+            "time": "2026-02-22T03:04:11+00:00"
         },
         {
             "name": "laravel/fortify",
