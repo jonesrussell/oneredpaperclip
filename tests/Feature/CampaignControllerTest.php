@@ -122,3 +122,53 @@ test('authenticated user can get campaign show page with follow state', function
         ->has('isFollowing')
     );
 });
+
+test('guest cannot get dashboard campaigns page', function () {
+    $response = $this->get(route('dashboard.campaigns'));
+    $response->assertRedirect(route('login'));
+});
+
+test('authenticated user can get dashboard campaigns page', function () {
+    $response = $this->actingAs($this->user)->get(route('dashboard.campaigns'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('dashboard/campaigns/Index')
+        ->has('campaigns')
+        ->has('campaigns.data')
+    );
+});
+
+test('dashboard campaigns page shows only current user campaigns', function () {
+    $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
+    $myCampaign = Campaign::create([
+        'user_id' => $this->user->id,
+        'category_id' => $category->id,
+        'status' => 'active',
+        'visibility' => 'public',
+        'title' => 'My campaign',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+    $otherUser = User::factory()->create();
+    $otherCampaign = Campaign::create([
+        'user_id' => $otherUser->id,
+        'category_id' => $category->id,
+        'status' => 'active',
+        'visibility' => 'public',
+        'title' => 'Other user campaign',
+        'story' => null,
+        'current_item_id' => null,
+        'goal_item_id' => null,
+    ]);
+
+    $response = $this->actingAs($this->user)->get(route('dashboard.campaigns'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('dashboard/campaigns/Index')
+        ->has('campaigns.data', 1)
+        ->where('campaigns.data.0.id', $myCampaign->id)
+    );
+});

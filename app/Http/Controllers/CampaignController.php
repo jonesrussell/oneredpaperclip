@@ -36,6 +36,23 @@ class CampaignController extends Controller
     }
 
     /**
+     * List the authenticated user's campaigns.
+     */
+    public function myCampaigns(Request $request): Response
+    {
+        $campaigns = Campaign::query()
+            ->where('user_id', $request->user()->id)
+            ->with(['user', 'currentItem', 'goalItem'])
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return Inertia::render('dashboard/campaigns/Index', [
+            'campaigns' => $campaigns,
+        ]);
+    }
+
+    /**
      * Show the form for creating a new campaign.
      */
     public function create(): Response
