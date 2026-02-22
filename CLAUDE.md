@@ -52,6 +52,8 @@ User creates Campaign (with start Item + goal Item)
 
 Business logic lives in Action classes, not controllers:
 - `CreateCampaign` — creates campaign + start/goal items, links item IDs
+- `UpdateCampaign` — updates campaign details
+- `CreateOffer` — creates offer with offered item targeting a campaign item
 - `AcceptOffer` — creates Trade, marks offer accepted, sends notification
 - `DeclineOffer` — marks offer declined, sends notification
 - `ConfirmTrade` — records confirmation timestamp; when both confirm, completes trade and advances campaign
@@ -76,6 +78,7 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
 - **Layouts:**
   - `PublicLayout` — public pages (Welcome, campaign browsing): sticky header, decorative blobs, mobile bottom tab bar, footer
   - `AppLayout` (wraps `AppSidebarLayout`) — authenticated pages: sidebar on desktop, bottom tab bar on mobile
+  - `AdminLayout` — admin/dashboard pages (NorthCloud articles, users)
   - `AuthLayout` — auth pages: centered card with accent blobs
   - Settings has its own `Layout`
 - **Custom components:**
@@ -87,6 +90,10 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
 - **Pages:** `resources/js/pages/` — Inertia Vue components
 - **Wayfinder:** TypeScript route helpers generated at `resources/js/actions/` and `resources/js/routes/`. Import routes from `@/actions/` (controllers) or `@/routes/` (named routes).
 - **ESLint enforces:** alphabetical imports, `import type` for type-only imports, prettier compatibility
+
+### JSON API (`routes/web.php` → `/api/*`)
+
+Parallel JSON API under `api.*` route names using `Api\CampaignApiController`, `Api\OfferApiController`, `Api\TradeApiController`. Same session auth as web — intended for WebMCP / agent access, not a separate Sanctum-based API.
 
 ### Middleware
 
@@ -116,9 +123,8 @@ Form Requests use **array-style** rules (not pipe-delimited strings). Check `Sto
 ## Known Gaps
 
 These are referenced in code but don't exist yet:
-- `CreateOffer` action (referenced in `OfferController@store`)
 - `ItemMediaController` (referenced in `routes/web.php` and Wayfinder)
-- No model factories for Campaign, Item, Offer, Trade (tests use `Model::create()` directly)
+- No model factories for Campaign, Item, Offer, Trade (only `UserFactory` exists; tests use `Model::create()` directly)
 
 ## Design Documentation
 
