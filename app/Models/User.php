@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'reputation_score',
         'verified_at',
+        'is_admin',
     ];
 
     /**
@@ -50,6 +51,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'verified_at' => 'datetime',
+            'is_admin' => 'boolean',
         ];
     }
 

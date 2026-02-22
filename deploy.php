@@ -64,6 +64,8 @@ task('deploy:install_services', function (): void {
     run("cp {{release_path}}/deploy/systemd-user/*.service $serviceDir/");
     run('systemctl --user daemon-reload || true');
     run('systemctl --user enable oneredpaperclip-queue-work.service oneredpaperclip-inertia-ssr.service oneredpaperclip-schedule-work.service || true');
+    // Optional: enable NorthCloud article feed subscriber when using Redis pipeline:
+    // run('systemctl --user enable oneredpaperclip-northcloud-subscribe.service || true');
 });
 before('deploy:symlink', 'deploy:install_services');
 
@@ -79,7 +81,7 @@ after('deploy:copy_caddyfile', 'deploy:reload_caddy');
 
 task('deploy:restart_services', function (): void {
     run('cd {{release_path}} && {{bin/php}} artisan inertia:stop-ssr || true');
-    run('systemctl --user restart oneredpaperclip-queue-work.service oneredpaperclip-inertia-ssr.service oneredpaperclip-schedule-work.service 2>/dev/null || true');
+    run('systemctl --user restart oneredpaperclip-queue-work.service oneredpaperclip-inertia-ssr.service oneredpaperclip-schedule-work.service oneredpaperclip-northcloud-subscribe.service 2>/dev/null || true');
 });
 after('deploy:symlink', 'deploy:restart_services');
 

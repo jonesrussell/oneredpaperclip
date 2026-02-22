@@ -1,0 +1,14 @@
+[Unit]
+Description=One Red Paperclip NorthCloud article feed subscriber
+After=network.target
+ConditionPathExists=/home/deployer/oneredpaperclip/current
+
+[Service]
+Type=simple
+WorkingDirectory=/home/deployer/oneredpaperclip/current
+ExecStart=/usr/bin/php artisan articles:subscribe
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

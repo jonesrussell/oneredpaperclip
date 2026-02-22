@@ -106,6 +106,13 @@ MariaDB. Default queue connection is `database`. Categories seeded with 9 predef
 
 Form Requests use **array-style** rules (not pipe-delimited strings). Check `StoreCampaignRequest` for the pattern.
 
+### NorthCloud (`jonesrussell/northcloud-laravel`)
+
+- **Admin:** Dashboard Articles and Users (CRUD) at `/dashboard/articles` and `/dashboard/users`; protected by `northcloud-admin` middleware (requires `User.is_admin` or custom policy). Sidebar shows "Admin" group with Articles/Users when `page.props.northcloud.navigation` is present.
+- **Config:** `config/northcloud.php` — Redis channels, models, navigation, SendGrid (optional). Env: `NORTHCLOUD_CHANNELS`, `NORTHCLOUD_REDIS_*`, `NORTHCLOUD_SENDGRID_AS_DEFAULT`, etc. (see `.env.example`).
+- **Article feed (optional):** To ingest from North Cloud Redis pipeline, set Redis connection (e.g. `NORTHCLOUD_REDIS_HOST`) and run `php artisan articles:subscribe` (long-running). Production: optional systemd user service `oneredpaperclip-northcloud-subscribe.service`; enable with `systemctl --user enable oneredpaperclip-northcloud-subscribe.service` when using the feed.
+- **First admin:** Set `is_admin = 1` for a user in the DB (or run a one-off tinker/seed) so someone can access the dashboard.
+
 ## Known Gaps
 
 These are referenced in code but don't exist yet:
