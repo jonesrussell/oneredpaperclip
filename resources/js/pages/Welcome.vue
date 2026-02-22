@@ -120,7 +120,7 @@ function stepNodeColor(color: string): string {
                         class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
                     >
                         <PaperclipIcon
-                            class="hero-house-paperclip h-24 w-24 text-[var(--brand-red)]"
+                            class="hero-house-paperclip h-16 w-16 !text-[var(--brand-red)]"
                         />
                     </div>
                 </div>

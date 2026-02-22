@@ -9,7 +9,7 @@ type Props = {
     class?: HTMLAttributes['class'];
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 </script>
 
 <template>
@@ -22,7 +22,7 @@ defineProps<Props>();
         stroke-linecap="round"
         stroke-linejoin="round"
         aria-hidden="true"
-        :class="$attrs.class"
+        :class="props.class"
         v-bind="$attrs"
     >
         <path
