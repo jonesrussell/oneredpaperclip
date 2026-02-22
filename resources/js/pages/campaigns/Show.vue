@@ -148,40 +148,55 @@ function formatDate(dateString: string): string {
     <Head :title="campaign.title ?? 'Campaign'" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
-            <!-- Header -->
-            <div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <Badge
-                        v-if="campaign.category?.name"
-                        variant="secondary"
-                        class="rounded-full text-xs"
-                    >
-                        {{ campaign.category.name }}
-                    </Badge>
-                    <Badge
-                        variant="secondary"
-                        class="rounded-full text-xs capitalize"
-                        :class="getStatusClasses(campaign.status)"
-                    >
-                        {{ campaign.status }}
-                    </Badge>
+        <!-- Swap Shop styling: warm cream background and light-theme tokens to match public pages -->
+        <div class="campaign-show-swap-shop min-h-full">
+            <div class="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
+                <!-- Header with subtle gradient (matches Welcome hero feel) -->
+                <div class="relative">
+                    <div
+                        class="pointer-events-none absolute -left-4 -right-4 -top-2 h-32 rounded-b-2xl bg-gradient-to-br from-[var(--hot-coral)]/10 via-transparent to-[var(--sunny-yellow)]/8 sm:-left-6 sm:-right-6"
+                        aria-hidden="true"
+                    />
+                    <div class="relative">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <Badge
+                                v-if="campaign.category?.name"
+                                variant="secondary"
+                                class="rounded-full border-0 text-xs"
+                                :style="{
+                                    backgroundColor: 'var(--soft-lavender)',
+                                    color: 'var(--ink)',
+                                }"
+                            >
+                                {{ campaign.category.name }}
+                            </Badge>
+                            <Badge
+                                variant="secondary"
+                                class="rounded-full border-0 text-xs capitalize"
+                                :class="getStatusClasses(campaign.status)"
+                            >
+                                {{ campaign.status }}
+                            </Badge>
+                        </div>
+                        <h1
+                            class="mt-2 font-display text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl"
+                        >
+                            {{ campaign.title ?? 'Untitled campaign' }}
+                        </h1>
+                        <div
+                            class="mt-2 flex items-center gap-2 text-sm text-[var(--ink-muted)]"
+                        >
+                            <User class="size-4 text-[var(--sky-blue)]" />
+                            <span>{{ campaign.user?.name ?? 'Anonymous' }}</span>
+                        </div>
+                    </div>
                 </div>
-                <h1
-                    class="mt-2 font-display text-2xl font-bold tracking-tight text-[var(--ink)] sm:text-3xl"
-                >
-                    {{ campaign.title ?? 'Untitled campaign' }}
-                </h1>
-                <div
-                    class="mt-2 flex items-center gap-2 text-sm text-[var(--ink-muted)]"
-                >
-                    <User class="size-4" />
-                    <span>{{ campaign.user?.name ?? 'Anonymous' }}</span>
-                </div>
-            </div>
 
-            <!-- Journey card -->
-            <div class="rounded-2xl border border-[var(--border)] bg-white p-5">
+                <!-- Journey card (Swap Shop card style: warm shadow, border) -->
+                <div
+                    class="surface-light rounded-2xl border border-[var(--ink)]/10 bg-[var(--card)] p-5 shadow-sm transition-shadow hover:shadow-md"
+                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
+                >
                 <h2
                     class="text-sm font-semibold tracking-wider text-[var(--ink-muted)] uppercase"
                 >
@@ -225,16 +240,18 @@ function formatDate(dateString: string): string {
                 />
             </div>
 
-            <!-- Tab bar -->
-            <div class="flex gap-1 rounded-xl bg-[var(--muted)] p-1">
+            <!-- Tab bar (Swap Shop: active = accent pill) -->
+            <div
+                class="flex gap-1 rounded-xl border border-[var(--ink)]/10 bg-[var(--ink)]/[0.03] p-1.5"
+            >
                 <button
                     v-for="tab in tabs"
                     :key="tab.key"
-                    class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                    class="rounded-lg px-4 py-2 text-sm font-medium transition-all"
                     :class="
                         activeTab === tab.key
-                            ? 'bg-white text-[var(--ink)] shadow-sm'
-                            : 'text-[var(--ink-muted)] hover:text-[var(--ink)]'
+                            ? 'bg-[var(--hot-coral)]/15 text-[var(--hot-coral)] shadow-sm'
+                            : 'text-[var(--ink-muted)] hover:bg-[var(--ink)]/5 hover:text-[var(--ink)]'
                     "
                     @click="activeTab = tab.key"
                 >
@@ -242,7 +259,12 @@ function formatDate(dateString: string): string {
                     <Badge
                         v-if="tab.count"
                         variant="secondary"
-                        class="ml-1 rounded-full text-xs"
+                        class="ml-1 rounded-full border-0 text-xs"
+                        :class="
+                            activeTab === tab.key
+                                ? 'bg-[var(--hot-coral)]/25 text-[var(--hot-coral)]'
+                                : ''
+                        "
                     >
                         {{ tab.count }}
                     </Badge>
@@ -253,13 +275,14 @@ function formatDate(dateString: string): string {
             <div v-show="activeTab === 'story'" class="space-y-4">
                 <div
                     v-if="campaign.story"
-                    class="prose prose-sm max-w-none rounded-2xl border border-[var(--border)] bg-white p-5 text-[var(--ink)]"
+                    class="surface-light prose prose-sm max-w-none rounded-2xl border border-[var(--ink)]/10 bg-[var(--card)] p-5 text-[var(--ink)] shadow-sm"
+                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
                 >
                     {{ campaign.story }}
                 </div>
                 <div
                     v-else
-                    class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-12 text-center text-sm text-[var(--ink-muted)]"
+                    class="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-[var(--card)]/60 py-12 text-center text-sm text-[var(--ink-muted)]"
                 >
                     No story yet.
                 </div>
@@ -268,7 +291,7 @@ function formatDate(dateString: string): string {
             <div v-show="activeTab === 'offers'" class="space-y-3">
                 <div
                     v-if="!campaign.offers?.length"
-                    class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-12 text-center text-sm text-[var(--ink-muted)]"
+                    class="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-[var(--card)]/60 py-12 text-center text-sm text-[var(--ink-muted)]"
                 >
                     No pending offers.
                 </div>
@@ -276,7 +299,8 @@ function formatDate(dateString: string): string {
                     v-for="offer in campaign.offers"
                     v-else
                     :key="offer.id"
-                    class="rounded-xl border border-[var(--border)] bg-white p-4"
+                    class="surface-light rounded-xl border border-[var(--ink)]/10 bg-[var(--card)] p-4 shadow-sm"
+                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
                 >
                     <div class="flex items-start justify-between gap-3">
                         <div>
@@ -308,7 +332,7 @@ function formatDate(dateString: string): string {
             <div v-show="activeTab === 'trades'" class="space-y-3">
                 <div
                     v-if="!campaign.trades?.length"
-                    class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-12 text-center text-sm text-[var(--ink-muted)]"
+                    class="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-[var(--card)]/60 py-12 text-center text-sm text-[var(--ink-muted)]"
                 >
                     No trades yet.
                 </div>
@@ -316,7 +340,8 @@ function formatDate(dateString: string): string {
                     v-for="trade in campaign.trades"
                     v-else
                     :key="trade.id"
-                    class="rounded-xl border border-[var(--border)] bg-white p-4"
+                    class="surface-light rounded-xl border border-[var(--ink)]/10 bg-[var(--card)] p-4 shadow-sm"
+                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
                 >
                     <div class="flex items-center justify-between gap-3">
                         <div>
@@ -347,7 +372,7 @@ function formatDate(dateString: string): string {
             <div v-show="activeTab === 'comments'" class="space-y-3">
                 <div
                     v-if="!campaign.comments?.length"
-                    class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-12 text-center text-sm text-[var(--ink-muted)]"
+                    class="rounded-2xl border border-dashed border-[var(--ink)]/20 bg-[var(--card)]/60 py-12 text-center text-sm text-[var(--ink-muted)]"
                 >
                     No comments yet.
                 </div>
@@ -355,11 +380,12 @@ function formatDate(dateString: string): string {
                     v-for="comment in campaign.comments"
                     v-else
                     :key="comment.id"
-                    class="rounded-xl border border-[var(--border)] bg-white p-4"
+                    class="surface-light rounded-xl border border-[var(--ink)]/10 bg-[var(--card)] p-4 shadow-sm"
+                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
                 >
                     <div class="flex items-start gap-3">
                         <div
-                            class="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--muted)] text-xs font-semibold text-[var(--ink-muted)]"
+                            class="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--sky-blue)]/20 text-xs font-semibold text-[var(--sky-blue)]"
                         >
                             {{
                                 (comment.user?.name ?? 'A')
@@ -385,14 +411,35 @@ function formatDate(dateString: string): string {
                     </div>
                 </div>
             </div>
+            </div>
         </div>
 
-        <!-- Sticky mobile CTA -->
+        <!-- Sticky mobile CTA (Swap Shop: brand CTA) -->
         <div
             v-if="!isOwner"
-            class="fixed inset-x-0 bottom-16 z-40 border-t border-[var(--border)] bg-white/95 p-3 backdrop-blur-md lg:hidden"
+            class="fixed inset-x-0 bottom-16 z-40 border-t border-[var(--ink)]/10 bg-[var(--paper)]/95 p-3 backdrop-blur-md lg:hidden"
         >
-            <Button class="w-full" size="lg"> Make an Offer </Button>
+            <Button
+                class="w-full bg-[var(--brand-red)] text-white hover:bg-[var(--brand-red-hover)]"
+                size="lg"
+            >
+                Make an Offer
+            </Button>
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Force Swap Shop light theme on this page so it matches public pages (warm cream, accents) */
+.campaign-show-swap-shop {
+    --paper: hsl(32 55% 97%);
+    --ink: hsl(0 0% 15%);
+    --ink-muted: hsl(0 0% 45%);
+    --background: hsl(32 50% 97%);
+    --card: hsl(35 45% 99%);
+    --border: hsl(30 20% 90%);
+    --muted: hsl(32 30% 94%);
+    background-color: var(--paper);
+    color: var(--ink);
+}
+</style>
