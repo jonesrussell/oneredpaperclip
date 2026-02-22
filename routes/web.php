@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\CampaignApiController;
+use App\Http\Controllers\Api\OfferApiController;
+use App\Http\Controllers\Api\TradeApiController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
@@ -61,6 +64,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('dashboard/campaigns', [CampaignController::class, 'myCampaigns'])->name('dashboard.campaigns');
+});
+
+// WebMCP / agent API (JSON only; same session auth as web)
+Route::prefix('api')->name('api.')->group(function () {
+    Route::get('campaigns', [CampaignApiController::class, 'index'])->name('campaigns.index');
+    Route::get('campaigns/mine', [CampaignApiController::class, 'mine'])->name('campaigns.mine')
+        ->middleware(['auth', 'verified']);
+    Route::get('campaigns/{campaign}', [CampaignApiController::class, 'show'])->name('campaigns.show');
+    Route::post('campaigns', [CampaignApiController::class, 'store'])->name('campaigns.store')
+        ->middleware(['auth', 'verified']);
+    Route::post('campaigns/{campaign}/offers', [OfferApiController::class, 'store'])->name('campaigns.offers.store')
+        ->middleware(['auth', 'verified']);
+    Route::post('offers/{offer}/accept', [OfferApiController::class, 'accept'])->name('offers.accept')
+        ->middleware(['auth', 'verified']);
+    Route::post('offers/{offer}/decline', [OfferApiController::class, 'decline'])->name('offers.decline')
+        ->middleware(['auth', 'verified']);
+    Route::post('trades/{trade}/confirm', [TradeApiController::class, 'confirm'])->name('trades.confirm')
+        ->middleware(['auth', 'verified']);
 });
 
 require __DIR__.'/settings.php';
