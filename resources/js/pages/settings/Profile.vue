@@ -4,9 +4,11 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useInitials } from '@/composables/useInitials';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/profile';
@@ -29,6 +31,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 const page = usePage();
 const user = page.props.auth.user;
+const { getInitials } = useInitials();
 </script>
 
 <template>
@@ -50,6 +53,47 @@ const user = page.props.auth.user;
                     class="space-y-6"
                     v-slot="{ errors, processing, recentlySuccessful }"
                 >
+                    <div class="grid gap-2">
+                        <Label>Profile photo</Label>
+                        <div class="flex items-center gap-4">
+                            <Avatar
+                                class="size-16 overflow-hidden rounded-full"
+                            >
+                                <AvatarImage
+                                    v-if="user.avatar"
+                                    :src="user.avatar"
+                                    :alt="user.name"
+                                />
+                                <AvatarFallback
+                                    class="rounded-full bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
+                                >
+                                    {{ getInitials(user?.name) }}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div class="flex flex-col gap-2">
+                                <Input
+                                    id="photo"
+                                    type="file"
+                                    name="photo"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    class="max-w-sm"
+                                />
+                                <label
+                                    v-if="user.avatar"
+                                    class="flex items-center gap-2 text-sm text-muted-foreground"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        name="remove_photo"
+                                        value="1"
+                                    />
+                                    Remove current photo
+                                </label>
+                            </div>
+                        </div>
+                        <InputError class="mt-2" :message="errors.photo" />
+                    </div>
+
                     <div class="grid gap-2">
                         <Label for="name">Name</Label>
                         <Input

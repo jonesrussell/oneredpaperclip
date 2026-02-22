@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -82,4 +84,128 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh())->not->toBeNull();
+});
+
+test('profile photo can be uploaded', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => UploadedFile::fake()->image('photo.jpg', 100, 100),
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->profile_photo_path)->not->toBeNull();
+    expect(Storage::disk('public')->exists($user->profile_photo_path))->toBeTrue();
+    expect($user->avatar)->not->toBeNull();
+});
+
+test('profile update with name and email only leaves photo unchanged', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => UploadedFile::fake()->image('photo.jpg', 100, 100),
+        ]);
+
+    $path = $user->fresh()->profile_photo_path;
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => 'New Name',
+            'email' => $user->email,
+        ]);
+
+    $user->refresh();
+
+    expect($user->name)->toBe('New Name');
+    expect($user->profile_photo_path)->toBe($path);
+    expect(Storage::disk('public')->exists($path))->toBeTrue();
+});
+
+test('profile photo can be removed', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => UploadedFile::fake()->image('photo.jpg', 100, 100),
+        ]);
+
+    $path = $user->fresh()->profile_photo_path;
+    expect($path)->not->toBeNull();
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'remove_photo' => '1',
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->profile_photo_path)->toBeNull();
+    expect($user->avatar)->toBeNull();
+    expect(Storage::disk('public')->exists($path))->toBeFalse();
+});
+
+test('profile photo upload rejects invalid file', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->from(route('profile.edit'))
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => UploadedFile::fake()->create('document.pdf', 100, 'application/pdf'),
+        ]);
+
+    $response
+        ->assertSessionHasErrors('photo')
+        ->assertRedirect(route('profile.edit'));
+
+    expect($user->fresh()->profile_photo_path)->toBeNull();
+});
+
+test('deleting user removes profile photo from disk', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => $user->name,
+            'email' => $user->email,
+            'photo' => UploadedFile::fake()->image('photo.jpg', 100, 100),
+        ]);
+
+    $path = $user->fresh()->profile_photo_path;
+    expect(Storage::disk('public')->exists($path))->toBeTrue();
+
+    $this->actingAs($user)
+        ->delete(route('profile.destroy'), [
+            'password' => 'password',
+        ]);
+
+    expect(Storage::disk('public')->exists($path))->toBeFalse();
 });
