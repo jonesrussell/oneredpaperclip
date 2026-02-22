@@ -78,6 +78,16 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+
+    /* Native select dropdown: ensure options are readable (avoids white text on white in some browsers) */
+    select {
+        background-color: var(--popover);
+        color: var(--popover-foreground);
+    }
+    select option {
+        background-color: var(--popover);
+        color: var(--popover-foreground);
+    }
 }
 
 @layer utilities {

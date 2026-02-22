@@ -253,7 +253,7 @@ function goToStep(step: number): void {
                                     id="category_id"
                                     v-model="categoryId"
                                     name="category_id"
-                                    class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                    class="h-9 w-full rounded-md border border-input bg-[var(--popover)] px-3 py-1 text-base text-[var(--popover-foreground)] shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
                                 >
                                     <option value="">Select a category</option>
                                     <option
@@ -273,7 +273,7 @@ function goToStep(step: number): void {
                                         id="visibility"
                                         v-model="visibility"
                                         name="visibility"
-                                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                        class="h-9 w-full rounded-md border border-input bg-[var(--popover)] px-3 py-1 text-base text-[var(--popover-foreground)] shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
                                     >
                                         <option value="public">Public</option>
                                         <option value="unlisted">
@@ -288,7 +288,7 @@ function goToStep(step: number): void {
                                         id="status"
                                         v-model="status"
                                         name="status"
-                                        class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                        class="h-9 w-full rounded-md border border-input bg-[var(--popover)] px-3 py-1 text-base text-[var(--popover-foreground)] shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
                                     >
                                         <option value="draft">Draft</option>
                                         <option value="active">Active</option>
