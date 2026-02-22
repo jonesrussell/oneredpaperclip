@@ -47,7 +47,11 @@ Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.i
 Route::get('campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create')
     ->middleware(['auth', 'verified']);
 Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
+Route::get('campaigns/{campaign}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit')
+    ->middleware(['auth', 'verified']);
 Route::post('campaigns', [CampaignController::class, 'store'])->name('campaigns.store')
+    ->middleware(['auth', 'verified']);
+Route::put('campaigns/{campaign}', [CampaignController::class, 'update'])->name('campaigns.update')
     ->middleware(['auth', 'verified']);
 Route::post('campaigns/{campaign}/offers', [OfferController::class, 'store'])->name('campaigns.offers.store')
     ->middleware(['auth', 'verified']);

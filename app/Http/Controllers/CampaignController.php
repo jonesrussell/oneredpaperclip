@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreateCampaign;
+use App\Actions\UpdateCampaign;
 use App\Enums\CampaignStatus;
 use App\Enums\OfferStatus;
 use App\Http\Requests\StoreCampaignRequest;
+use App\Http\Requests\UpdateCampaignRequest;
 use App\Models\Campaign;
 use App\Models\Category;
 use App\Models\Follow;
@@ -72,6 +74,34 @@ class CampaignController extends Controller
     public function store(StoreCampaignRequest $request, CreateCampaign $createCampaign): RedirectResponse
     {
         $campaign = $createCampaign($request->validated(), $request->user());
+
+        return redirect()->route('campaigns.show', $campaign);
+    }
+
+    /**
+     * Show the form for editing the campaign (owner only).
+     */
+    public function edit(Request $request, Campaign $campaign): Response
+    {
+        $this->authorize('update', $campaign);
+
+        $campaign->load(['startItem', 'goalItem']);
+        $categories = Category::orderBy('name')->get();
+
+        return Inertia::render('campaigns/Edit', [
+            'campaign' => $campaign,
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * Update the specified campaign (owner only).
+     */
+    public function update(UpdateCampaignRequest $request, Campaign $campaign, UpdateCampaign $updateCampaign): RedirectResponse
+    {
+        $this->authorize('update', $campaign);
+
+        $updateCampaign($campaign, $request->validated());
 
         return redirect()->route('campaigns.show', $campaign);
     }
