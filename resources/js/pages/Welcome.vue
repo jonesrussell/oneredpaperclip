@@ -336,13 +336,13 @@ function stepNodeColor(color: string): string {
                 </div>
                 <ul
                     v-else
-                    class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+                    class="mt-10 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
                     role="list"
                 >
                     <li
                         v-for="(campaign, i) in props.featuredCampaigns"
                         :key="campaign.id"
-                        class="animate-in fade-in slide-in-from-bottom-3 [animation-duration:0.45s] [animation-fill-mode:both]"
+                        class="min-w-0 animate-in fade-in slide-in-from-bottom-3 [animation-duration:0.45s] [animation-fill-mode:both]"
                         :style="{ animationDelay: `${120 + i * 50}ms` }"
                     >
                         <CampaignCard :campaign="campaign" />

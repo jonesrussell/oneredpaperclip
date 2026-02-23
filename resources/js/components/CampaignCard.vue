@@ -13,8 +13,8 @@ defineProps<{
         status: string;
         trades_count?: number;
         user?: { id: number; name: string; avatar?: string | null } | null;
-        current_item?: { id: number; title: string } | null;
-        goal_item?: { id: number; title: string } | null;
+        current_item?: { id: number; title: string; image_url?: string | null } | null;
+        goal_item?: { id: number; title: string; image_url?: string | null } | null;
         category?: { id: number; name: string } | null;
     };
     progress?: number;
@@ -64,7 +64,7 @@ function statusStyles(status: string): string {
 <template>
     <Link
         :href="campaigns.show({ campaign: campaign.id }).url"
-        class="surface-light group relative block overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
+        class="surface-light group relative block min-w-0 overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
         style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
         prefetch
     >
@@ -77,7 +77,7 @@ function statusStyles(status: string): string {
             aria-hidden="true"
         />
 
-        <div class="relative p-4 pl-5">
+        <div class="relative min-w-0 p-4 pl-5">
             <!-- Progress ring (when provided) -->
             <div v-if="progress != null" class="absolute top-4 right-4">
                 <ProgressRing
@@ -94,20 +94,58 @@ function statusStyles(status: string): string {
                 {{ campaign.title ?? 'Untitled campaign' }}
             </h3>
 
-            <!-- Journey: current → goal -->
+            <!-- Journey: current → goal (with optional item thumbnails) -->
             <p
-                v-if="campaign.current_item?.title && campaign.goal_item?.title"
-                class="mt-2.5 line-clamp-1 flex items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
+                v-if="campaign.current_item?.title || campaign.goal_item?.title"
+                class="mt-2.5 flex min-w-0 items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
             >
-                <span class="truncate">{{ campaign.current_item.title }}</span>
+                <!-- Current item thumbnail -->
+                <span
+                    class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
+                >
+                    <img
+                        v-if="campaign.current_item?.image_url"
+                        :src="campaign.current_item.image_url"
+                        :alt="campaign.current_item?.title ?? 'Current item'"
+                        class="size-8 object-cover"
+                    />
+                    <span
+                        v-else
+                        class="flex size-8 items-center justify-center font-mono text-[10px] text-[var(--ink-muted)]"
+                        aria-hidden="true"
+                    >
+                        ·
+                    </span>
+                </span>
+                <span class="min-w-0 truncate">
+                    {{ campaign.current_item?.title ?? 'Start' }}
+                </span>
                 <span
                     class="shrink-0 font-mono text-[var(--brand-red)]"
                     aria-hidden="true"
                 >
                     →
                 </span>
-                <span class="truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]">
-                    {{ campaign.goal_item.title }}
+                <!-- Goal item thumbnail -->
+                <span
+                    class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
+                >
+                    <img
+                        v-if="campaign.goal_item?.image_url"
+                        :src="campaign.goal_item.image_url"
+                        :alt="campaign.goal_item?.title ?? 'Goal item'"
+                        class="size-8 object-cover"
+                    />
+                    <span
+                        v-else
+                        class="flex size-8 items-center justify-center font-mono text-[10px] text-[var(--ink-muted)]"
+                        aria-hidden="true"
+                    >
+                        ·
+                    </span>
+                </span>
+                <span class="min-w-0 truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]">
+                    {{ campaign.goal_item?.title ?? 'Goal' }}
                 </span>
             </p>
 

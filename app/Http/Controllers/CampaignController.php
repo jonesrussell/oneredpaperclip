@@ -27,7 +27,7 @@ class CampaignController extends Controller
             ->notDraft()
             ->when($request->filled('category_id'), fn ($q) => $q->where('category_id', $request->integer('category_id')))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
-            ->with(['user', 'currentItem', 'goalItem'])
+            ->with(['user', 'currentItem.media', 'goalItem.media'])
             ->latest();
 
         $campaigns = $query->paginate(15)->withQueryString();
@@ -46,7 +46,7 @@ class CampaignController extends Controller
     {
         $campaigns = Campaign::query()
             ->where('user_id', $request->user()->id)
-            ->with(['user', 'currentItem', 'goalItem'])
+            ->with(['user', 'currentItem.media', 'goalItem.media'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
@@ -124,8 +124,8 @@ class CampaignController extends Controller
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',
             'category',
-            'currentItem',
-            'goalItem',
+            'currentItem.media',
+            'goalItem.media',
         ]);
 
         $isFollowing = $request->user()

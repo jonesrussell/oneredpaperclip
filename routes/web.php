@@ -20,7 +20,7 @@ Route::get('/', function () {
         $featuredCampaigns = Campaign::query()
             ->publicVisibility()
             ->active()
-            ->with(['user', 'currentItem', 'goalItem'])
+            ->with(['user', 'currentItem.media', 'goalItem.media'])
             ->latest()
             ->limit(6)
             ->get();
