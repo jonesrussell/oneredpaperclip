@@ -14,7 +14,7 @@ const canRegister = computed(
 </script>
 
 <template>
-    <div class="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+    <div class="min-h-screen w-full overflow-x-hidden bg-[var(--paper)] text-[var(--ink)]">
         <!-- Decorative background blobs -->
         <div
             class="pointer-events-none fixed inset-0 z-0 overflow-hidden"
@@ -45,16 +45,16 @@ const canRegister = computed(
 
         <!-- Sticky top header -->
         <header
-            class="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur-md dark:bg-[var(--paper)]/90"
+            class="sticky top-0 z-40 w-full overflow-x-hidden border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur-md dark:bg-[var(--paper)]/90"
         >
             <div
-                class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
+                class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6"
             >
                 <Link
                     :href="home().url"
-                    class="flex items-center gap-2 font-display text-lg font-bold tracking-tight transition-transform hover:scale-[1.02]"
+                    class="flex min-w-0 shrink items-center gap-2 font-display text-lg font-bold tracking-tight transition-transform hover:scale-[1.02]"
                 >
-                    <span class="text-[var(--brand-red)]">
+                    <span class="truncate text-[var(--brand-red)]">
                         One Red Paperclip
                     </span>
                 </Link>
@@ -112,13 +112,15 @@ const canRegister = computed(
         </header>
 
         <!-- Main content -->
-        <main class="relative z-10 pb-20 lg:pb-0">
+        <main
+            class="relative z-10 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0"
+        >
             <slot />
         </main>
 
         <!-- Footer -->
         <footer
-            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-24 dark:bg-[var(--paper)]/80 lg:pb-8"
+            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] dark:bg-[var(--paper)]/80 lg:pb-8"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6"

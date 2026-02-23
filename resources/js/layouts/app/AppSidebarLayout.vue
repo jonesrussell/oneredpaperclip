@@ -20,7 +20,7 @@ withDefaults(defineProps<Props>(), {
         <AppSidebar />
         <AppContent
             variant="sidebar"
-            class="overflow-x-hidden bg-[var(--paper)] pb-20 text-[var(--ink)] lg:pb-0"
+            class="overflow-x-hidden bg-[var(--paper)] pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-[var(--ink)] lg:pb-0"
         >
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />

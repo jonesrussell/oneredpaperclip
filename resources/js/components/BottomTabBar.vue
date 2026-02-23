@@ -16,12 +16,12 @@ function isActive(path: string): boolean {
 
 <template>
     <nav
-        class="fixed inset-x-0 bottom-0 z-50 flex h-16 items-center justify-around border-t border-[var(--border)] bg-white/95 backdrop-blur-md lg:hidden"
+        class="fixed inset-x-0 bottom-0 z-50 flex h-16 w-full max-w-[100vw] items-center justify-around gap-0 border-t border-[var(--border)] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden"
         aria-label="Mobile navigation"
     >
         <Link
             :href="user ? dashboard().url : home().url"
-            class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+            class="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1 text-xs font-medium transition-colors sm:px-3"
             :class="
                 isActive('/dashboard') || currentUrl === '/'
                     ? 'text-[var(--brand-red)]'
@@ -34,7 +34,7 @@ function isActive(path: string): boolean {
 
         <Link
             :href="campaigns.index().url"
-            class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium transition-colors"
+            class="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1 text-xs font-medium transition-colors sm:px-3"
             :class="
                 isActive('/campaigns') && !currentUrl.includes('/create')
                     ? 'text-[var(--brand-red)]'
@@ -47,7 +47,7 @@ function isActive(path: string): boolean {
 
         <Link
             :href="user ? campaigns.create().url : register().url"
-            class="-mt-5 flex flex-col items-center gap-0.5"
+            class="-mt-5 flex min-w-0 flex-1 flex-col items-center gap-0.5"
         >
             <div
                 class="flex size-12 items-center justify-center rounded-full bg-[var(--brand-red)] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
@@ -61,7 +61,7 @@ function isActive(path: string): boolean {
 
         <Link
             :href="user ? dashboard().url : login().url"
-            class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium text-[var(--ink-muted)] transition-colors"
+            class="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1 text-xs font-medium text-[var(--ink-muted)] transition-colors sm:px-3"
         >
             <Bell class="size-5" />
             <span>Activity</span>
@@ -69,7 +69,7 @@ function isActive(path: string): boolean {
 
         <Link
             :href="user ? dashboard().url : login().url"
-            class="flex flex-col items-center gap-0.5 px-3 py-1 text-xs font-medium text-[var(--ink-muted)] transition-colors"
+            class="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1 text-xs font-medium text-[var(--ink-muted)] transition-colors sm:px-3"
         >
             <User class="size-5" />
             <span>Profile</span>

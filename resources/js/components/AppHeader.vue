@@ -78,8 +78,8 @@ const rightNavItems: NavItem[] = [
 
 <template>
     <div>
-        <div class="border-b border-sidebar-border/80">
-            <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
+        <div class="w-full overflow-x-hidden border-b border-sidebar-border/80">
+            <div class="mx-auto flex h-16 min-w-0 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
                     <Sheet>
