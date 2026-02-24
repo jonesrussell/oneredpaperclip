@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import DOMPurify from 'dompurify';
 import { Form, Head } from '@inertiajs/vue3';
+import DOMPurify from 'dompurify';
+import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { aiSuggest } from '@/actions/App/Http/Controllers/CampaignController';
 
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
@@ -42,6 +44,9 @@ const categoryId = ref('');
 const visibility = ref('public');
 const status = ref('draft');
 
+const aiSuggestLoading = ref<'start_item' | 'goal_item' | 'story' | null>(null);
+const aiSuggestError = ref<string | null>(null);
+
 const stepLabels = [
     'What do you have?',
     "What's your dream item?",
@@ -74,6 +79,64 @@ function sanitizeForReview(html: string): string {
         ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a'],
         ALLOWED_ATTR: ['href', 'target', 'rel'],
     });
+}
+
+function getCsrfToken(): string | null {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    if (!match) return null;
+    try {
+        return decodeURIComponent(match[1]);
+    } catch {
+        return match[1];
+    }
+}
+
+function htmlToPlainText(html: string): string {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+async function requestAiSuggest(
+    context: 'start_item' | 'goal_item' | 'story',
+    currentHtml: string,
+    titleHint: string,
+): Promise<void> {
+    aiSuggestError.value = null;
+    aiSuggestLoading.value = context;
+    try {
+        const headers: Record<string, string> = {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        };
+        const csrf = getCsrfToken();
+        if (csrf) headers['X-XSRF-TOKEN'] = csrf;
+        const res = await fetch(aiSuggest.url(), {
+            method: 'POST',
+            credentials: 'include',
+            headers,
+            body: JSON.stringify({
+                context,
+                current_text: htmlToPlainText(currentHtml),
+                title_hint: titleHint || undefined,
+            }),
+        });
+        const data = (await res.json()) as { suggestion?: string };
+        if (!res.ok) {
+            aiSuggestError.value =
+                (data as { message?: string }).message ?? 'Request failed';
+            return;
+        }
+        const suggestion = data.suggestion ?? '';
+        const wrapped = suggestion ? `<p>${suggestion}</p>` : '';
+        if (context === 'start_item') startDescription.value = wrapped;
+        else if (context === 'goal_item') goalDescription.value = wrapped;
+        else campaignStory.value = wrapped;
+    } catch {
+        aiSuggestError.value = 'Something went wrong. Try again.';
+    } finally {
+        aiSuggestLoading.value = null;
+    }
 }
 </script>
 
@@ -157,9 +220,43 @@ function sanitizeForReview(html: string): string {
                                 />
                             </div>
                             <div class="grid gap-2">
-                                <Label for="start_item_description"
-                                    >Description</Label
+                                <div
+                                    class="flex flex-wrap items-center justify-between gap-2"
                                 >
+                                    <Label for="start_item_description"
+                                        >Description</Label
+                                    >
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        class="gap-1.5 text-xs"
+                                        :disabled="
+                                            aiSuggestLoading !== null
+                                        "
+                                        @click="
+                                            requestAiSuggest(
+                                                'start_item',
+                                                startDescription,
+                                                startTitle,
+                                            )
+                                        "
+                                    >
+                                        <Spinner
+                                            v-if="
+                                                aiSuggestLoading ===
+                                                'start_item'
+                                            "
+                                            class="size-3.5"
+                                        />
+                                        <Sparkles
+                                            v-else
+                                            class="size-3.5"
+                                            aria-hidden
+                                        />
+                                        Improve with AI
+                                    </Button>
+                                </div>
                                 <RichTextEditor
                                     id="start_item_description"
                                     v-model="startDescription"
@@ -170,6 +267,15 @@ function sanitizeForReview(html: string): string {
                                 <InputError
                                     :message="errors['start_item.description']"
                                 />
+                                <p
+                                    v-if="
+                                        aiSuggestError &&
+                                        aiSuggestLoading === null
+                                    "
+                                    class="text-xs text-destructive"
+                                >
+                                    {{ aiSuggestError }}
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -202,9 +308,43 @@ function sanitizeForReview(html: string): string {
                                 />
                             </div>
                             <div class="grid gap-2">
-                                <Label for="goal_item_description"
-                                    >Description</Label
+                                <div
+                                    class="flex flex-wrap items-center justify-between gap-2"
                                 >
+                                    <Label for="goal_item_description"
+                                        >Description</Label
+                                    >
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        class="gap-1.5 text-xs"
+                                        :disabled="
+                                            aiSuggestLoading !== null
+                                        "
+                                        @click="
+                                            requestAiSuggest(
+                                                'goal_item',
+                                                goalDescription,
+                                                goalTitle,
+                                            )
+                                        "
+                                    >
+                                        <Spinner
+                                            v-if="
+                                                aiSuggestLoading ===
+                                                'goal_item'
+                                            "
+                                            class="size-3.5"
+                                        />
+                                        <Sparkles
+                                            v-else
+                                            class="size-3.5"
+                                            aria-hidden
+                                        />
+                                        Improve with AI
+                                    </Button>
+                                </div>
                                 <RichTextEditor
                                     id="goal_item_description"
                                     v-model="goalDescription"
@@ -215,6 +355,15 @@ function sanitizeForReview(html: string): string {
                                 <InputError
                                     :message="errors['goal_item.description']"
                                 />
+                                <p
+                                    v-if="
+                                        aiSuggestError &&
+                                        aiSuggestLoading === null
+                                    "
+                                    class="text-xs text-destructive"
+                                >
+                                    {{ aiSuggestError }}
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
@@ -245,7 +394,40 @@ function sanitizeForReview(html: string): string {
                                 <InputError :message="errors.title" />
                             </div>
                             <div class="grid gap-2">
-                                <Label for="story">Your story</Label>
+                                <div
+                                    class="flex flex-wrap items-center justify-between gap-2"
+                                >
+                                    <Label for="story">Your story</Label>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        class="gap-1.5 text-xs"
+                                        :disabled="
+                                            aiSuggestLoading !== null
+                                        "
+                                        @click="
+                                            requestAiSuggest(
+                                                'story',
+                                                campaignStory,
+                                                campaignTitle,
+                                            )
+                                        "
+                                    >
+                                        <Spinner
+                                            v-if="
+                                                aiSuggestLoading === 'story'
+                                            "
+                                            class="size-3.5"
+                                        />
+                                        <Sparkles
+                                            v-else
+                                            class="size-3.5"
+                                            aria-hidden
+                                        />
+                                        Improve with AI
+                                    </Button>
+                                </div>
                                 <RichTextEditor
                                     id="story"
                                     v-model="campaignStory"
@@ -254,6 +436,15 @@ function sanitizeForReview(html: string): string {
                                     min-height="min-h-[6rem]"
                                 />
                                 <InputError :message="errors.story" />
+                                <p
+                                    v-if="
+                                        aiSuggestError &&
+                                        aiSuggestLoading === null
+                                    "
+                                    class="text-xs text-destructive"
+                                >
+                                    {{ aiSuggestError }}
+                                </p>
                             </div>
                             <div class="grid gap-2">
                                 <Label for="category_id">Category</Label>

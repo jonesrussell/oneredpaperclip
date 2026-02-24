@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { onBeforeUnmount, watch } from 'vue';
 
-import { EditorContent, useEditor } from '@tiptap/vue-3';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
+import { EditorContent, useEditor } from '@tiptap/vue-3';
+import { onBeforeUnmount, watch } from 'vue';
 
 const props = withDefaults(
     defineProps<{

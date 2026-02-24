@@ -56,6 +56,8 @@ Route::get('about', fn () => Inertia::render('About', [
 Route::get('campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
 Route::get('campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create')
     ->middleware(['auth', 'verified']);
+Route::post('campaigns/ai-suggest', [CampaignController::class, 'aiSuggest'])->name('campaigns.ai-suggest')
+    ->middleware(['auth', 'verified', 'throttle:15,1']);
 Route::get('campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
 Route::get('campaigns/{campaign}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit')
     ->middleware(['auth', 'verified']);
