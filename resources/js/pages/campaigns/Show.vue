@@ -44,6 +44,7 @@ type Campaign = {
     id: number;
     title?: string | null;
     story?: string | null;
+    story_safe?: string;
     status: string;
     user_id?: number;
     user?: { id: number; name: string; avatar?: string | null } | null;
@@ -311,11 +312,10 @@ function formatDate(dateString: string): string {
                 <!-- Tab content -->
                 <div v-show="activeTab === 'story'" class="space-y-4">
                     <div
-                        v-if="campaign.story"
+                        v-if="campaign.story || campaign.story_safe"
                         class="prose prose-sm dark:prose-invert max-w-none rounded-2xl border border-border bg-card p-5 text-foreground shadow-sm dark:shadow-[var(--shadow-card)]"
-                    >
-                        {{ campaign.story }}
-                    </div>
+                        v-html="campaign.story_safe ?? ''"
+                    />
                     <div
                         v-else
                         class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"

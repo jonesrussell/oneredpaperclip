@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CreateCampaign;
+use App\Actions\SuggestCampaignText;
 use App\Actions\UpdateCampaign;
 use App\Enums\CampaignStatus;
 use App\Enums\OfferStatus;
+use App\Http\Requests\CampaignAiSuggestRequest;
 use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
 use App\Models\Campaign;
 use App\Models\Category;
 use App\Models\Follow;
 use App\Services\RichTextHtmlSanitizer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -137,6 +140,9 @@ class CampaignController extends Controller
                 ->exists()
             : false;
 
+        $sanitizer = app(RichTextHtmlSanitizer::class);
+        $campaign->setAttribute('story_safe', $sanitizer->sanitize($campaign->story ?? ''));
+
         $description = $campaign->story
             ? \Illuminate\Support\Str::limit(strip_tags($campaign->story), 160)
             : sprintf(
@@ -153,5 +159,15 @@ class CampaignController extends Controller
                 'description' => $description,
             ],
         ]);
+    }
+
+    /**
+     * AI-assisted text suggestion for campaign create/edit (start item, goal item, story).
+     */
+    public function aiSuggest(CampaignAiSuggestRequest $request, SuggestCampaignText $suggest): JsonResponse
+    {
+        $suggestion = $suggest($request->validated());
+
+        return response()->json(['suggestion' => $suggestion]);
     }
 }

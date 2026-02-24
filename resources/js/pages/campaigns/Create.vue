@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DOMPurify from 'dompurify';
 import { Form, Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -66,15 +67,13 @@ function goToStep(step: number): void {
     }
 }
 
-/** Strip HTML for safe plain-text display (e.g. review step before sanitizer). */
-function stripHtml(html: string): string {
+/** Sanitize HTML for safe display in review step. */
+function sanitizeForReview(html: string): string {
     if (!html) return '';
-    if (typeof document === 'undefined') {
-        return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    }
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent ?? div.innerText ?? '';
+    return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a'],
+        ALLOWED_ATTR: ['href', 'target', 'rel'],
+    });
 }
 </script>
 
@@ -333,12 +332,11 @@ function stripHtml(html: string): string {
                                 >
                                     {{ startTitle || 'Not set' }}
                                 </p>
-                                <p
+                                <div
                                     v-if="startDescription"
-                                    class="mt-1 text-sm text-[var(--ink-muted)]"
-                                >
-                                    {{ stripHtml(startDescription) }}
-                                </p>
+                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    v-html="sanitizeForReview(startDescription)"
+                                />
                             </div>
                             <div class="flex items-center justify-center">
                                 <span class="text-lg text-[var(--brand-red)]"
@@ -356,12 +354,11 @@ function stripHtml(html: string): string {
                                 >
                                     {{ goalTitle || 'Not set' }}
                                 </p>
-                                <p
+                                <div
                                     v-if="goalDescription"
-                                    class="mt-1 text-sm text-[var(--ink-muted)]"
-                                >
-                                    {{ stripHtml(goalDescription) }}
-                                </p>
+                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    v-html="sanitizeForReview(goalDescription)"
+                                />
                             </div>
                             <div
                                 v-if="campaignTitle"
@@ -377,12 +374,11 @@ function stripHtml(html: string): string {
                                 >
                                     {{ campaignTitle }}
                                 </p>
-                                <p
+                                <div
                                     v-if="campaignStory"
-                                    class="mt-1 text-sm text-[var(--ink-muted)]"
-                                >
-                                    {{ stripHtml(campaignStory) }}
-                                </p>
+                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    v-html="sanitizeForReview(campaignStory)"
+                                />
                             </div>
                             <div class="flex gap-3">
                                 <div
