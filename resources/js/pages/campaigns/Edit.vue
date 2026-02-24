@@ -3,6 +3,7 @@ import { Form, Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
+import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -59,7 +60,9 @@ const goalDescription = ref(goalItem()?.description ?? '');
 const campaignTitle = ref(props.campaign.title ?? '');
 const campaignStory = ref(props.campaign.story ?? '');
 const categoryId = ref(
-    props.campaign.category_id != null ? String(props.campaign.category_id) : '',
+    props.campaign.category_id != null
+        ? String(props.campaign.category_id)
+        : '',
 );
 const visibility = ref(props.campaign.visibility ?? 'public');
 const status = ref(props.campaign.status ?? 'active');
@@ -70,7 +73,9 @@ function cancel(): void {
 </script>
 
 <template>
-    <Head :title="campaign.title ? `Edit: ${campaign.title}` : 'Edit campaign'" />
+    <Head
+        :title="campaign.title ? `Edit: ${campaign.title}` : 'Edit campaign'"
+    />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto w-full max-w-2xl px-4 py-8">
@@ -105,21 +110,18 @@ function cancel(): void {
                                 required
                                 placeholder="e.g. Red paperclip"
                             />
-                            <InputError
-                                :message="errors['start_item.title']"
-                            />
+                            <InputError :message="errors['start_item.title']" />
                         </div>
                         <div class="grid gap-2">
                             <Label for="start_item_description"
                                 >Description</Label
                             >
-                            <textarea
+                            <RichTextEditor
                                 id="start_item_description"
                                 v-model="startDescription"
                                 name="start_item[description]"
-                                rows="3"
                                 placeholder="Describe your item..."
-                                class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                min-height="min-h-[4.5rem]"
                             />
                             <InputError
                                 :message="errors['start_item.description']"
@@ -148,21 +150,18 @@ function cancel(): void {
                                 required
                                 placeholder="e.g. A house"
                             />
-                            <InputError
-                                :message="errors['goal_item.title']"
-                            />
+                            <InputError :message="errors['goal_item.title']" />
                         </div>
                         <div class="grid gap-2">
                             <Label for="goal_item_description"
                                 >Description</Label
                             >
-                            <textarea
+                            <RichTextEditor
                                 id="goal_item_description"
                                 v-model="goalDescription"
                                 name="goal_item[description]"
-                                rows="3"
                                 placeholder="Describe your dream item..."
-                                class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                min-height="min-h-[4.5rem]"
                             />
                             <InputError
                                 :message="errors['goal_item.description']"
@@ -194,13 +193,12 @@ function cancel(): void {
                         </div>
                         <div class="grid gap-2">
                             <Label for="story">Your story</Label>
-                            <textarea
+                            <RichTextEditor
                                 id="story"
                                 v-model="campaignStory"
                                 name="story"
-                                rows="4"
                                 placeholder="Why are you starting this campaign?"
-                                class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                min-height="min-h-[6rem]"
                             />
                             <InputError :message="errors.story" />
                         </div>

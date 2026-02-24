@@ -3,6 +3,7 @@ import { Form, Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 import InputError from '@/components/InputError.vue';
+import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -63,6 +64,17 @@ function goToStep(step: number): void {
     if (step >= 1 && step <= totalSteps) {
         currentStep.value = step;
     }
+}
+
+/** Strip HTML for safe plain-text display (e.g. review step before sanitizer). */
+function stripHtml(html: string): string {
+    if (!html) return '';
+    if (typeof document === 'undefined') {
+        return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent ?? div.innerText ?? '';
 }
 </script>
 
@@ -149,13 +161,12 @@ function goToStep(step: number): void {
                                 <Label for="start_item_description"
                                     >Description</Label
                                 >
-                                <textarea
+                                <RichTextEditor
                                     id="start_item_description"
                                     v-model="startDescription"
                                     name="start_item[description]"
-                                    rows="3"
                                     placeholder="Describe your item..."
-                                    class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                    min-height="min-h-[4.5rem]"
                                 />
                                 <InputError
                                     :message="errors['start_item.description']"
@@ -195,13 +206,12 @@ function goToStep(step: number): void {
                                 <Label for="goal_item_description"
                                     >Description</Label
                                 >
-                                <textarea
+                                <RichTextEditor
                                     id="goal_item_description"
                                     v-model="goalDescription"
                                     name="goal_item[description]"
-                                    rows="3"
                                     placeholder="Describe your dream item..."
-                                    class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                    min-height="min-h-[4.5rem]"
                                 />
                                 <InputError
                                     :message="errors['goal_item.description']"
@@ -237,13 +247,12 @@ function goToStep(step: number): void {
                             </div>
                             <div class="grid gap-2">
                                 <Label for="story">Your story</Label>
-                                <textarea
+                                <RichTextEditor
                                     id="story"
                                     v-model="campaignStory"
                                     name="story"
-                                    rows="4"
                                     placeholder="Why are you starting this campaign?"
-                                    class="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                    min-height="min-h-[6rem]"
                                 />
                                 <InputError :message="errors.story" />
                             </div>
@@ -328,7 +337,7 @@ function goToStep(step: number): void {
                                     v-if="startDescription"
                                     class="mt-1 text-sm text-[var(--ink-muted)]"
                                 >
-                                    {{ startDescription }}
+                                    {{ stripHtml(startDescription) }}
                                 </p>
                             </div>
                             <div class="flex items-center justify-center">
@@ -351,7 +360,7 @@ function goToStep(step: number): void {
                                     v-if="goalDescription"
                                     class="mt-1 text-sm text-[var(--ink-muted)]"
                                 >
-                                    {{ goalDescription }}
+                                    {{ stripHtml(goalDescription) }}
                                 </p>
                             </div>
                             <div
@@ -372,7 +381,7 @@ function goToStep(step: number): void {
                                     v-if="campaignStory"
                                     class="mt-1 text-sm text-[var(--ink-muted)]"
                                 >
-                                    {{ campaignStory }}
+                                    {{ stripHtml(campaignStory) }}
                                 </p>
                             </div>
                             <div class="flex gap-3">

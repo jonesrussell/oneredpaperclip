@@ -1,4 +1,3 @@
-
 import { usePage } from '@inertiajs/vue3';
 import { FileText, Users, type LucideIcon } from 'lucide-vue-next';
 import { computed, type ComputedRef } from 'vue';

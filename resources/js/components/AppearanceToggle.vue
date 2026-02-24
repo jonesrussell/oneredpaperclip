@@ -13,13 +13,13 @@ import { useAppearance } from '@/composables/useAppearance';
 const { resolvedAppearance, updateAppearance } = useAppearance();
 
 function toggle(): void {
-    updateAppearance(
-        resolvedAppearance.value === 'dark' ? 'light' : 'dark',
-    );
+    updateAppearance(resolvedAppearance.value === 'dark' ? 'light' : 'dark');
 }
 
 const label = computed(() =>
-    resolvedAppearance.value === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+    resolvedAppearance.value === 'dark'
+        ? 'Switch to light mode'
+        : 'Switch to dark mode',
 );
 </script>
 
@@ -34,10 +34,7 @@ const label = computed(() =>
                     :aria-label="label"
                     @click="toggle"
                 >
-                    <Sun
-                        v-if="resolvedAppearance === 'dark'"
-                        class="size-5"
-                    />
+                    <Sun v-if="resolvedAppearance === 'dark'" class="size-5" />
                     <Moon v-else class="size-5" />
                 </Button>
             </TooltipTrigger>

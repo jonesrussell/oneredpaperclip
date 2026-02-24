@@ -20,7 +20,9 @@ export type UseCurrentUrlReturn = {
 const page = usePage();
 const currentUrlReactive = computed(() => {
     const base =
-        typeof window !== 'undefined' ? window.location.origin : 'https://localhost';
+        typeof window !== 'undefined'
+            ? window.location.origin
+            : 'https://localhost';
     return new URL(page.url, base).pathname;
 });
 

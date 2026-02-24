@@ -35,7 +35,7 @@ import campaigns from '@/routes/campaigns';
 
         <!-- Kyle's Story -->
         <section
-            class="border-t border-[var(--ink)]/10 bg-white/50 py-16 dark:bg-[var(--paper)] sm:py-24"
+            class="border-t border-[var(--ink)]/10 bg-white/50 py-16 sm:py-24 dark:bg-[var(--paper)]"
         >
             <div class="mx-auto max-w-4xl px-4 sm:px-6">
                 <div class="grid gap-12 md:grid-cols-[1fr,auto] md:items-start">
@@ -421,17 +421,21 @@ import campaigns from '@/routes/campaigns';
                     class="mt-8 flex flex-wrap items-center justify-center gap-4"
                 >
                     <Link
-                        :href="campaigns.index().url"
-                        class="inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
-                    >
-                        Browse campaigns
-                    </Link>
-                    <Link
                         v-if="!$page.props.auth.user"
                         :href="register().url"
-                        class="inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10"
+                        class="inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
                     >
                         Create an account
+                    </Link>
+                    <Link
+                        :href="campaigns.index().url"
+                        :class="
+                            !$page.props.auth.user
+                                ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'
+                                : 'inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
+                        "
+                    >
+                        Browse campaigns
                     </Link>
                 </div>
             </div>

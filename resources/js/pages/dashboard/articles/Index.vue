@@ -51,7 +51,9 @@ const breadcrumbs = [
     { title: 'Articles', href: routePrefix },
 ];
 
-const filterValues = ref<Record<string, string | undefined>>({ ...props.filters });
+const filterValues = ref<Record<string, string | undefined>>({
+    ...props.filters,
+});
 const selectedIds = ref<number[]>([]);
 const deleteDialogOpen = ref(false);
 const articleToDelete = ref<Article | null>(null);
@@ -63,7 +65,10 @@ const applyFilters = () => {
     for (const [key, value] of Object.entries(filterValues.value)) {
         if (value) params[key] = value;
     }
-    router.get(routePrefix, params, { preserveState: true, preserveScroll: true });
+    router.get(routePrefix, params, {
+        preserveState: true,
+        preserveScroll: true,
+    });
 };
 
 const handleDeleteClick = (article: Article) => {
@@ -81,18 +86,26 @@ const confirmDelete = () => {
                 articleToDelete.value = null;
                 selectedIds.value = [];
             },
-            onFinish: () => { isDeleting.value = false; },
+            onFinish: () => {
+                isDeleting.value = false;
+            },
         });
     } else if (selectedIds.value.length > 0) {
         isBulkLoading.value = true;
-        router.post(`${routePrefix}/bulk-delete`, { ids: selectedIds.value }, {
-            preserveScroll: true,
-            onSuccess: () => {
-                deleteDialogOpen.value = false;
-                selectedIds.value = [];
+        router.post(
+            `${routePrefix}/bulk-delete`,
+            { ids: selectedIds.value },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    deleteDialogOpen.value = false;
+                    selectedIds.value = [];
+                },
+                onFinish: () => {
+                    isBulkLoading.value = false;
+                },
             },
-            onFinish: () => { isBulkLoading.value = false; },
-        });
+        );
     }
 };
 
@@ -104,32 +117,56 @@ const handleBulkDelete = () => {
 const handleBulkPublish = () => {
     if (selectedIds.value.length === 0) return;
     isBulkLoading.value = true;
-    router.post(`${routePrefix}/bulk-publish`, { ids: selectedIds.value }, {
-        preserveScroll: true,
-        onSuccess: () => { selectedIds.value = []; },
-        onFinish: () => { isBulkLoading.value = false; },
-    });
+    router.post(
+        `${routePrefix}/bulk-publish`,
+        { ids: selectedIds.value },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                selectedIds.value = [];
+            },
+            onFinish: () => {
+                isBulkLoading.value = false;
+            },
+        },
+    );
 };
 
 const handleBulkUnpublish = () => {
     if (selectedIds.value.length === 0) return;
     isBulkLoading.value = true;
-    router.post(`${routePrefix}/bulk-unpublish`, { ids: selectedIds.value }, {
-        preserveScroll: true,
-        onSuccess: () => { selectedIds.value = []; },
-        onFinish: () => { isBulkLoading.value = false; },
-    });
+    router.post(
+        `${routePrefix}/bulk-unpublish`,
+        { ids: selectedIds.value },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                selectedIds.value = [];
+            },
+            onFinish: () => {
+                isBulkLoading.value = false;
+            },
+        },
+    );
 };
 
 const handleTogglePublish = (article: Article) => {
-    router.post(`${routePrefix}/${article.id}/toggle-publish`, {}, { preserveScroll: true });
+    router.post(
+        `${routePrefix}/${article.id}/toggle-publish`,
+        {},
+        { preserveScroll: true },
+    );
 };
 
 const handleSort = (column: string, direction: string) => {
-    router.get(routePrefix, { ...props.filters, sort: column, direction }, {
-        preserveState: true,
-        preserveScroll: true,
-    });
+    router.get(
+        routePrefix,
+        { ...props.filters, sort: column, direction },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
 };
 
 const goToPage = (url: string | null) => {
@@ -158,8 +195,13 @@ const getPageNumbers = () => {
 };
 
 const goToPageNumber = (page: number | string) => {
-    if (typeof page === 'string' || page === props.articles?.current_page) return;
-    router.get(routePrefix, { ...props.filters, page }, { preserveState: true, preserveScroll: true });
+    if (typeof page === 'string' || page === props.articles?.current_page)
+        return;
+    router.get(
+        routePrefix,
+        { ...props.filters, page },
+        { preserveState: true, preserveScroll: true },
+    );
 };
 
 const hasSelected = computed(() => selectedIds.value.length > 0);
@@ -174,7 +216,9 @@ const bulkDeleteDescription = computed(() => {
 
 watch(
     () => props.articles?.data?.map((a) => a.id).join(','),
-    () => { selectedIds.value = []; },
+    () => {
+        selectedIds.value = [];
+    },
 );
 </script>
 
@@ -182,12 +226,16 @@ watch(
     <Head title="Articles - Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4 md:p-6">
+        <div
+            class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4 md:p-6"
+        >
             <!-- Header -->
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">Articles</h1>
-                    <p class="mt-1 text-muted-foreground">Manage your article content</p>
+                    <p class="mt-1 text-muted-foreground">
+                        Manage your article content
+                    </p>
                 </div>
                 <Button as="a" :href="`${routePrefix}/create`">
                     <Plus class="mr-2 h-4 w-4" />
@@ -197,9 +245,21 @@ watch(
 
             <!-- Stats -->
             <div class="grid gap-4 md:grid-cols-3">
-                <StatCard label="Total Articles" :value="stats?.total ?? 0" :icon="FileText" />
-                <StatCard label="Drafts" :value="stats?.drafts ?? 0" :icon="FilePlus" />
-                <StatCard label="Published" :value="stats?.published ?? 0" :icon="FileCheck" />
+                <StatCard
+                    label="Total Articles"
+                    :value="stats?.total ?? 0"
+                    :icon="FileText"
+                />
+                <StatCard
+                    label="Drafts"
+                    :value="stats?.drafts ?? 0"
+                    :icon="FilePlus"
+                />
+                <StatCard
+                    label="Published"
+                    :value="stats?.published ?? 0"
+                    :icon="FileCheck"
+                />
             </div>
 
             <!-- Filters -->
@@ -232,18 +292,27 @@ watch(
                 :edit-url="(id: number) => `${routePrefix}/${id}/edit`"
                 :index-url="routePrefix"
                 @delete="handleDeleteClick"
-                @update:selected="(ids: number[]) => selectedIds = ids"
+                @update:selected="(ids: number[]) => (selectedIds = ids)"
                 @toggle-publish="handleTogglePublish"
                 @sort="handleSort"
             />
 
             <!-- Pagination -->
-            <div v-if="showPagination" class="flex items-center justify-between">
+            <div
+                v-if="showPagination"
+                class="flex items-center justify-between"
+            >
                 <div class="text-sm text-muted-foreground">
-                    Showing {{ articles.from }} to {{ articles.to }} of {{ articles.total }} results
+                    Showing {{ articles.from }} to {{ articles.to }} of
+                    {{ articles.total }} results
                 </div>
                 <div class="flex items-center gap-2">
-                    <Button variant="outline" size="sm" :disabled="!articles?.prev_page_url" @click="goToPage(articles.prev_page_url)">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!articles?.prev_page_url"
+                        @click="goToPage(articles.prev_page_url)"
+                    >
                         Previous
                     </Button>
                     <div class="flex gap-1">
@@ -251,14 +320,23 @@ watch(
                             v-for="page in getPageNumbers()"
                             :key="page"
                             size="sm"
-                            :variant="page === articles.current_page ? 'default' : 'outline'"
+                            :variant="
+                                page === articles.current_page
+                                    ? 'default'
+                                    : 'outline'
+                            "
                             :disabled="typeof page === 'string'"
                             @click="goToPageNumber(page)"
                         >
                             {{ page }}
                         </Button>
                     </div>
-                    <Button variant="outline" size="sm" :disabled="!articles?.next_page_url" @click="goToPage(articles.next_page_url)">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        :disabled="!articles?.next_page_url"
+                        @click="goToPage(articles.next_page_url)"
+                    >
                         Next
                     </Button>
                 </div>
@@ -268,12 +346,19 @@ watch(
         <DeleteConfirmDialog
             v-model:open="deleteDialogOpen"
             :title="articleToDelete ? 'Delete Article' : 'Delete Articles'"
-            :description="articleToDelete
-                ? `Are you sure you want to delete &quot;${articleToDelete.title}&quot;? This action cannot be undone.`
-                : bulkDeleteDescription"
+            :description="
+                articleToDelete
+                    ? `Are you sure you want to delete &quot;${articleToDelete.title}&quot;? This action cannot be undone.`
+                    : bulkDeleteDescription
+            "
             :loading="isDeleting || isBulkLoading"
             @confirm="confirmDelete"
-            @cancel="() => { deleteDialogOpen = false; articleToDelete = null; }"
+            @cancel="
+                () => {
+                    deleteDialogOpen = false;
+                    articleToDelete = null;
+                }
+            "
         />
     </AppLayout>
 </template>

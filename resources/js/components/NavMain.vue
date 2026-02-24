@@ -15,7 +15,7 @@ withDefaults(
         items: NavItem[];
         label?: string;
     }>(),
-    { label: 'Platform' }
+    { label: 'Platform' },
 );
 
 const { isCurrentUrl } = useCurrentUrl();

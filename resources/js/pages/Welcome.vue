@@ -95,74 +95,76 @@ function stepNodeColor(color: string): string {
                 aria-hidden="true"
             />
             <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
-            <div class="relative">
-            <div
-                class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
-            >
-                <h1
-                    class="order-1 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:row-start-1 md:col-start-1 md:text-6xl"
-                    style="animation-delay: 0ms"
-                >
-                    Start with one thing.
-                    <span class="text-[var(--brand-red)]">Trade up.</span>
-                </h1>
-                <!-- Paperclip: own column, spans both rows, vertically centered to left column -->
-                <div
-                    class="order-3 relative flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:row-start-1 md:row-span-2 md:col-start-2 md:h-full md:items-center md:justify-end"
-                    style="animation-delay: 120ms"
-                >
+                <div class="relative">
                     <div
-                        class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
-                        aria-hidden="true"
-                    />
-                    <!-- House-shaped container: one red paperclip → house -->
-                    <div
-                        class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
+                        class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
                     >
-                        <PaperclipIcon
-                            class="hero-house-paperclip h-16 w-16 !text-[var(--brand-red)]"
-                        />
+                        <h1
+                            class="order-1 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:col-start-1 md:row-start-1 md:text-6xl"
+                            style="animation-delay: 0ms"
+                        >
+                            Start with one thing.
+                            <span class="text-[var(--brand-red)]"
+                                >Trade up.</span
+                            >
+                        </h1>
+                        <!-- Paperclip: own column, spans both rows, vertically centered to left column -->
+                        <div
+                            class="relative order-3 flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:col-start-2 md:row-span-2 md:row-start-1 md:h-full md:items-center md:justify-end"
+                            style="animation-delay: 120ms"
+                        >
+                            <div
+                                class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
+                                aria-hidden="true"
+                            />
+                            <!-- House-shaped container: one red paperclip → house -->
+                            <div
+                                class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
+                            >
+                                <PaperclipIcon
+                                    class="hero-house-paperclip h-16 w-16 !text-[var(--brand-red)]"
+                                />
+                            </div>
+                        </div>
+                        <div
+                            class="order-2 max-w-xl md:order-none md:col-start-1 md:row-start-2"
+                        >
+                            <p
+                                class="mt-5 animate-in text-lg leading-relaxed text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:mt-0"
+                                style="animation-delay: 80ms"
+                            >
+                                Create a campaign with a start item and a goal.
+                                Others make offers. You trade, confirm, and move
+                                closer to your goal—one swap at a time.
+                            </p>
+                            <div
+                                class="mt-8 flex animate-in flex-wrap gap-4 [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4"
+                                style="animation-delay: 160ms"
+                            >
+                                <Link
+                                    v-if="$page.props.auth.user"
+                                    :href="campaigns.create().url"
+                                    class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
+                                >
+                                    Start a campaign
+                                </Link>
+                                <Link
+                                    v-else-if="props.canRegister"
+                                    :href="register().url"
+                                    class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
+                                >
+                                    Create an account
+                                </Link>
+                                <Link
+                                    :href="campaigns.index().url"
+                                    class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
+                                >
+                                    Browse campaigns
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div
-                    class="order-2 max-w-xl md:order-none md:row-start-2 md:col-start-1"
-                >
-                    <p
-                        class="mt-5 animate-in text-lg leading-relaxed text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:mt-0"
-                        style="animation-delay: 80ms"
-                    >
-                        Create a campaign with a start item and a goal. Others
-                        make offers. You trade, confirm, and move closer to your
-                        goal—one swap at a time.
-                    </p>
-                    <div
-                        class="mt-8 flex animate-in flex-wrap gap-4 [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4"
-                        style="animation-delay: 160ms"
-                    >
-                        <Link
-                            :href="campaigns.index().url"
-                            class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
-                        >
-                            Browse campaigns
-                        </Link>
-                        <Link
-                            v-if="$page.props.auth.user"
-                            :href="campaigns.create().url"
-                            class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
-                        >
-                            Start a campaign
-                        </Link>
-                        <Link
-                            v-else-if="props.canRegister"
-                            :href="register().url"
-                            class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
-                        >
-                            Create an account
-                        </Link>
-                    </div>
-                </div>
-            </div>
-            </div>
             </div>
         </section>
 
@@ -226,7 +228,7 @@ function stepNodeColor(color: string): string {
                 <div class="relative mt-14 sm:mt-16">
                     <!-- Vertical track (line through the middle) -->
                     <div
-                        class="absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2 rounded-full bg-gradient-to-b from-[var(--hot-coral)] via-[var(--sunny-yellow)] to-[var(--brand-red)] opacity-40 sm:w-1.5"
+                        class="absolute top-0 bottom-0 left-1/2 w-1 -translate-x-1/2 rounded-full bg-gradient-to-b from-[var(--hot-coral)] via-[var(--sunny-yellow)] to-[var(--brand-red)] opacity-40 sm:w-1.5"
                         aria-hidden="true"
                     />
 
@@ -236,8 +238,7 @@ function stepNodeColor(color: string): string {
                             :key="step.title"
                             class="flex flex-col items-center gap-6 py-6 sm:flex-row sm:gap-6 sm:py-8"
                             :style="{
-                                animation:
-                                    'welcome-path-in 0.6s ease-out both',
+                                animation: 'welcome-path-in 0.6s ease-out both',
                                 animationDelay: `${280 + i * 100}ms`,
                             }"
                         >
@@ -281,7 +282,9 @@ function stepNodeColor(color: string): string {
                             <!-- Spacer so card alternates left/right -->
                             <div
                                 class="hidden flex-1 sm:block sm:max-w-[calc(50%-2.5rem)]"
-                                :class="i % 2 === 0 ? 'sm:order-3' : 'sm:order-1'"
+                                :class="
+                                    i % 2 === 0 ? 'sm:order-3' : 'sm:order-1'
+                                "
                             />
                         </li>
                     </ul>
@@ -342,7 +345,7 @@ function stepNodeColor(color: string): string {
                     <li
                         v-for="(campaign, i) in props.featuredCampaigns"
                         :key="campaign.id"
-                        class="min-w-0 animate-in fade-in slide-in-from-bottom-3 [animation-duration:0.45s] [animation-fill-mode:both]"
+                        class="min-w-0 animate-in [animation-duration:0.45s] [animation-fill-mode:both] fade-in slide-in-from-bottom-3"
                         :style="{ animationDelay: `${120 + i * 50}ms` }"
                     >
                         <CampaignCard :campaign="campaign" />
@@ -369,17 +372,21 @@ function stepNodeColor(color: string): string {
                     class="mt-8 flex flex-wrap items-center justify-center gap-4"
                 >
                     <Link
-                        :href="campaigns.index().url"
-                        class="surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
-                    >
-                        Browse campaigns
-                    </Link>
-                    <Link
                         v-if="!$page.props.auth.user && props.canRegister"
                         :href="register().url"
-                        class="inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10"
+                        class="surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
                     >
                         Create an account
+                    </Link>
+                    <Link
+                        :href="campaigns.index().url"
+                        :class="
+                            !$page.props.auth.user && props.canRegister
+                                ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'
+                                : 'surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
+                        "
+                    >
+                        Browse campaigns
                     </Link>
                 </div>
             </div>

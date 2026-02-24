@@ -1,4 +1,3 @@
-
 import * as CampaignApi from '@/actions/App/Http/Controllers/Api/CampaignApiController';
 import * as OfferApi from '@/actions/App/Http/Controllers/Api/OfferApiController';
 import * as TradeApi from '@/actions/App/Http/Controllers/Api/TradeApiController';
@@ -21,7 +20,10 @@ function getCsrfToken(): string | null {
 
 type RouteDef = { url: string; method: string };
 
-async function apiFetch(route: RouteDef, body?: Record<string, unknown>): Promise<Response> {
+async function apiFetch(
+    route: RouteDef,
+    body?: Record<string, unknown>,
+): Promise<Response> {
     const headers: Record<string, string> = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -62,16 +64,27 @@ function buildTools(): ModelContextTool[] {
             inputSchema: {
                 type: 'object',
                 properties: {
-                    limit: { type: 'number', description: 'Max number of campaigns to return (default 15, max 50)' },
+                    limit: {
+                        type: 'number',
+                        description:
+                            'Max number of campaigns to return (default 15, max 50)',
+                    },
                 },
             },
             annotations: { readOnlyHint: true },
             async execute(input) {
-                const limit = typeof input.limit === 'number' ? input.limit : 15;
+                const limit =
+                    typeof input.limit === 'number' ? input.limit : 15;
                 const route = CampaignApi.index({ query: { limit } });
                 const response = await apiFetch(route);
                 if (!response.ok) {
-                    return { error: response.status === 401 ? 'User must be logged in' : await response.text(), status: response.status };
+                    return {
+                        error:
+                            response.status === 401
+                                ? 'User must be logged in'
+                                : await response.text(),
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -82,7 +95,9 @@ function buildTools(): ModelContextTool[] {
                 'Get one campaign by ID: title, status, current and goal items, and pending offer count.',
             inputSchema: {
                 type: 'object',
-                properties: { campaign_id: { type: 'number', description: 'Campaign ID' } },
+                properties: {
+                    campaign_id: { type: 'number', description: 'Campaign ID' },
+                },
                 required: ['campaign_id'],
             },
             annotations: { readOnlyHint: true },
@@ -94,30 +109,42 @@ function buildTools(): ModelContextTool[] {
                 const route = CampaignApi.show({ campaign: campaignId });
                 const response = await apiFetch(route);
                 if (!response.ok) {
-                    return { error: await response.text(), status: response.status };
+                    return {
+                        error: await response.text(),
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
         },
         {
             name: 'my_campaigns',
-            description: "List the current user's campaigns. Requires authentication.",
+            description:
+                "List the current user's campaigns. Requires authentication.",
             inputSchema: {
                 type: 'object',
                 properties: {
-                    limit: { type: 'number', description: 'Max number to return (default 15, max 50)' },
+                    limit: {
+                        type: 'number',
+                        description:
+                            'Max number to return (default 15, max 50)',
+                    },
                 },
             },
             annotations: { readOnlyHint: true },
             async execute(input) {
-                const limit = typeof input.limit === 'number' ? input.limit : 15;
+                const limit =
+                    typeof input.limit === 'number' ? input.limit : 15;
                 const route = CampaignApi.mine({ query: { limit } });
                 const response = await apiFetch(route);
                 if (response.status === 401 || response.status === 302) {
                     return { error: 'User must be logged in', campaigns: [] };
                 }
                 if (!response.ok) {
-                    return { error: await response.text(), status: response.status };
+                    return {
+                        error: await response.text(),
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -130,11 +157,26 @@ function buildTools(): ModelContextTool[] {
                 type: 'object',
                 properties: {
                     title: { type: 'string', description: 'Campaign title' },
-                    start_item_title: { type: 'string', description: 'Start item title' },
-                    start_item_description: { type: 'string', description: 'Start item description' },
-                    goal_item_title: { type: 'string', description: 'Goal item title' },
-                    goal_item_description: { type: 'string', description: 'Goal item description' },
-                    category_id: { type: 'number', description: 'Optional category ID' },
+                    start_item_title: {
+                        type: 'string',
+                        description: 'Start item title',
+                    },
+                    start_item_description: {
+                        type: 'string',
+                        description: 'Start item description',
+                    },
+                    goal_item_title: {
+                        type: 'string',
+                        description: 'Goal item title',
+                    },
+                    goal_item_description: {
+                        type: 'string',
+                        description: 'Goal item description',
+                    },
+                    category_id: {
+                        type: 'number',
+                        description: 'Optional category ID',
+                    },
                 },
                 required: ['start_item_title', 'goal_item_title'],
             },
@@ -149,16 +191,27 @@ function buildTools(): ModelContextTool[] {
                         title: String(input.goal_item_title ?? ''),
                         description: input.goal_item_description ?? null,
                     },
-                    category_id: typeof input.category_id === 'number' ? input.category_id : null,
+                    category_id:
+                        typeof input.category_id === 'number'
+                            ? input.category_id
+                            : null,
                 };
                 const route = CampaignApi.store();
-                const response = await apiFetch(route, body as Record<string, unknown>);
+                const response = await apiFetch(
+                    route,
+                    body as Record<string, unknown>,
+                );
                 if (response.status === 401 || response.status === 302) {
                     return { error: 'User must be logged in' };
                 }
                 if (!response.ok) {
                     const data = await parseJsonResponse(response);
-                    return { error: (data as { message?: string })?.message ?? await response.text(), status: response.status };
+                    return {
+                        error:
+                            (data as { message?: string })?.message ??
+                            (await response.text()),
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -166,13 +219,19 @@ function buildTools(): ModelContextTool[] {
         {
             name: 'submit_offer',
             description:
-                'Submit an offer on a campaign\'s current item. Requires authentication.',
+                "Submit an offer on a campaign's current item. Requires authentication.",
             inputSchema: {
                 type: 'object',
                 properties: {
                     campaign_id: { type: 'number', description: 'Campaign ID' },
-                    offered_item_title: { type: 'string', description: 'Title of the item you are offering' },
-                    offered_item_description: { type: 'string', description: 'Description of the offered item' },
+                    offered_item_title: {
+                        type: 'string',
+                        description: 'Title of the item you are offering',
+                    },
+                    offered_item_description: {
+                        type: 'string',
+                        description: 'Description of the offered item',
+                    },
                 },
                 required: ['campaign_id', 'offered_item_title'],
             },
@@ -188,13 +247,21 @@ function buildTools(): ModelContextTool[] {
                     },
                 };
                 const route = OfferApi.store({ campaign: campaignId });
-                const response = await apiFetch(route, body as Record<string, unknown>);
+                const response = await apiFetch(
+                    route,
+                    body as Record<string, unknown>,
+                );
                 if (response.status === 401 || response.status === 302) {
                     return { error: 'User must be logged in' };
                 }
                 if (!response.ok) {
                     const data = await parseJsonResponse(response);
-                    return { error: (data as { message?: string })?.message ?? await response.text(), status: response.status };
+                    return {
+                        error:
+                            (data as { message?: string })?.message ??
+                            (await response.text()),
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -205,7 +272,9 @@ function buildTools(): ModelContextTool[] {
                 'Accept a pending offer (campaign owner only). Creates a trade. Requires user confirmation.',
             inputSchema: {
                 type: 'object',
-                properties: { offer_id: { type: 'number', description: 'Offer ID' } },
+                properties: {
+                    offer_id: { type: 'number', description: 'Offer ID' },
+                },
                 required: ['offer_id'],
             },
             async execute(input, client) {
@@ -213,11 +282,18 @@ function buildTools(): ModelContextTool[] {
                 if (!Number.isFinite(offerId)) {
                     return { error: 'offer_id must be a number' };
                 }
-                const confirmed = await client.requestUserInteraction(async () => {
-                    return window.confirm('Accept this offer? A trade will be created for both parties to confirm.');
-                });
+                const confirmed = await client.requestUserInteraction(
+                    async () => {
+                        return window.confirm(
+                            'Accept this offer? A trade will be created for both parties to confirm.',
+                        );
+                    },
+                );
                 if (!confirmed) {
-                    return { cancelled: true, message: 'User declined confirmation' };
+                    return {
+                        cancelled: true,
+                        message: 'User declined confirmation',
+                    };
                 }
                 const route = OfferApi.accept({ offer: offerId });
                 const response = await apiFetch(route);
@@ -226,17 +302,25 @@ function buildTools(): ModelContextTool[] {
                 }
                 if (!response.ok) {
                     const data = await parseJsonResponse(response);
-                    return { error: (data as { message?: string })?.message ?? 'Accept failed', status: response.status };
+                    return {
+                        error:
+                            (data as { message?: string })?.message ??
+                            'Accept failed',
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
         },
         {
             name: 'decline_offer',
-            description: 'Decline a pending offer (campaign owner only). Requires authentication.',
+            description:
+                'Decline a pending offer (campaign owner only). Requires authentication.',
             inputSchema: {
                 type: 'object',
-                properties: { offer_id: { type: 'number', description: 'Offer ID' } },
+                properties: {
+                    offer_id: { type: 'number', description: 'Offer ID' },
+                },
                 required: ['offer_id'],
             },
             async execute(input) {
@@ -251,7 +335,12 @@ function buildTools(): ModelContextTool[] {
                 }
                 if (!response.ok) {
                     const data = await parseJsonResponse(response);
-                    return { error: (data as { message?: string })?.message ?? 'Decline failed', status: response.status };
+                    return {
+                        error:
+                            (data as { message?: string })?.message ??
+                            'Decline failed',
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -262,7 +351,9 @@ function buildTools(): ModelContextTool[] {
                 'Confirm a trade (offerer or campaign owner). When both parties have confirmed, the trade completes. Requires user confirmation.',
             inputSchema: {
                 type: 'object',
-                properties: { trade_id: { type: 'number', description: 'Trade ID' } },
+                properties: {
+                    trade_id: { type: 'number', description: 'Trade ID' },
+                },
                 required: ['trade_id'],
             },
             async execute(input, client) {
@@ -270,11 +361,16 @@ function buildTools(): ModelContextTool[] {
                 if (!Number.isFinite(tradeId)) {
                     return { error: 'trade_id must be a number' };
                 }
-                const confirmed = await client.requestUserInteraction(async () => {
-                    return window.confirm('Confirm this trade?');
-                });
+                const confirmed = await client.requestUserInteraction(
+                    async () => {
+                        return window.confirm('Confirm this trade?');
+                    },
+                );
                 if (!confirmed) {
-                    return { cancelled: true, message: 'User declined confirmation' };
+                    return {
+                        cancelled: true,
+                        message: 'User declined confirmation',
+                    };
                 }
                 const route = TradeApi.confirm({ trade: tradeId });
                 const response = await apiFetch(route);
@@ -283,7 +379,12 @@ function buildTools(): ModelContextTool[] {
                 }
                 if (!response.ok) {
                     const data = await parseJsonResponse(response);
-                    return { error: (data as { message?: string })?.message ?? 'Confirm failed', status: response.status };
+                    return {
+                        error:
+                            (data as { message?: string })?.message ??
+                            'Confirm failed',
+                        status: response.status,
+                    };
                 }
                 return parseJsonResponse(response);
             },
@@ -296,7 +397,11 @@ function buildTools(): ModelContextTool[] {
  * No-op when navigator.modelContext is undefined (e.g. unsupported or non-secure context).
  */
 export function registerWebMCPTools(): void {
-    if (typeof navigator === 'undefined' || !('modelContext' in navigator) || !navigator.modelContext) {
+    if (
+        typeof navigator === 'undefined' ||
+        !('modelContext' in navigator) ||
+        !navigator.modelContext
+    ) {
         return;
     }
     const tools = buildTools();

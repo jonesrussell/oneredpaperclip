@@ -36,7 +36,10 @@ const initFormData = (): Record<string, unknown> => {
         else if (field.type === 'belongs-to-many') data[field.name] = [];
         else if (field.type === 'belongs-to') {
             // Default to first available option
-            const options = props.relationOptions.news_sources ?? props.relationOptions[field.name] ?? [];
+            const options =
+                props.relationOptions.news_sources ??
+                props.relationOptions[field.name] ??
+                [];
             data[field.name] = options[0]?.id ?? null;
         } else data[field.name] = '';
     }
@@ -58,8 +61,12 @@ const handleSubmit = (publish: boolean = false) => {
 
     router.post(routePrefix, data, {
         preserveScroll: true,
-        onError: (err) => { errors.value = err; },
-        onFinish: () => { processing.value = false; },
+        onError: (err) => {
+            errors.value = err;
+        },
+        onFinish: () => {
+            processing.value = false;
+        },
     });
 };
 </script>
@@ -68,16 +75,28 @@ const handleSubmit = (publish: boolean = false) => {
     <Head title="Create Article - Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4 md:p-6">
+        <div
+            class="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4 md:p-6"
+        >
             <!-- Header -->
             <div class="flex items-center justify-between">
                 <div>
-                    <Button variant="ghost" size="sm" as="a" :href="routePrefix" class="mb-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        as="a"
+                        :href="routePrefix"
+                        class="mb-2"
+                    >
                         <ArrowLeft class="mr-2 h-4 w-4" />
                         Back to Articles
                     </Button>
-                    <h1 class="text-3xl font-bold tracking-tight">Create Article</h1>
-                    <p class="mt-1 text-muted-foreground">Add a new article to your collection</p>
+                    <h1 class="text-3xl font-bold tracking-tight">
+                        Create Article
+                    </h1>
+                    <p class="mt-1 text-muted-foreground">
+                        Add a new article to your collection
+                    </p>
                 </div>
             </div>
 
@@ -92,13 +111,27 @@ const handleSubmit = (publish: boolean = false) => {
 
                 <!-- Actions -->
                 <div class="mt-6 flex gap-3 border-t pt-4">
-                    <Button type="button" variant="outline" as="a" :href="routePrefix" :disabled="processing">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        as="a"
+                        :href="routePrefix"
+                        :disabled="processing"
+                    >
                         Cancel
                     </Button>
-                    <Button type="submit" variant="outline" :disabled="processing">
+                    <Button
+                        type="submit"
+                        variant="outline"
+                        :disabled="processing"
+                    >
                         {{ processing ? 'Saving...' : 'Save as Draft' }}
                     </Button>
-                    <Button type="button" @click="handleSubmit(true)" :disabled="processing">
+                    <Button
+                        type="button"
+                        @click="handleSubmit(true)"
+                        :disabled="processing"
+                    >
                         {{ processing ? 'Publishing...' : 'Publish' }}
                     </Button>
                 </div>

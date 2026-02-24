@@ -234,8 +234,8 @@
     --soft-lavender: hsl(265 55% 75%);
     --sky-blue: hsl(205 85% 65%);
     /* Elevation: subtle shadow for cards in dark mode */
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4),
-        0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-card:
+        0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {

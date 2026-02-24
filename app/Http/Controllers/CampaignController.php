@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateCampaignRequest;
 use App\Models\Campaign;
 use App\Models\Category;
 use App\Models\Follow;
+use App\Services\RichTextHtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

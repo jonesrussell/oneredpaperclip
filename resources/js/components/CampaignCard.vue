@@ -13,8 +13,16 @@ defineProps<{
         status: string;
         trades_count?: number;
         user?: { id: number; name: string; avatar?: string | null } | null;
-        current_item?: { id: number; title: string; image_url?: string | null } | null;
-        goal_item?: { id: number; title: string; image_url?: string | null } | null;
+        current_item?: {
+            id: number;
+            title: string;
+            image_url?: string | null;
+        } | null;
+        goal_item?: {
+            id: number;
+            title: string;
+            image_url?: string | null;
+        } | null;
         category?: { id: number; name: string } | null;
     };
     progress?: number;
@@ -65,12 +73,12 @@ function statusStyles(status: string): string {
     <Link
         :href="campaigns.show({ campaign: campaign.id }).url"
         class="surface-light group relative block min-w-0 overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
-        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
+        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
         prefetch
     >
         <!-- Left-edge category accent -->
         <div
-            class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
+            class="absolute top-0 bottom-0 left-0 w-1 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
             :style="{
                 backgroundColor: getCategoryColor(campaign.category?.name),
             }"
@@ -89,7 +97,7 @@ function statusStyles(status: string): string {
 
             <!-- Title -->
             <h3
-                class="line-clamp-2 pr-12 font-display text-lg font-semibold leading-snug text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
+                class="line-clamp-2 pr-12 font-display text-lg leading-snug font-semibold text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
             >
                 {{ campaign.title ?? 'Untitled campaign' }}
             </h3>
@@ -144,7 +152,9 @@ function statusStyles(status: string): string {
                         ·
                     </span>
                 </span>
-                <span class="min-w-0 truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]">
+                <span
+                    class="min-w-0 truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]"
+                >
                     {{ campaign.goal_item?.title ?? 'Goal' }}
                 </span>
             </p>
@@ -154,7 +164,10 @@ function statusStyles(status: string): string {
                 class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-[var(--ink)]/5 pt-3"
             >
                 <span
-                    v-if="campaign.trades_count != null && campaign.trades_count > 0"
+                    v-if="
+                        campaign.trades_count != null &&
+                        campaign.trades_count > 0
+                    "
                     class="font-mono text-xs font-semibold text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
                     {{ campaign.trades_count }}
@@ -170,7 +183,9 @@ function statusStyles(status: string): string {
                             :src="campaign.user.avatar"
                             :alt="campaign.user.name"
                         />
-                        <AvatarFallback class="rounded-lg text-black dark:text-white">
+                        <AvatarFallback
+                            class="rounded-lg text-black dark:text-white"
+                        >
                             {{ getInitials(campaign.user.name) }}
                         </AvatarFallback>
                     </Avatar>

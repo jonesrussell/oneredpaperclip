@@ -9,7 +9,7 @@ export interface ToolAnnotations {
 
 export type ToolExecuteCallback = (
     input: Record<string, unknown>,
-    client: ModelContextClient
+    client: ModelContextClient,
 ) => Promise<unknown>;
 
 export type UserInteractionCallback = () => Promise<unknown>;

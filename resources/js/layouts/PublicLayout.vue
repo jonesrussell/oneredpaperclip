@@ -14,7 +14,9 @@ const canRegister = computed(
 </script>
 
 <template>
-    <div class="min-h-screen w-full overflow-x-hidden bg-[var(--paper)] text-[var(--ink)]">
+    <div
+        class="min-h-screen w-full overflow-x-hidden bg-[var(--paper)] text-[var(--ink)]"
+    >
         <!-- Decorative background blobs -->
         <div
             class="pointer-events-none fixed inset-0 z-0 overflow-hidden"
@@ -120,7 +122,7 @@ const canRegister = computed(
 
         <!-- Footer -->
         <footer
-            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] dark:bg-[var(--paper)]/80 lg:pb-8"
+            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 dark:bg-[var(--paper)]/80"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6"

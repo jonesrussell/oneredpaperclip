@@ -149,7 +149,9 @@ function formatDate(dateString: string): string {
 </script>
 
 <template>
-    <Head :title="`${campaign.title ?? 'Campaign'} — ${page.props.name ?? 'One Red Paperclip'}`" />
+    <Head
+        :title="`${campaign.title ?? 'Campaign'} — ${page.props.name ?? 'One Red Paperclip'}`"
+    />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="min-h-full bg-background">
@@ -157,7 +159,7 @@ function formatDate(dateString: string): string {
                 <!-- Header with subtle gradient (matches Welcome hero feel) -->
                 <div class="relative">
                     <div
-                        class="pointer-events-none absolute -left-4 -right-4 -top-2 h-32 rounded-b-2xl bg-gradient-to-br from-[var(--hot-coral)]/10 via-transparent to-[var(--sunny-yellow)]/8 sm:-left-6 sm:-right-6"
+                        class="pointer-events-none absolute -top-2 -right-4 -left-4 h-32 rounded-b-2xl bg-gradient-to-br from-[var(--hot-coral)]/10 via-transparent to-[var(--sunny-yellow)]/8 sm:-right-6 sm:-left-6"
                         aria-hidden="true"
                     />
                     <div class="relative">
@@ -195,7 +197,9 @@ function formatDate(dateString: string): string {
                                 <AvatarImage
                                     v-if="campaign.user?.avatar"
                                     :src="campaign.user.avatar"
-                                    :alt="campaign.user?.name ?? 'Campaign owner'"
+                                    :alt="
+                                        campaign.user?.name ?? 'Campaign owner'
+                                    "
                                 />
                                 <AvatarFallback
                                     class="rounded-full bg-[var(--sky-blue)]/20 text-[var(--sky-blue)]"
@@ -207,10 +211,16 @@ function formatDate(dateString: string): string {
                                     }}
                                 </AvatarFallback>
                             </Avatar>
-                            <span>{{ campaign.user?.name ?? 'Anonymous' }}</span>
+                            <span>{{
+                                campaign.user?.name ?? 'Anonymous'
+                            }}</span>
                             <Link
                                 v-if="isOwner"
-                                :href="campaigns.edit.url({ campaign: campaign.id })"
+                                :href="
+                                    campaigns.edit.url({
+                                        campaign: campaign.id,
+                                    })
+                                "
                                 class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                             >
                                 <Pencil class="size-4" />
@@ -224,219 +234,226 @@ function formatDate(dateString: string): string {
                 <div
                     class="rounded-2xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md dark:shadow-[var(--shadow-card)]"
                 >
-                <h2
-                    class="text-sm font-semibold tracking-wider text-muted-foreground uppercase"
-                >
-                    Trade Journey
-                </h2>
+                    <h2
+                        class="text-sm font-semibold tracking-wider text-muted-foreground uppercase"
+                    >
+                        Trade Journey
+                    </h2>
 
-                <!-- Start -> Current -> Goal -->
+                    <!-- Start -> Current -> Goal -->
+                    <div
+                        class="mt-4 flex items-center justify-between gap-3 text-sm"
+                    >
+                        <div class="flex-1 text-center">
+                            <p class="text-xs text-muted-foreground">Start</p>
+                            <p class="mt-0.5 font-semibold text-foreground">
+                                {{ campaign.current_item?.title ?? 'TBD' }}
+                            </p>
+                        </div>
+                        <ArrowRight
+                            class="size-5 shrink-0 text-[var(--brand-red)]"
+                        />
+                        <div class="flex-1 text-center">
+                            <p class="text-xs text-muted-foreground">Goal</p>
+                            <p class="mt-0.5 font-semibold text-foreground">
+                                {{ campaign.goal_item?.title ?? 'TBD' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Progress ring -->
+                    <div class="flex items-center justify-center py-4">
+                        <ProgressRing
+                            :percent="progress"
+                            :size="80"
+                            :stroke-width="6"
+                        />
+                    </div>
+
+                    <!-- Milestone timeline -->
+                    <MilestoneTimeline
+                        v-if="milestones.length > 2"
+                        :milestones="milestones"
+                    />
+                </div>
+
+                <!-- Tab bar (Swap Shop: active = accent pill) -->
                 <div
-                    class="mt-4 flex items-center justify-between gap-3 text-sm"
+                    class="flex gap-1 rounded-xl border border-border bg-muted/50 p-1.5"
                 >
-                    <div class="flex-1 text-center">
-                        <p class="text-xs text-muted-foreground">Start</p>
-                        <p class="mt-0.5 font-semibold text-foreground">
-                            {{ campaign.current_item?.title ?? 'TBD' }}
-                        </p>
-                    </div>
-                    <ArrowRight
-                        class="size-5 shrink-0 text-[var(--brand-red)]"
-                    />
-                    <div class="flex-1 text-center">
-                        <p class="text-xs text-muted-foreground">Goal</p>
-                        <p class="mt-0.5 font-semibold text-foreground">
-                            {{ campaign.goal_item?.title ?? 'TBD' }}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Progress ring -->
-                <div class="flex items-center justify-center py-4">
-                    <ProgressRing
-                        :percent="progress"
-                        :size="80"
-                        :stroke-width="6"
-                    />
-                </div>
-
-                <!-- Milestone timeline -->
-                <MilestoneTimeline
-                    v-if="milestones.length > 2"
-                    :milestones="milestones"
-                />
-            </div>
-
-            <!-- Tab bar (Swap Shop: active = accent pill) -->
-            <div
-                class="flex gap-1 rounded-xl border border-border bg-muted/50 p-1.5"
-            >
-                <button
-                    v-for="tab in tabs"
-                    :key="tab.key"
-                    class="rounded-lg px-4 py-2 text-sm font-medium transition-all"
-                    :class="
-                        activeTab === tab.key
-                            ? 'bg-[var(--hot-coral)]/15 text-[var(--hot-coral)] shadow-sm'
-                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                    "
-                    @click="activeTab = tab.key"
-                >
-                    {{ tab.label }}
-                    <Badge
-                        v-if="tab.count"
-                        variant="secondary"
-                        class="ml-1 rounded-full border-0 text-xs"
+                    <button
+                        v-for="tab in tabs"
+                        :key="tab.key"
+                        class="rounded-lg px-4 py-2 text-sm font-medium transition-all"
                         :class="
                             activeTab === tab.key
-                                ? 'bg-[var(--hot-coral)]/25 text-[var(--hot-coral)]'
-                                : ''
+                                ? 'bg-[var(--hot-coral)]/15 text-[var(--hot-coral)] shadow-sm'
+                                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         "
+                        @click="activeTab = tab.key"
                     >
-                        {{ tab.count }}
-                    </Badge>
-                </button>
-            </div>
-
-            <!-- Tab content -->
-            <div v-show="activeTab === 'story'" class="space-y-4">
-                <div
-                    v-if="campaign.story"
-                    class="prose prose-sm max-w-none rounded-2xl border border-border bg-card p-5 text-foreground shadow-sm dark:prose-invert dark:shadow-[var(--shadow-card)]"
-                >
-                    {{ campaign.story }}
-                </div>
-                <div
-                    v-else
-                    class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
-                >
-                    No story yet.
-                </div>
-            </div>
-
-            <div v-show="activeTab === 'offers'" class="space-y-3">
-                <div
-                    v-if="!campaign.offers?.length"
-                    class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
-                >
-                    No pending offers.
-                </div>
-                <div
-                    v-for="offer in campaign.offers"
-                    v-else
-                    :key="offer.id"
-                    class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
-                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
-                >
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <p class="text-sm font-semibold text-foreground">
-                                {{
-                                    offer.offered_item?.title ?? 'Unknown item'
-                                }}
-                            </p>
-                            <p class="mt-0.5 text-xs text-muted-foreground">
-                                from {{ offer.from_user?.name ?? 'Anonymous' }}
-                            </p>
-                            <p
-                                v-if="offer.message"
-                                class="mt-2 text-sm text-muted-foreground"
-                            >
-                                {{ offer.message }}
-                            </p>
-                        </div>
+                        {{ tab.label }}
                         <Badge
+                            v-if="tab.count"
                             variant="secondary"
-                            class="shrink-0 rounded-full text-xs capitalize"
-                        >
-                            {{ offer.status }}
-                        </Badge>
-                    </div>
-                </div>
-            </div>
-
-            <div v-show="activeTab === 'trades'" class="space-y-3">
-                <div
-                    v-if="!campaign.trades?.length"
-                    class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
-                >
-                    No trades yet.
-                </div>
-                <div
-                    v-for="trade in campaign.trades"
-                    v-else
-                    :key="trade.id"
-                    class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
-                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
-                >
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <p class="text-sm font-semibold text-foreground">
-                                Trade #{{ trade.position }}
-                            </p>
-                            <p class="mt-0.5 text-xs text-muted-foreground">
-                                {{
-                                    trade.offered_item?.title ?? 'Unknown item'
-                                }}
-                            </p>
-                        </div>
-                        <Badge
-                            variant="secondary"
-                            class="shrink-0 rounded-full text-xs capitalize"
+                            class="ml-1 rounded-full border-0 text-xs"
                             :class="
-                                trade.status === 'completed'
-                                    ? 'bg-[var(--electric-mint)]/15 text-[var(--electric-mint)]'
+                                activeTab === tab.key
+                                    ? 'bg-[var(--hot-coral)]/25 text-[var(--hot-coral)]'
                                     : ''
                             "
                         >
-                            {{ trade.status }}
+                            {{ tab.count }}
                         </Badge>
+                    </button>
+                </div>
+
+                <!-- Tab content -->
+                <div v-show="activeTab === 'story'" class="space-y-4">
+                    <div
+                        v-if="campaign.story"
+                        class="prose prose-sm dark:prose-invert max-w-none rounded-2xl border border-border bg-card p-5 text-foreground shadow-sm dark:shadow-[var(--shadow-card)]"
+                    >
+                        {{ campaign.story }}
+                    </div>
+                    <div
+                        v-else
+                        class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
+                    >
+                        No story yet.
                     </div>
                 </div>
-            </div>
 
-            <div v-show="activeTab === 'comments'" class="space-y-3">
-                <div
-                    v-if="!campaign.comments?.length"
-                    class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
-                >
-                    No comments yet.
-                </div>
-                <div
-                    v-for="comment in campaign.comments"
-                    v-else
-                    :key="comment.id"
-                    class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
-                    style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06);"
-                >
-                    <div class="flex items-start gap-3">
-                        <div
-                            class="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--sky-blue)]/20 text-xs font-semibold text-[var(--sky-blue)]"
-                        >
-                            {{
-                                (comment.user?.name ?? 'A')
-                                    .charAt(0)
-                                    .toUpperCase()
-                            }}
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2">
-                                <span
+                <div v-show="activeTab === 'offers'" class="space-y-3">
+                    <div
+                        v-if="!campaign.offers?.length"
+                        class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
+                    >
+                        No pending offers.
+                    </div>
+                    <div
+                        v-for="offer in campaign.offers"
+                        v-else
+                        :key="offer.id"
+                        class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
+                        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
+                    >
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p
                                     class="text-sm font-semibold text-foreground"
                                 >
-                                    {{ comment.user?.name ?? 'Anonymous' }}
-                                </span>
-                                <span class="text-xs text-muted-foreground">
-                                    {{ formatDate(comment.created_at) }}
-                                </span>
+                                    {{
+                                        offer.offered_item?.title ??
+                                        'Unknown item'
+                                    }}
+                                </p>
+                                <p class="mt-0.5 text-xs text-muted-foreground">
+                                    from
+                                    {{ offer.from_user?.name ?? 'Anonymous' }}
+                                </p>
+                                <p
+                                    v-if="offer.message"
+                                    class="mt-2 text-sm text-muted-foreground"
+                                >
+                                    {{ offer.message }}
+                                </p>
                             </div>
-                            <p class="mt-1 text-sm text-foreground">
-                                {{ comment.body }}
-                            </p>
+                            <Badge
+                                variant="secondary"
+                                class="shrink-0 rounded-full text-xs capitalize"
+                            >
+                                {{ offer.status }}
+                            </Badge>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <div v-show="activeTab === 'trades'" class="space-y-3">
+                    <div
+                        v-if="!campaign.trades?.length"
+                        class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
+                    >
+                        No trades yet.
+                    </div>
+                    <div
+                        v-for="trade in campaign.trades"
+                        v-else
+                        :key="trade.id"
+                        class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
+                        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
+                    >
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <p
+                                    class="text-sm font-semibold text-foreground"
+                                >
+                                    Trade #{{ trade.position }}
+                                </p>
+                                <p class="mt-0.5 text-xs text-muted-foreground">
+                                    {{
+                                        trade.offered_item?.title ??
+                                        'Unknown item'
+                                    }}
+                                </p>
+                            </div>
+                            <Badge
+                                variant="secondary"
+                                class="shrink-0 rounded-full text-xs capitalize"
+                                :class="
+                                    trade.status === 'completed'
+                                        ? 'bg-[var(--electric-mint)]/15 text-[var(--electric-mint)]'
+                                        : ''
+                                "
+                            >
+                                {{ trade.status }}
+                            </Badge>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="activeTab === 'comments'" class="space-y-3">
+                    <div
+                        v-if="!campaign.comments?.length"
+                        class="rounded-2xl border border-dashed border-border bg-card/60 py-12 text-center text-sm text-muted-foreground"
+                    >
+                        No comments yet.
+                    </div>
+                    <div
+                        v-for="comment in campaign.comments"
+                        v-else
+                        :key="comment.id"
+                        class="rounded-xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
+                        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
+                    >
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--sky-blue)]/20 text-xs font-semibold text-[var(--sky-blue)]"
+                            >
+                                {{
+                                    (comment.user?.name ?? 'A')
+                                        .charAt(0)
+                                        .toUpperCase()
+                                }}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span
+                                        class="text-sm font-semibold text-foreground"
+                                    >
+                                        {{ comment.user?.name ?? 'Anonymous' }}
+                                    </span>
+                                    <span class="text-xs text-muted-foreground">
+                                        {{ formatDate(comment.created_at) }}
+                                    </span>
+                                </div>
+                                <p class="mt-1 text-sm text-foreground">
+                                    {{ comment.body }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
