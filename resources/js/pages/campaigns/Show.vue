@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ArrowRight, Pencil, User } from 'lucide-vue-next';
+import { ArrowRight, Pencil } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import MilestoneTimeline from '@/components/MilestoneTimeline.vue';
 import ProgressRing from '@/components/ProgressRing.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useInitials } from '@/composables/useInitials';
 import AppLayout from '@/layouts/AppLayout.vue';
 import campaigns from '@/routes/campaigns';
 import type { BreadcrumbItem } from '@/types';
@@ -44,7 +46,7 @@ type Campaign = {
     story?: string | null;
     status: string;
     user_id?: number;
-    user?: { id: number; name: string } | null;
+    user?: { id: number; name: string; avatar?: string | null } | null;
     category?: { id: number; name: string } | null;
     current_item?: ItemSummary | null;
     goal_item?: ItemSummary | null;
@@ -59,6 +61,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
+const { getInitials } = useInitials();
 
 const isOwner = computed(() => {
     const userId = page.props.auth?.user?.id;
@@ -186,7 +189,24 @@ function formatDate(dateString: string): string {
                         <div
                             class="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
                         >
-                            <User class="size-4 text-[var(--sky-blue)]" />
+                            <Avatar
+                                class="size-8 shrink-0 overflow-hidden rounded-full"
+                            >
+                                <AvatarImage
+                                    v-if="campaign.user?.avatar"
+                                    :src="campaign.user.avatar"
+                                    :alt="campaign.user?.name ?? 'Campaign owner'"
+                                />
+                                <AvatarFallback
+                                    class="rounded-full bg-[var(--sky-blue)]/20 text-[var(--sky-blue)]"
+                                >
+                                    {{
+                                        getInitials(
+                                            campaign.user?.name ?? 'Anonymous',
+                                        )
+                                    }}
+                                </AvatarFallback>
+                            </Avatar>
                             <span>{{ campaign.user?.name ?? 'Anonymous' }}</span>
                             <Link
                                 v-if="isOwner"
