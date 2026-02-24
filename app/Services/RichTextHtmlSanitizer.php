@@ -11,7 +11,7 @@ class RichTextHtmlSanitizer
 
     public function __construct()
     {
-        $config = (new HtmlSanitizerConfig())
+        $config = (new HtmlSanitizerConfig)
             ->allowSafeElements()
             ->allowElement('a', ['href', 'title'])
             ->forceAttribute('a', 'rel', 'noopener noreferrer')

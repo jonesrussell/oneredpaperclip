@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Item extends Model
 {
+    /** @use HasFactory<\Database\Factories\ItemFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'itemable_type',
         'itemable_id',

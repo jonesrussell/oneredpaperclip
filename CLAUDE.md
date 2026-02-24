@@ -82,7 +82,7 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
   - `AuthLayout` — auth pages: centered card with accent blobs
   - Settings has its own `Layout`
 - **Custom components:**
-  - `CampaignCard` — reusable card with category accent strip, progress ring, trade count badge
+  - `ChallengeCard` — reusable card with category accent strip, progress ring, trade count badge
   - `ProgressRing` — SVG circular progress indicator, color changes by completion (coral/yellow/mint)
   - `MilestoneTimeline` — horizontal trade timeline with completed/current/future nodes
   - `BottomTabBar` — mobile navigation (Home, Explore, Create[elevated], Activity, Profile)
@@ -120,11 +120,18 @@ Form Requests use **array-style** rules (not pipe-delimited strings). Check `Sto
 - **Article feed (optional):** To ingest from North Cloud Redis pipeline, set Redis connection (e.g. `NORTHCLOUD_REDIS_HOST`) and run `php artisan articles:subscribe` (long-running). Production: optional systemd user service `oneredpaperclip-northcloud-subscribe.service`; enable with `systemctl --user enable oneredpaperclip-northcloud-subscribe.service` when using the feed.
 - **First admin:** Set `is_admin = 1` for a user in the DB (or run a one-off tinker/seed) so someone can access the dashboard.
 
+## Naming Convention: Campaign vs Challenge
+
+The UI displays "Challenge" as user-facing terminology, while the backend domain model uses "Campaign" throughout (models, database tables, routes, enums, controllers, actions). This is intentional:
+- **Backend code**: `Campaign` model, `campaigns` table, `campaigns.*` routes, `CampaignStatus` enum
+- **Frontend display**: Vue pages at `resources/js/pages/challenges/`, component named `ChallengeCard`, UI text says "Challenge"
+- **Props/types in Vue**: Use `campaign` to match the backend data shape passed via Inertia
+
+Do not rename backend models/tables/routes to "challenge" — the domain model is "Campaign."
+
 ## Known Gaps
 
-These are referenced in code but don't exist yet:
-- `ItemMediaController` (referenced in `routes/web.php` and Wayfinder)
-- No model factories for Campaign, Item, Offer, Trade (only `UserFactory` exists; tests use `Model::create()` directly)
+- Existing tests use `Model::create()` directly instead of factories (factories now exist for all models — prefer using them for new tests)
 
 ## Design Documentation
 
@@ -156,7 +163,6 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
-- laravel/sail (SAIL) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
 - @inertiajs/vue3 (INERTIA) - v2

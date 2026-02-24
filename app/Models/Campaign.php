@@ -5,10 +5,14 @@ namespace App\Models;
 use App\Enums\CampaignStatus;
 use App\Enums\CampaignVisibility;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Campaign extends Model
 {
+    /** @use HasFactory<\Database\Factories\CampaignFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'category_id',
