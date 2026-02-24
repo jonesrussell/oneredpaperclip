@@ -37,7 +37,7 @@ class CampaignController extends Controller
         $campaigns = $query->paginate(15)->withQueryString();
         $categories = Category::orderBy('name')->get();
 
-        return Inertia::render('campaigns/Index', [
+        return Inertia::render('challenges/Index', [
             'campaigns' => $campaigns,
             'categories' => $categories,
         ]);
@@ -55,7 +55,7 @@ class CampaignController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('dashboard/campaigns/Index', [
+        return Inertia::render('dashboard/challenges/Index', [
             'campaigns' => $campaigns,
         ]);
     }
@@ -67,7 +67,7 @@ class CampaignController extends Controller
     {
         $categories = Category::orderBy('name')->get();
 
-        return Inertia::render('campaigns/Create', [
+        return Inertia::render('challenges/Create', [
             'categories' => $categories,
         ]);
     }
@@ -92,7 +92,7 @@ class CampaignController extends Controller
         $campaign->load(['startItem', 'goalItem']);
         $categories = Category::orderBy('name')->get();
 
-        return Inertia::render('campaigns/Edit', [
+        return Inertia::render('challenges/Edit', [
             'campaign' => $campaign,
             'categories' => $categories,
         ]);
@@ -151,11 +151,11 @@ class CampaignController extends Controller
                 $campaign->goalItem?->title ?? 'Goal'
             );
 
-        return Inertia::render('campaigns/Show', [
+        return Inertia::render('challenges/Show', [
             'campaign' => $campaign,
             'isFollowing' => $isFollowing,
             'meta' => [
-                'title' => ($campaign->title ?? 'Campaign').' — '.config('app.name'),
+                'title' => ($campaign->title ?? 'Challenge').' — '.config('app.name'),
                 'description' => $description,
             ],
         ]);

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { ImageIcon } from 'lucide-vue-next';
 
 import ProgressRing from '@/components/ProgressRing.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/composables/useInitials';
 import campaigns from '@/routes/campaigns';
 
-defineProps<{
+const props = defineProps<{
     campaign: {
         id: number;
         title: string | null;
@@ -67,6 +68,11 @@ function statusStyles(status: string): string {
             return 'bg-[var(--muted)] text-[var(--ink-muted)]';
     }
 }
+
+const heroImageUrl = (): string | null =>
+    props.campaign.current_item?.image_url ??
+    props.campaign.goal_item?.image_url ??
+    null;
 </script>
 
 <template>
@@ -85,6 +91,26 @@ function statusStyles(status: string): string {
             aria-hidden="true"
         />
 
+        <!-- Hero image area -->
+        <div
+            class="relative h-36 w-full shrink-0 overflow-hidden bg-gradient-to-br from-[var(--ink)]/8 to-[var(--ink)]/4 transition-transform duration-200 group-hover:scale-[1.02]"
+        >
+            <img
+                v-if="heroImageUrl()"
+                :src="heroImageUrl()!"
+                alt=""
+                class="size-full object-cover"
+            />
+            <div
+                v-else
+                class="flex size-full flex-col items-center justify-center gap-1.5 text-[var(--ink-muted)]"
+                aria-hidden="true"
+            >
+                <ImageIcon class="size-10 opacity-50" />
+                <span class="text-xs font-medium">No photo</span>
+            </div>
+        </div>
+
         <div class="relative min-w-0 p-4 pl-5">
             <!-- Progress ring (when provided) -->
             <div v-if="progress != null" class="absolute top-4 right-4">
@@ -97,9 +123,9 @@ function statusStyles(status: string): string {
 
             <!-- Title -->
             <h3
-                class="line-clamp-2 pr-12 font-display text-lg leading-snug font-semibold text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
+                class="line-clamp-2 pr-12 font-display text-xl leading-snug font-semibold text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
             >
-                {{ campaign.title ?? 'Untitled campaign' }}
+                {{ campaign.title ?? 'Untitled challenge' }}
             </h3>
 
             <!-- Journey: current → goal (with optional item thumbnails) -->
@@ -119,10 +145,10 @@ function statusStyles(status: string): string {
                     />
                     <span
                         v-else
-                        class="flex size-8 items-center justify-center font-mono text-[10px] text-[var(--ink-muted)]"
+                        class="flex size-8 items-center justify-center text-[var(--ink-muted)]"
                         aria-hidden="true"
                     >
-                        ·
+                        <ImageIcon class="size-4 opacity-60" />
                     </span>
                 </span>
                 <span class="min-w-0 truncate">
@@ -146,10 +172,10 @@ function statusStyles(status: string): string {
                     />
                     <span
                         v-else
-                        class="flex size-8 items-center justify-center font-mono text-[10px] text-[var(--ink-muted)]"
+                        class="flex size-8 items-center justify-center text-[var(--ink-muted)]"
                         aria-hidden="true"
                     >
-                        ·
+                        <ImageIcon class="size-4 opacity-60" />
                     </span>
                 </span>
                 <span

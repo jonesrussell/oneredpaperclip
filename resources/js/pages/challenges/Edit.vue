@@ -21,7 +21,12 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import campaigns from '@/routes/campaigns';
 import type { BreadcrumbItem } from '@/types';
 
-type ItemEdit = { title: string; description?: string | null } | null;
+type ItemEdit = {
+    id: number;
+    title: string;
+    description?: string | null;
+    image_url?: string | null;
+} | null;
 
 type CampaignEdit = {
     id: number;
@@ -47,9 +52,9 @@ const goalItem = () =>
     props.campaign.goal_item ?? props.campaign.goalItem ?? null;
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Campaigns', href: '/campaigns' },
+    { title: 'Challenges', href: '/campaigns' },
     {
-        title: props.campaign.title ?? 'Campaign',
+        title: props.campaign.title ?? 'Challenge',
         href: `/campaigns/${props.campaign.id}`,
     },
     { title: 'Edit', href: `/campaigns/${props.campaign.id}/edit` },
@@ -71,6 +76,8 @@ const status = ref(props.campaign.status ?? 'active');
 
 const aiSuggestLoading = ref<'start_item' | 'goal_item' | 'story' | null>(null);
 const aiSuggestError = ref<string | null>(null);
+const uploadLoading = ref<'start' | 'goal' | null>(null);
+const uploadError = ref<string | null>(null);
 
 function getCsrfToken(): string | null {
     if (typeof document === 'undefined') return null;
@@ -133,11 +140,48 @@ async function requestAiSuggest(
 function cancel(): void {
     router.visit(campaigns.show.url({ campaign: props.campaign.id }));
 }
+
+async function uploadItemPhoto(itemId: number, file: File, which: 'start' | 'goal'): Promise<void> {
+    uploadError.value = null;
+    uploadLoading.value = which;
+    try {
+        const formData = new FormData();
+        formData.append('image', file);
+        const csrf = getCsrfToken();
+        const headers: HeadersInit = { Accept: 'application/json' };
+        if (csrf) headers['X-XSRF-TOKEN'] = csrf;
+        const res = await fetch(`/items/${itemId}/media`, {
+            method: 'POST',
+            credentials: 'include',
+            headers,
+            body: formData,
+        });
+        if (!res.ok) {
+            const data = (await res.json()) as { message?: string; errors?: Record<string, string[]> };
+            const msg = data.message ?? data.errors?.image?.join(' ') ?? 'Upload failed';
+            uploadError.value = msg;
+            return;
+        }
+        router.reload();
+    } catch {
+        uploadError.value = 'Upload failed. Try again.';
+    } finally {
+        uploadLoading.value = null;
+    }
+}
+
+function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    uploadItemPhoto(itemId, file, which);
+    input.value = '';
+}
 </script>
 
 <template>
     <Head
-        :title="campaign.title ? `Edit: ${campaign.title}` : 'Edit campaign'"
+        :title="campaign.title ? `Edit: ${campaign.title}` : 'Edit challenge'"
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -145,9 +189,15 @@ function cancel(): void {
             <h1
                 class="mb-6 font-display text-2xl font-semibold text-[var(--ink)]"
             >
-                Edit campaign
+                Edit challenge
             </h1>
 
+            <p
+                v-if="uploadError"
+                class="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+                {{ uploadError }}
+            </p>
             <Form
                 v-bind="campaigns.update.form({ campaign: campaign.id })"
                 v-slot="{ errors, processing }"
@@ -229,6 +279,37 @@ function cancel(): void {
                                 {{ aiSuggestError }}
                             </p>
                         </div>
+                        <div v-if="startItem()" class="grid gap-2 border-t border-[var(--border)] pt-4">
+                            <Label>Photo</Label>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div
+                                    class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--muted)]"
+                                >
+                                    <img
+                                        v-if="startItem()?.image_url"
+                                        :src="startItem()!.image_url!"
+                                        alt="Start item"
+                                        class="size-full object-cover"
+                                    />
+                                    <span
+                                        v-else
+                                        class="text-xs text-[var(--ink-muted)]"
+                                    >
+                                        No photo
+                                    </span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-white file:text-sm"
+                                        :disabled="uploadLoading === 'start'"
+                                        @change="onItemPhotoChange(startItem()!.id, 'start', $event)"
+                                    />
+                                    <Spinner v-if="uploadLoading === 'start'" class="size-4" />
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -308,13 +389,44 @@ function cancel(): void {
                                 {{ aiSuggestError }}
                             </p>
                         </div>
+                        <div v-if="goalItem()" class="grid gap-2 border-t border-[var(--border)] pt-4">
+                            <Label>Photo</Label>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div
+                                    class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--muted)]"
+                                >
+                                    <img
+                                        v-if="goalItem()?.image_url"
+                                        :src="goalItem()!.image_url!"
+                                        alt="Goal item"
+                                        class="size-full object-cover"
+                                    />
+                                    <span
+                                        v-else
+                                        class="text-xs text-[var(--ink-muted)]"
+                                    >
+                                        No photo
+                                    </span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-white file:text-sm"
+                                        :disabled="uploadLoading === 'goal'"
+                                        @change="onItemPhotoChange(goalItem()!.id, 'goal', $event)"
+                                    />
+                                    <Spinner v-if="uploadLoading === 'goal'" class="size-4" />
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
                 <Card class="border-[var(--border)]">
                     <CardHeader>
                         <CardTitle class="font-display text-lg"
-                            >Campaign details</CardTitle
+                            >Challenge details</CardTitle
                         >
                         <CardDescription>
                             Title, story, category, and visibility.
@@ -322,7 +434,7 @@ function cancel(): void {
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <div class="grid gap-2">
-                            <Label for="title">Campaign title</Label>
+                            <Label for="title">Challenge title</Label>
                             <Input
                                 id="title"
                                 v-model="campaignTitle"
@@ -367,7 +479,7 @@ function cancel(): void {
                                 id="story"
                                 v-model="campaignStory"
                                 name="story"
-                                placeholder="Why are you starting this campaign?"
+                                placeholder="Why are you starting this challenge?"
                                 min-height="min-h-[6rem]"
                             />
                             <InputError :message="errors.story" />

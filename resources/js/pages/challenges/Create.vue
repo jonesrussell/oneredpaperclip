@@ -27,7 +27,7 @@ defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Campaigns', href: '/campaigns' },
+    { title: 'Challenges', href: '/campaigns' },
     { title: 'Create', href: '/campaigns/create' },
 ];
 
@@ -141,7 +141,7 @@ async function requestAiSuggest(
 </script>
 
 <template>
-    <Head title="Create Campaign" />
+    <Head title="Create challenge" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto w-full max-w-2xl px-4 py-8">
@@ -369,21 +369,21 @@ async function requestAiSuggest(
                     </Card>
                 </div>
 
-                <!-- Step 3: Campaign details -->
+                <!-- Step 3: Challenge details -->
                 <div v-show="currentStep === 3">
                     <Card class="border-[var(--border)]">
                         <CardHeader>
                             <CardTitle class="font-display text-lg"
-                                >Campaign details</CardTitle
+                                >Challenge details</CardTitle
                             >
                             <CardDescription>
-                                Give your campaign a name and tell people why
+                                Give your challenge a name and tell people why
                                 you're trading.
                             </CardDescription>
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="grid gap-2">
-                                <Label for="title">Campaign title</Label>
+                                <Label for="title">Challenge title</Label>
                                 <Input
                                     id="title"
                                     v-model="campaignTitle"
@@ -432,7 +432,7 @@ async function requestAiSuggest(
                                     id="story"
                                     v-model="campaignStory"
                                     name="story"
-                                    placeholder="Why are you starting this campaign?"
+                                    placeholder="Why are you starting this challenge?"
                                     min-height="min-h-[6rem]"
                                 />
                                 <InputError :message="errors.story" />
@@ -504,7 +504,7 @@ async function requestAiSuggest(
                     <Card class="border-[var(--border)]">
                         <CardHeader>
                             <CardTitle class="font-display text-lg"
-                                >Review your campaign</CardTitle
+                                >Review your challenge</CardTitle
                             >
                             <CardDescription>
                                 Make sure everything looks good before
@@ -558,7 +558,7 @@ async function requestAiSuggest(
                                 <p
                                     class="text-xs font-medium tracking-wider text-[var(--ink-muted)] uppercase"
                                 >
-                                    Campaign
+                                    Challenge
                                 </p>
                                 <p
                                     class="font-display font-semibold text-[var(--ink)]"
@@ -633,7 +633,7 @@ async function requestAiSuggest(
                         :disabled="processing"
                     >
                         <Spinner v-if="processing" />
-                        Launch campaign
+                        Launch challenge
                     </Button>
                 </div>
             </Form>

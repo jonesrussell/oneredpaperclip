@@ -281,7 +281,7 @@ import campaigns from '@/routes/campaigns';
                         <p
                             class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
                         >
-                            Kyle did it solo. Here, anyone can create a campaign
+                            Kyle did it solo. Here, anyone can create a challenge
                             and start trading up from whatever they have.
                         </p>
                     </div>
@@ -345,12 +345,12 @@ import campaigns from '@/routes/campaigns';
                         <h3
                             class="font-display text-lg font-semibold text-[var(--ink)]"
                         >
-                            Campaign-based
+                            Challenge-based
                         </h3>
                         <p
                             class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
                         >
-                            Every trade-up journey is a campaign with a clear
+                            Every trade-up journey is a challenge with a clear
                             start item and goal. Track progress along the way.
                         </p>
                     </div>
@@ -384,7 +384,7 @@ import campaigns from '@/routes/campaigns';
                         <p
                             class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
                         >
-                            Follow campaigns, make offers, and cheer people on.
+                            Follow challenges, make offers, and cheer people on.
                             Trading up is more fun together.
                         </p>
                     </div>
@@ -414,7 +414,7 @@ import campaigns from '@/routes/campaigns';
                     Ready to start your own trade-up?
                 </h2>
                 <p class="mt-3 text-white/80">
-                    Create a campaign, list your start item, and see how far you
+                    Create a challenge, list your start item, and see how far you
                     can go.
                 </p>
                 <div
@@ -435,7 +435,7 @@ import campaigns from '@/routes/campaigns';
                                 : 'inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
                         "
                     >
-                        Browse campaigns
+                        Browse challenges
                     </Link>
                 </div>
             </div>

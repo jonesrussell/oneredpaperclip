@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'My Campaigns',
+        title: 'My Challenges',
         href: dashboardCampaigns(),
         icon: ListChecks,
     },

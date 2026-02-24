@@ -70,9 +70,9 @@ const isOwner = computed(() => {
 });
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Campaigns', href: '/campaigns' },
+    { title: 'Challenges', href: '/campaigns' },
     {
-        title: props.campaign.title ?? 'Campaign',
+        title: props.campaign.title ?? 'Challenge',
         href: `/campaigns/${props.campaign.id}`,
     },
 ];
@@ -151,7 +151,7 @@ function formatDate(dateString: string): string {
 
 <template>
     <Head
-        :title="`${campaign.title ?? 'Campaign'} — ${page.props.name ?? 'One Red Paperclip'}`"
+        :title="`${campaign.title ?? 'Challenge'} — ${page.props.name ?? 'One Red Paperclip'}`"
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -187,7 +187,7 @@ function formatDate(dateString: string): string {
                         <h1
                             class="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
                         >
-                            {{ campaign.title ?? 'Untitled campaign' }}
+                            {{ campaign.title ?? 'Untitled challenge' }}
                         </h1>
                         <div
                             class="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
@@ -199,7 +199,7 @@ function formatDate(dateString: string): string {
                                     v-if="campaign.user?.avatar"
                                     :src="campaign.user.avatar"
                                     :alt="
-                                        campaign.user?.name ?? 'Campaign owner'
+                                        campaign.user?.name ?? 'Challenge owner'
                                     "
                                 />
                                 <AvatarFallback
@@ -225,7 +225,7 @@ function formatDate(dateString: string): string {
                                 class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                             >
                                 <Pencil class="size-4" />
-                                Edit campaign
+                                Edit challenge
                             </Link>
                         </div>
                     </div>

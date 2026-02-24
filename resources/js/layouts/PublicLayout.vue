@@ -81,7 +81,7 @@ const canRegister = computed(
                         :href="campaigns.index().url"
                         class="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--ink)]"
                     >
-                        Explore
+                        Explore challenges
                     </Link>
 
                     <AppearanceToggle class="ml-2" />
@@ -147,7 +147,7 @@ const canRegister = computed(
                         :href="campaigns.index().url"
                         class="hover:text-[var(--ink)]"
                     >
-                        Campaigns
+                        Challenges
                     </Link>
                     <Link
                         v-if="!user"

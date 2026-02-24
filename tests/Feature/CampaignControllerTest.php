@@ -24,7 +24,7 @@ test('authenticated user can get campaign create page', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Create')
+        ->component('challenges/Create')
         ->has('categories', 2)
     );
 });
@@ -79,7 +79,7 @@ test('guest can get campaign show page', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Show')
+        ->component('challenges/Show')
         ->has('campaign')
         ->where('campaign.id', $campaign->id)
     );
@@ -117,7 +117,7 @@ test('authenticated user can get campaign show page with follow state', function
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Show')
+        ->component('challenges/Show')
         ->has('campaign')
         ->has('isFollowing')
     );
@@ -133,7 +133,7 @@ test('authenticated user can get dashboard campaigns page', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('dashboard/campaigns/Index')
+        ->component('dashboard/challenges/Index')
         ->has('campaigns')
         ->has('campaigns.data')
     );
@@ -167,7 +167,7 @@ test('dashboard campaigns page shows only current user campaigns', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('dashboard/campaigns/Index')
+        ->component('dashboard/challenges/Index')
         ->has('campaigns.data', 1)
         ->where('campaigns.data.0.id', $myCampaign->id)
     );
@@ -200,7 +200,7 @@ test('campaigns index does not include draft campaigns', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Index')
+        ->component('challenges/Index')
         ->has('campaigns.data', 1)
         ->where('campaigns.data.0.id', $activeCampaign->id)
     );
@@ -241,7 +241,7 @@ test('owner can view their own draft campaign', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Show')
+        ->component('challenges/Show')
         ->where('campaign.id', $campaign->id)
         ->where('campaign.title', 'My draft')
     );
@@ -346,7 +346,7 @@ test('owner can get campaign edit page', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('campaigns/Edit')
+        ->component('challenges/Edit')
         ->has('campaign')
         ->has('categories')
         ->where('campaign.id', $campaign->id)

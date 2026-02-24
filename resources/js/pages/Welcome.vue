@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 
-import CampaignCard from '@/components/CampaignCard.vue';
+import ChallengeCard from '@/components/ChallengeCard.vue';
 import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
@@ -46,7 +46,7 @@ function formatStat(count: number): string {
 const howItWorksSteps = [
     {
         title: 'Start',
-        body: 'Create a campaign with something you have and something you want.',
+        body: 'Create a challenge with something you have and something you want.',
         color: 'coral',
     },
     {
@@ -99,9 +99,15 @@ function stepNodeColor(color: string): string {
                     <div
                         class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
                     >
-                        <h1
-                            class="order-1 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:col-start-1 md:row-start-1 md:text-6xl"
+                        <p
+                            class="order-1 animate-in text-sm font-medium uppercase tracking-wider text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:order-none md:col-start-1 md:row-start-1"
                             style="animation-delay: 0ms"
+                        >
+                            Trading challenges
+                        </p>
+                        <h1
+                            class="order-2 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:col-start-1 md:row-start-1 md:text-6xl md:mt-1"
+                            style="animation-delay: 40ms"
                         >
                             Start with one thing.
                             <span class="text-[var(--brand-red)]"
@@ -110,7 +116,7 @@ function stepNodeColor(color: string): string {
                         </h1>
                         <!-- Paperclip: own column, spans both rows, vertically centered to left column -->
                         <div
-                            class="relative order-3 flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:col-start-2 md:row-span-2 md:row-start-1 md:h-full md:items-center md:justify-end"
+                            class="relative order-4 flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:col-start-2 md:row-span-2 md:row-start-1 md:h-full md:items-center md:justify-end"
                             style="animation-delay: 120ms"
                         >
                             <div
@@ -127,13 +133,13 @@ function stepNodeColor(color: string): string {
                             </div>
                         </div>
                         <div
-                            class="order-2 max-w-xl md:order-none md:col-start-1 md:row-start-2"
+                            class="order-3 max-w-xl md:order-none md:col-start-1 md:row-start-2"
                         >
                             <p
                                 class="mt-5 animate-in text-lg leading-relaxed text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:mt-0"
                                 style="animation-delay: 80ms"
                             >
-                                Create a campaign with a start item and a goal.
+                                Create a challenge with a start item and a goal.
                                 Others make offers. You trade, confirm, and move
                                 closer to your goal—one swap at a time.
                             </p>
@@ -146,7 +152,7 @@ function stepNodeColor(color: string): string {
                                     :href="campaigns.create().url"
                                     class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
                                 >
-                                    Start a campaign
+                                    Start a challenge
                                 </Link>
                                 <Link
                                     v-else-if="props.canRegister"
@@ -159,7 +165,7 @@ function stepNodeColor(color: string): string {
                                     :href="campaigns.index().url"
                                     class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
                                 >
-                                    Browse campaigns
+                                    Browse challenges
                                 </Link>
                             </div>
                         </div>
@@ -181,7 +187,7 @@ function stepNodeColor(color: string): string {
                     >
                         {{ formatStat(props.stats.campaignsCount) }}
                     </p>
-                    <p class="text-sm text-[var(--ink-muted)]">Campaigns</p>
+                    <p class="text-sm text-[var(--ink-muted)]">Challenges</p>
                 </div>
                 <div class="text-center">
                     <p
@@ -311,7 +317,7 @@ function stepNodeColor(color: string): string {
                         <h2
                             class="font-display text-2xl font-semibold tracking-tight text-[var(--ink)] sm:text-3xl"
                         >
-                            Active campaigns
+                            Active challenges
                         </h2>
                         <p class="mt-1 text-[var(--ink-muted)]">
                             See what others are trading toward.
@@ -328,13 +334,13 @@ function stepNodeColor(color: string): string {
                     v-if="props.featuredCampaigns.length === 0"
                     class="mt-10 rounded-xl border border-dashed border-[var(--ink)]/20 bg-[var(--paper)]/60 py-16 text-center text-[var(--ink-muted)]"
                 >
-                    No public campaigns yet. Be the first to start one.
+                    No public challenges yet. Be the first to start one.
                     <Link
                         v-if="$page.props.auth.user"
                         :href="campaigns.create().url"
                         class="ml-1 font-medium text-[var(--brand-red)] hover:underline"
                     >
-                        Create a campaign
+                        Create a challenge
                     </Link>
                 </div>
                 <ul
@@ -348,7 +354,7 @@ function stepNodeColor(color: string): string {
                         class="min-w-0 animate-in [animation-duration:0.45s] [animation-fill-mode:both] fade-in slide-in-from-bottom-3"
                         :style="{ animationDelay: `${120 + i * 50}ms` }"
                     >
-                        <CampaignCard :campaign="campaign" />
+                        <ChallengeCard :campaign="campaign" />
                     </li>
                 </ul>
             </div>
@@ -386,7 +392,7 @@ function stepNodeColor(color: string): string {
                                 : 'surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
                         "
                     >
-                        Browse campaigns
+                        Browse challenges
                     </Link>
                 </div>
             </div>

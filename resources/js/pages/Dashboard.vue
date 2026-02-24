@@ -28,7 +28,7 @@ const howItWorksSteps = [
     {
         step: '1',
         title: 'Start',
-        body: 'Create a campaign with something you have and something you want.',
+        body: 'Create a challenge with something you have and something you want.',
     },
     {
         step: '2',
@@ -76,7 +76,7 @@ const howItWorksSteps = [
                         {{ props.activeCampaignsCount }}
                     </p>
                     <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
-                        Active Campaigns
+                        Active Challenges
                     </p>
                 </div>
                 <div
@@ -116,7 +116,7 @@ const howItWorksSteps = [
                                 <PlusCircle class="size-5" />
                             </div>
                             <CardTitle class="mt-2">
-                                Start a campaign
+                                Start a challenge
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -137,12 +137,12 @@ const howItWorksSteps = [
                                 <Compass class="size-5" />
                             </div>
                             <CardTitle class="mt-2">
-                                Browse campaigns
+                                Browse challenges
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p class="text-sm text-[var(--ink-muted)]">
-                                Explore active campaigns and make an offer on
+                                Explore active challenges and make an offer on
                                 something you like.
                             </p>
                         </CardContent>

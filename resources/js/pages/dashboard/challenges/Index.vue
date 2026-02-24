@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-import CampaignCard from '@/components/CampaignCard.vue';
+import ChallengeCard from '@/components/ChallengeCard.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import campaignRoutes from '@/routes/campaigns';
@@ -31,40 +31,40 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
-    { title: 'My Campaigns', href: dashboardCampaigns().url },
+    { title: 'My Challenges', href: dashboardCampaigns().url },
 ];
 
 const campaignList = ref(props.campaigns.data);
 </script>
 
 <template>
-    <Head title="My Campaigns" />
+    <Head title="My Challenges" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
-            <h1 class="text-xl font-semibold">My Campaigns</h1>
+            <h1 class="text-xl font-semibold">My Challenges</h1>
 
             <!-- Empty state -->
             <div
                 v-if="campaignList.length === 0"
                 class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-16 text-center text-[var(--ink-muted)]"
             >
-                You haven't started any campaigns yet.
+                You haven't started any challenges yet.
                 <br />
                 <Link
                     :href="campaignRoutes.create().url"
                     class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
                 >
-                    Create a campaign
+                    Create a challenge
                 </Link>
             </div>
 
-            <!-- Campaign grid -->
+            <!-- Challenge grid -->
             <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <li v-for="campaign in campaignList" :key="campaign.id">
-                    <CampaignCard :campaign="campaign" />
+                    <ChallengeCard :campaign="campaign" />
                 </li>
             </ul>
 
@@ -72,7 +72,7 @@ const campaignList = ref(props.campaigns.data);
             <nav
                 v-if="campaigns.last_page > 1"
                 class="flex flex-wrap items-center justify-center gap-2 pt-4"
-                aria-label="Campaign pagination"
+                aria-label="Challenge pagination"
             >
                 <template v-for="link in campaigns.links" :key="link.label">
                     <Link

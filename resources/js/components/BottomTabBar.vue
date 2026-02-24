@@ -42,7 +42,7 @@ function isActive(path: string): boolean {
             "
         >
             <Compass class="size-5" />
-            <span>Explore</span>
+            <span>Challenges</span>
         </Link>
 
         <Link
