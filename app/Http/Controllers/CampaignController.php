@@ -19,6 +19,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Ai\Exceptions\AiException;
+use Laravel\Ai\Exceptions\ProviderOverloadedException;
+use Laravel\Ai\Exceptions\RateLimitedException;
 
 class CampaignController extends Controller
 {
@@ -166,7 +169,27 @@ class CampaignController extends Controller
      */
     public function aiSuggest(CampaignAiSuggestRequest $request, SuggestCampaignText $suggest): JsonResponse
     {
-        $suggestion = $suggest($request->validated());
+        try {
+            $suggestion = $suggest($request->validated());
+        } catch (RateLimitedException $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'AI service is rate limited. Please wait a moment and try again.',
+            ], 429);
+        } catch (ProviderOverloadedException $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'AI service is temporarily overloaded. Please try again shortly.',
+            ], 503);
+        } catch (AiException|\RuntimeException $e) {
+            report($e);
+
+            return response()->json([
+                'message' => 'Unable to generate AI suggestion. Please try again or write your description manually.',
+            ], 502);
+        }
 
         return response()->json(['suggestion' => $suggestion]);
     }

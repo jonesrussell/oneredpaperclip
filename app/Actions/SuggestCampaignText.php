@@ -17,7 +17,13 @@ class SuggestCampaignText
 
         $response = SuggestCampaignTextAgent::make()->prompt($prompt);
 
-        return trim((string) $response);
+        $text = trim($response->text);
+
+        if ($text === '') {
+            throw new \RuntimeException('AI returned an empty suggestion. Please try again.');
+        }
+
+        return $text;
     }
 
     /**
