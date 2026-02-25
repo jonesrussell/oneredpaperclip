@@ -1,8 +1,7 @@
 <?php
 
+use App\Ai\Agents\SuggestCampaignTextAgent;
 use App\Models\User;
-use OpenAI\Laravel\Facades\OpenAI;
-use OpenAI\Responses\Chat\CreateResponse;
 
 uses()->group('campaigns');
 
@@ -29,16 +28,8 @@ test('campaign ai suggest validates context', function () {
 });
 
 test('campaign ai suggest returns suggestion when valid', function () {
-    OpenAI::fake([
-        CreateResponse::fake([
-            'choices' => [
-                [
-                    'message' => [
-                        'content' => 'I am trading up from a red paperclip to a house.',
-                    ],
-                ],
-            ],
-        ]),
+    SuggestCampaignTextAgent::fake([
+        'I am trading up from a red paperclip to a house.',
     ]);
 
     $response = $this->actingAs($this->user)->postJson(route('campaigns.ai-suggest'), [
@@ -47,6 +38,8 @@ test('campaign ai suggest returns suggestion when valid', function () {
         'title_hint' => 'From paperclip to house',
     ]);
 
-    $response->assertOk();
+    $response->assertSuccessful();
     $response->assertJson(['suggestion' => 'I am trading up from a red paperclip to a house.']);
+
+    SuggestCampaignTextAgent::assertPrompted(fn ($prompt) => $prompt->contains('Starting with a paperclip.'));
 });
