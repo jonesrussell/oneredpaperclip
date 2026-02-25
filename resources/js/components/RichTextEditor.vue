@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
@@ -28,8 +27,9 @@ const emit = defineEmits<{
 const editor = useEditor({
     content: props.modelValue || '',
     extensions: [
-        StarterKit,
-        Link.configure({ openOnClick: false }),
+        StarterKit.configure({
+            link: { openOnClick: false },
+        }),
         Placeholder.configure({ placeholder: props.placeholder }),
     ],
     editorProps: {
