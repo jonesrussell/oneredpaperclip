@@ -43,7 +43,10 @@ test('campaign ai suggest returns suggestion when valid', function () {
     $response->assertOk();
     $response->assertJson(['suggestion' => 'I am trading up from a red paperclip to a house.']);
 
-    SuggestCampaignTextAgent::assertPrompted(fn ($prompt) => $prompt->contains('Starting with a paperclip.'));
+    SuggestCampaignTextAgent::assertPrompted(
+        fn ($prompt) => $prompt->contains('Starting with a paperclip.')
+            && $prompt->contains('max 40 words')
+    );
 });
 
 test('campaign ai suggest builds correct prompt for start_item context', function () {
@@ -59,7 +62,9 @@ test('campaign ai suggest builds correct prompt for start_item context', functio
     $response->assertOk();
 
     SuggestCampaignTextAgent::assertPrompted(
-        fn ($prompt) => $prompt->contains('start item') && $prompt->contains('Red Paperclip')
+        fn ($prompt) => $prompt->contains('start item')
+            && $prompt->contains('Red Paperclip')
+            && $prompt->contains('max 20 words')
     );
 });
 
@@ -76,7 +81,9 @@ test('campaign ai suggest builds correct prompt for goal_item context', function
     $response->assertOk();
 
     SuggestCampaignTextAgent::assertPrompted(
-        fn ($prompt) => $prompt->contains('goal') && $prompt->contains('Dream House')
+        fn ($prompt) => $prompt->contains('goal')
+            && $prompt->contains('Dream House')
+            && $prompt->contains('max 20 words')
     );
 });
 

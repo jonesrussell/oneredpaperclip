@@ -38,17 +38,17 @@ class SuggestCampaignText
         $parts = [];
 
         if ($context === 'start_item') {
-            $parts[] = 'Suggest a short, engaging description for a trade-up start item.';
+            $parts[] = 'Write a 1-sentence item description (max 20 words) for a trade-up start item.';
             if ($title !== '') {
                 $parts[] = "Item title: {$title}.";
             }
         } elseif ($context === 'goal_item') {
-            $parts[] = 'Suggest a short, engaging description for a trade-up goal/dream item.';
+            $parts[] = 'Write a 1-sentence item description (max 20 words) for a trade-up dream/goal item.';
             if ($title !== '') {
                 $parts[] = "Item title: {$title}.";
             }
         } else {
-            $parts[] = 'Suggest a short campaign story (1–2 sentences) explaining why the user is doing this trade-up.';
+            $parts[] = 'Write a campaign story (1–2 sentences, max 40 words) explaining why the user is doing this trade-up.';
         }
 
         if ($current !== '') {
