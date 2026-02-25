@@ -2,12 +2,12 @@
 
 namespace App\Actions;
 
-use OpenAI\Laravel\Facades\OpenAI;
+use App\Ai\Agents\SuggestCampaignTextAgent;
 
 class SuggestCampaignText
 {
     /**
-     * Get an AI suggestion for campaign/item text. Uses OpenAI chat completion.
+     * Get an AI suggestion for campaign/item text.
      *
      * @param  array{context: string, current_text?: string, title_hint?: string}  $input
      */
@@ -15,21 +15,15 @@ class SuggestCampaignText
     {
         $prompt = $this->buildPrompt($input);
 
-        $response = OpenAI::chat()->create([
-            'model' => config('openai.chat_model', 'gpt-4o-mini'),
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => 'You help users write short, clear descriptions for a trade-up campaign platform. Reply with only the suggested text, no preamble or quotes.',
-                ],
-                ['role' => 'user', 'content' => $prompt],
-            ],
-            'max_tokens' => 500,
-        ]);
+        $response = SuggestCampaignTextAgent::make()->prompt($prompt);
 
-        $content = $response->choices[0]->message->content ?? '';
+        $text = trim($response->text);
 
-        return trim($content);
+        if ($text === '') {
+            throw new \RuntimeException('AI returned an empty suggestion. Please try again.');
+        }
+
+        return $text;
     }
 
     /**
