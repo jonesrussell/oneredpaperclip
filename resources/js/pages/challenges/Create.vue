@@ -232,7 +232,8 @@ async function requestAiSuggest(
                                         size="sm"
                                         class="gap-1.5 text-xs"
                                         :disabled="
-                                            aiSuggestLoading !== null
+                                            aiSuggestLoading !== null ||
+                                            !startTitle.trim()
                                         "
                                         @click="
                                             requestAiSuggest(
@@ -320,7 +321,8 @@ async function requestAiSuggest(
                                         size="sm"
                                         class="gap-1.5 text-xs"
                                         :disabled="
-                                            aiSuggestLoading !== null
+                                            aiSuggestLoading !== null ||
+                                            !goalTitle.trim()
                                         "
                                         @click="
                                             requestAiSuggest(
@@ -404,7 +406,8 @@ async function requestAiSuggest(
                                         size="sm"
                                         class="gap-1.5 text-xs"
                                         :disabled="
-                                            aiSuggestLoading !== null
+                                            aiSuggestLoading !== null ||
+                                            !campaignTitle.trim()
                                         "
                                         @click="
                                             requestAiSuggest(

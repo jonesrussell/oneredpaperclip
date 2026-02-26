@@ -237,7 +237,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null"
+                                    :disabled="aiSuggestLoading !== null || !startTitle.trim()"
                                     @click="
                                         requestAiSuggest(
                                             'start_item',
@@ -347,7 +347,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null"
+                                    :disabled="aiSuggestLoading !== null || !goalTitle.trim()"
                                     @click="
                                         requestAiSuggest(
                                             'goal_item',
@@ -454,7 +454,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null"
+                                    :disabled="aiSuggestLoading !== null || !campaignTitle.trim()"
                                     @click="
                                         requestAiSuggest(
                                             'story',
