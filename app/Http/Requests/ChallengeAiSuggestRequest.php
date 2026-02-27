@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CampaignAiSuggestRequest extends FormRequest
+class ChallengeAiSuggestRequest extends FormRequest
 {
     public function authorize(): bool
     {

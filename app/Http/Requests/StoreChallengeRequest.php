@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\CampaignStatus;
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreCampaignRequest extends FormRequest
+class StoreChallengeRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -20,8 +21,8 @@ class StoreCampaignRequest extends FormRequest
             'title' => ['nullable', 'string', 'max:255'],
             'story' => ['nullable', 'string', 'max:2000'],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'status' => ['nullable', 'string', Rule::in([CampaignStatus::Draft->value, CampaignStatus::Active->value])],
-            'visibility' => ['nullable', 'string', Rule::in(array_map(fn ($c) => $c->value, \App\Enums\CampaignVisibility::cases()))],
+            'status' => ['nullable', 'string', Rule::in([ChallengeStatus::Draft->value, ChallengeStatus::Active->value])],
+            'visibility' => ['nullable', 'string', Rule::in(array_map(fn ($c) => $c->value, ChallengeVisibility::cases()))],
             'start_item' => ['required', 'array'],
             'start_item.title' => ['required', 'string', 'max:255'],
             'start_item.description' => ['nullable', 'string', 'max:2000'],
