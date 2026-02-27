@@ -2,35 +2,35 @@
 
 namespace App\Actions;
 
-use App\Enums\CampaignStatus;
-use App\Enums\CampaignVisibility;
-use App\Models\Campaign;
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
+use App\Models\Challenge;
 
-class UpdateCampaign
+class UpdateChallenge
 {
     /**
-     * Update campaign and its start/goal items.
+     * Update challenge and its start/goal items.
      *
      * @param  array{title?: string|null, story?: string|null, category_id?: int|null, status?: string|null, visibility?: string|null, start_item: array{title: string, description?: string|null}, goal_item: array{title: string, description?: string|null}}  $validated
      */
-    public function __invoke(Campaign $campaign, array $validated): Campaign
+    public function __invoke(Challenge $challenge, array $validated): Challenge
     {
         $status = isset($validated['status'])
-            ? CampaignStatus::from($validated['status'])
-            : $campaign->status;
+            ? ChallengeStatus::from($validated['status'])
+            : $challenge->status;
         $visibility = isset($validated['visibility'])
-            ? CampaignVisibility::from($validated['visibility'])
-            : $campaign->visibility;
+            ? ChallengeVisibility::from($validated['visibility'])
+            : $challenge->visibility;
 
-        $campaign->update([
-            'category_id' => $validated['category_id'] ?? $campaign->category_id,
+        $challenge->update([
+            'category_id' => $validated['category_id'] ?? $challenge->category_id,
             'status' => $status,
             'visibility' => $visibility,
-            'title' => $validated['title'] ?? $campaign->title,
-            'story' => $validated['story'] ?? $campaign->story,
+            'title' => $validated['title'] ?? $challenge->title,
+            'story' => $validated['story'] ?? $challenge->story,
         ]);
 
-        $startItem = $campaign->startItem;
+        $startItem = $challenge->startItem;
         if ($startItem) {
             $startItem->update([
                 'title' => $validated['start_item']['title'],
@@ -38,7 +38,7 @@ class UpdateCampaign
             ]);
         }
 
-        $goalItem = $campaign->goalItem;
+        $goalItem = $challenge->goalItem;
         if ($goalItem) {
             $goalItem->update([
                 'title' => $validated['goal_item']['title'],
@@ -46,6 +46,6 @@ class UpdateCampaign
             ]);
         }
 
-        return $campaign->load(['items', 'currentItem', 'goalItem']);
+        return $challenge->load(['items', 'currentItem', 'goalItem']);
     }
 }

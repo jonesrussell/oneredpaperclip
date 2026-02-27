@@ -2,12 +2,12 @@
 
 namespace App\Actions;
 
-use App\Ai\Agents\SuggestCampaignTextAgent;
+use App\Ai\Agents\SuggestChallengeTextAgent;
 
-class SuggestCampaignText
+class SuggestChallengeText
 {
     /**
-     * Get an AI suggestion for campaign/item text.
+     * Get an AI suggestion for challenge/item text.
      *
      * @param  array{context: string, current_text?: string, title_hint?: string}  $input
      */
@@ -15,7 +15,7 @@ class SuggestCampaignText
     {
         $prompt = $this->buildPrompt($input);
 
-        $response = SuggestCampaignTextAgent::make()->prompt($prompt);
+        $response = SuggestChallengeTextAgent::make()->prompt($prompt);
 
         $text = trim($response->text);
 
@@ -48,7 +48,7 @@ class SuggestCampaignText
                 $parts[] = "Item title: {$title}.";
             }
         } else {
-            $parts[] = 'Write a campaign story (1–2 sentences, max 40 words) explaining why the user is doing this trade-up.';
+            $parts[] = 'Write a challenge story (1–2 sentences, max 40 words) explaining why the user is doing this trade-up.';
         }
 
         if ($current !== '') {
