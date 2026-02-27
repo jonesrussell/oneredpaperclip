@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CampaignVisibility: string
+enum ChallengeVisibility: string
 {
     case Public = 'public';
     case Unlisted = 'unlisted';

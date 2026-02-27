@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CampaignStatus: string
+enum ChallengeStatus: string
 {
     case Draft = 'draft';
     case Active = 'active';
