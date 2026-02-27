@@ -7,9 +7,14 @@ use App\Enums\CampaignVisibility;
 use App\Models\Campaign;
 use App\Models\Item;
 use App\Models\User;
+use App\Services\XpService;
 
 class CreateCampaign
 {
+    public function __construct(
+        private XpService $xpService
+    ) {}
+
     /**
      * Create a campaign with start and goal items.
      *
@@ -55,6 +60,8 @@ class CreateCampaign
             'current_item_id' => $startItem->id,
             'goal_item_id' => $goalItem->id,
         ]);
+
+        $this->xpService->awardCampaignCreation($user);
 
         return $campaign->load('items');
     }

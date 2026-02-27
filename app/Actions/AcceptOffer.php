@@ -7,11 +7,16 @@ use App\Enums\TradeStatus;
 use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Trade;
+use App\Services\XpService;
 
 class AcceptOffer
 {
+    public function __construct(
+        private XpService $xpService
+    ) {}
+
     /**
-     * Accept an offer: create a trade, update offer status, notify offerer.
+     * Accept an offer: create a trade, update offer status, notify offerer, award XP.
      */
     public function __invoke(Offer $offer): Trade
     {
@@ -37,6 +42,10 @@ class AcceptOffer
             ],
             'read_at' => null,
         ]);
+
+        if ($campaign->user) {
+            $this->xpService->awardOfferReceived($campaign->user);
+        }
 
         return $trade;
     }

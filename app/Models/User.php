@@ -35,6 +35,11 @@ class User extends Authenticatable
         'reputation_score',
         'verified_at',
         'is_admin',
+        'xp',
+        'level',
+        'current_streak',
+        'longest_streak',
+        'last_activity_at',
     ];
 
     /**
@@ -62,7 +67,50 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'verified_at' => 'datetime',
             'is_admin' => 'boolean',
+            'xp' => 'integer',
+            'level' => 'integer',
+            'current_streak' => 'integer',
+            'longest_streak' => 'integer',
+            'last_activity_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Calculate XP required for a given level.
+     * Level n requires roughly 250 * n^1.5 XP.
+     */
+    public static function xpRequiredForLevel(int $level): int
+    {
+        if ($level <= 1) {
+            return 0;
+        }
+
+        return (int) round(250 * pow($level, 1.5));
+    }
+
+    /**
+     * Get XP required for the next level.
+     */
+    public function getXpForNextLevelAttribute(): int
+    {
+        return self::xpRequiredForLevel($this->level + 1);
+    }
+
+    /**
+     * Get XP progress within current level (0-100%).
+     */
+    public function getLevelProgressAttribute(): int
+    {
+        $currentLevelXp = self::xpRequiredForLevel($this->level);
+        $nextLevelXp = self::xpRequiredForLevel($this->level + 1);
+        $xpInLevel = $this->xp - $currentLevelXp;
+        $xpNeeded = $nextLevelXp - $currentLevelXp;
+
+        if ($xpNeeded <= 0) {
+            return 100;
+        }
+
+        return (int) min(100, round(($xpInLevel / $xpNeeded) * 100));
     }
 
     public function getAvatarAttribute(): ?string
