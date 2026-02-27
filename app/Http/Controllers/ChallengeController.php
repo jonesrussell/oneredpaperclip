@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateCampaign;
-use App\Actions\SuggestCampaignText;
-use App\Actions\UpdateCampaign;
-use App\Enums\CampaignStatus;
+use App\Actions\CreateChallenge;
+use App\Actions\SuggestChallengeText;
+use App\Actions\UpdateChallenge;
+use App\Enums\ChallengeStatus;
 use App\Enums\OfferStatus;
-use App\Http\Requests\CampaignAiSuggestRequest;
-use App\Http\Requests\StoreCampaignRequest;
-use App\Http\Requests\UpdateCampaignRequest;
-use App\Models\Campaign;
+use App\Http\Requests\ChallengeAiSuggestRequest;
+use App\Http\Requests\StoreChallengeRequest;
+use App\Http\Requests\UpdateChallengeRequest;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Follow;
 use App\Services\RichTextHtmlSanitizer;
 use Illuminate\Http\JsonResponse;
@@ -23,35 +23,35 @@ use Laravel\Ai\Exceptions\AiException;
 use Laravel\Ai\Exceptions\ProviderOverloadedException;
 use Laravel\Ai\Exceptions\RateLimitedException;
 
-class CampaignController extends Controller
+class ChallengeController extends Controller
 {
     /**
-     * List campaigns (explore); filter by category, status; paginate.
+     * List challenges (explore); filter by category, status; paginate.
      */
     public function index(Request $request): Response
     {
-        $query = Campaign::query()
+        $query = Challenge::query()
             ->notDraft()
             ->when($request->filled('category_id'), fn ($q) => $q->where('category_id', $request->integer('category_id')))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->with(['user', 'currentItem.media', 'goalItem.media'])
             ->latest();
 
-        $campaigns = $query->paginate(15)->withQueryString();
+        $challenges = $query->paginate(15)->withQueryString();
         $categories = Category::orderBy('name')->get();
 
         return Inertia::render('challenges/Index', [
-            'campaigns' => $campaigns,
+            'challenges' => $challenges,
             'categories' => $categories,
         ]);
     }
 
     /**
-     * List the authenticated user's campaigns.
+     * List the authenticated user's challenges.
      */
-    public function myCampaigns(Request $request): Response
+    public function myChallenges(Request $request): Response
     {
-        $campaigns = Campaign::query()
+        $challenges = Challenge::query()
             ->where('user_id', $request->user()->id)
             ->with(['user', 'currentItem.media', 'goalItem.media'])
             ->latest()
@@ -59,12 +59,12 @@ class CampaignController extends Controller
             ->withQueryString();
 
         return Inertia::render('dashboard/challenges/Index', [
-            'campaigns' => $campaigns,
+            'challenges' => $challenges,
         ]);
     }
 
     /**
-     * Show the form for creating a new campaign.
+     * Show the form for creating a new challenge.
      */
     public function create(): Response
     {
@@ -76,55 +76,55 @@ class CampaignController extends Controller
     }
 
     /**
-     * Store a newly created campaign.
+     * Store a newly created challenge.
      */
-    public function store(StoreCampaignRequest $request, CreateCampaign $createCampaign): RedirectResponse
+    public function store(StoreChallengeRequest $request, CreateChallenge $createChallenge): RedirectResponse
     {
-        $campaign = $createCampaign($request->validated(), $request->user());
+        $challenge = $createChallenge($request->validated(), $request->user());
 
-        return redirect()->route('campaigns.show', $campaign);
+        return redirect()->route('challenges.show', $challenge);
     }
 
     /**
-     * Show the form for editing the campaign (owner only).
+     * Show the form for editing the challenge (owner only).
      */
-    public function edit(Request $request, Campaign $campaign): Response
+    public function edit(Request $request, Challenge $challenge): Response
     {
-        $this->authorize('update', $campaign);
+        $this->authorize('update', $challenge);
 
-        $campaign->load(['startItem', 'goalItem']);
+        $challenge->load(['startItem', 'goalItem']);
         $categories = Category::orderBy('name')->get();
 
         return Inertia::render('challenges/Edit', [
-            'campaign' => $campaign,
+            'challenge' => $challenge,
             'categories' => $categories,
         ]);
     }
 
     /**
-     * Update the specified campaign (owner only).
+     * Update the specified challenge (owner only).
      */
-    public function update(UpdateCampaignRequest $request, Campaign $campaign, UpdateCampaign $updateCampaign): RedirectResponse
+    public function update(UpdateChallengeRequest $request, Challenge $challenge, UpdateChallenge $updateChallenge): RedirectResponse
     {
-        $this->authorize('update', $campaign);
+        $this->authorize('update', $challenge);
 
-        $updateCampaign($campaign, $request->validated());
+        $updateChallenge($challenge, $request->validated());
 
-        return redirect()->route('campaigns.show', $campaign);
+        return redirect()->route('challenges.show', $challenge);
     }
 
     /**
-     * Display the specified campaign.
+     * Display the specified challenge.
      */
-    public function show(Request $request, Campaign $campaign): Response
+    public function show(Request $request, Challenge $challenge): Response
     {
-        if ($campaign->status === CampaignStatus::Draft) {
-            if (! $request->user() || $request->user()->id !== $campaign->user_id) {
+        if ($challenge->status === ChallengeStatus::Draft) {
+            if (! $request->user() || $request->user()->id !== $challenge->user_id) {
                 abort(404);
             }
         }
 
-        $campaign->load([
+        $challenge->load([
             'items',
             'trades' => fn ($q) => $q->with('offeredItem')->orderBy('position'),
             'offers' => fn ($q) => $q->where('status', OfferStatus::Pending),
@@ -138,36 +138,36 @@ class CampaignController extends Controller
         $isFollowing = $request->user()
             ? Follow::query()
                 ->where('user_id', $request->user()->id)
-                ->where('followable_type', Campaign::class)
-                ->where('followable_id', $campaign->id)
+                ->where('followable_type', Challenge::class)
+                ->where('followable_id', $challenge->id)
                 ->exists()
             : false;
 
         $sanitizer = app(RichTextHtmlSanitizer::class);
-        $campaign->setAttribute('story_safe', $sanitizer->sanitize($campaign->story ?? ''));
+        $challenge->setAttribute('story_safe', $sanitizer->sanitize($challenge->story ?? ''));
 
-        $description = $campaign->story
-            ? \Illuminate\Support\Str::limit(strip_tags($campaign->story), 160)
+        $description = $challenge->story
+            ? \Illuminate\Support\Str::limit(strip_tags($challenge->story), 160)
             : sprintf(
                 '%s → %s',
-                $campaign->currentItem?->title ?? 'Start',
-                $campaign->goalItem?->title ?? 'Goal'
+                $challenge->currentItem?->title ?? 'Start',
+                $challenge->goalItem?->title ?? 'Goal'
             );
 
         return Inertia::render('challenges/Show', [
-            'campaign' => $campaign,
+            'challenge' => $challenge,
             'isFollowing' => $isFollowing,
             'meta' => [
-                'title' => ($campaign->title ?? 'Challenge').' — '.config('app.name'),
+                'title' => ($challenge->title ?? 'Challenge').' — '.config('app.name'),
                 'description' => $description,
             ],
         ]);
     }
 
     /**
-     * AI-assisted text suggestion for campaign create/edit (start item, goal item, story).
+     * AI-assisted text suggestion for challenge create/edit (start item, goal item, story).
      */
-    public function aiSuggest(CampaignAiSuggestRequest $request, SuggestCampaignText $suggest): JsonResponse
+    public function aiSuggest(ChallengeAiSuggestRequest $request, SuggestChallengeText $suggest): JsonResponse
     {
         try {
             $suggestion = $suggest($request->validated());
