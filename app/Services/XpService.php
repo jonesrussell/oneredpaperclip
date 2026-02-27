@@ -6,13 +6,13 @@ use App\Models\User;
 
 class XpService
 {
-    public const XP_CREATE_CAMPAIGN = 50;
+    public const XP_CREATE_CHALLENGE = 50;
 
     public const XP_RECEIVE_OFFER = 10;
 
     public const XP_COMPLETE_TRADE = 100;
 
-    public const XP_COMPLETE_CAMPAIGN = 500;
+    public const XP_COMPLETE_CHALLENGE = 500;
 
     public const XP_DAILY_LOGIN = 25;
 
@@ -47,13 +47,13 @@ class XpService
     }
 
     /**
-     * Award XP for creating a campaign.
+     * Award XP for creating a challenge.
      *
      * @return array{xp_gained: int, leveled_up: bool, new_level: int|null}
      */
-    public function awardCampaignCreation(User $user): array
+    public function awardChallengeCreation(User $user): array
     {
-        return $this->award($user, self::XP_CREATE_CAMPAIGN, $user->current_streak);
+        return $this->award($user, self::XP_CREATE_CHALLENGE, $user->current_streak);
     }
 
     /**
@@ -77,13 +77,13 @@ class XpService
     }
 
     /**
-     * Award XP for completing a campaign (reaching the goal).
+     * Award XP for completing a challenge (reaching the goal).
      *
      * @return array{xp_gained: int, leveled_up: bool, new_level: int|null}
      */
-    public function awardCampaignCompletion(User $user): array
+    public function awardChallengeCompletion(User $user): array
     {
-        return $this->award($user, self::XP_COMPLETE_CAMPAIGN, $user->current_streak);
+        return $this->award($user, self::XP_COMPLETE_CHALLENGE, $user->current_streak);
     }
 
     /**

@@ -10,7 +10,7 @@ use Stringable;
 
 #[UseCheapestModel]
 #[MaxTokens(100)]
-class SuggestCampaignTextAgent implements Agent
+class SuggestChallengeTextAgent implements Agent
 {
     use Promptable;
 
@@ -20,11 +20,11 @@ class SuggestCampaignTextAgent implements Agent
     public function instructions(): Stringable|string
     {
         return <<<'INSTRUCTIONS'
-            You write text for a trade-up campaign platform where users trade items toward a goal.
+            You write text for a trade-up challenge platform where users trade items toward a goal.
             Rules:
             - Reply with ONLY the suggested text. No preamble, labels, or quotes.
             - Item descriptions: 1 sentence, max 20 words. Highlight what makes it appealing to trade for.
-            - Campaign stories: 1–2 sentences, max 40 words. Explain the motivation behind the trade-up journey.
+            - Challenge stories: 1–2 sentences, max 40 words. Explain the motivation behind the trade-up journey.
             - Be specific and vivid, not generic. Use the item title when provided.
             - Never repeat the item title as the entire suggestion.
             INSTRUCTIONS;
