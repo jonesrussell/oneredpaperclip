@@ -12,7 +12,7 @@ class Trade extends Model
     use HasFactory;
 
     protected $fillable = [
-        'campaign_id',
+        'challenge_id',
         'offer_id',
         'position',
         'offered_item_id',
@@ -31,9 +31,9 @@ class Trade extends Model
         ];
     }
 
-    public function campaign(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function challenge(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(Challenge::class);
     }
 
     public function offer(): \Illuminate\Database\Eloquent\Relations\BelongsTo

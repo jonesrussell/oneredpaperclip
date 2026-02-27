@@ -12,10 +12,10 @@ class Offer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'campaign_id',
+        'challenge_id',
         'from_user_id',
         'offered_item_id',
-        'for_campaign_item_id',
+        'for_challenge_item_id',
         'message',
         'status',
         'expires_at',
@@ -29,9 +29,9 @@ class Offer extends Model
         ];
     }
 
-    public function campaign(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function challenge(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(Challenge::class);
     }
 
     public function fromUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -44,9 +44,9 @@ class Offer extends Model
         return $this->belongsTo(Item::class, 'offered_item_id');
     }
 
-    public function forCampaignItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function forChallengeItem(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Item::class, 'for_campaign_item_id');
+        return $this->belongsTo(Item::class, 'for_challenge_item_id');
     }
 
     public function trade(): \Illuminate\Database\Eloquent\Relations\HasOne

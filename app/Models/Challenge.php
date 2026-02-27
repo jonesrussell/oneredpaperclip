@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
-use App\Enums\CampaignStatus;
-use App\Enums\CampaignVisibility;
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Campaign extends Model
+class Challenge extends Model
 {
-    /** @use HasFactory<\Database\Factories\CampaignFactory> */
+    /** @use HasFactory<\Database\Factories\ChallengeFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -72,23 +75,23 @@ class Campaign extends Model
     protected function casts(): array
     {
         return [
-            'status' => CampaignStatus::class,
-            'visibility' => CampaignVisibility::class,
+            'status' => ChallengeStatus::class,
+            'visibility' => ChallengeVisibility::class,
         ];
     }
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', CampaignStatus::Active);
+        return $query->where('status', ChallengeStatus::Active);
     }
 
     public function scopeNotDraft(Builder $query): Builder
     {
-        return $query->where('status', '!=', CampaignStatus::Draft);
+        return $query->where('status', '!=', ChallengeStatus::Draft);
     }
 
     public function scopePublicVisibility(Builder $query): Builder
     {
-        return $query->where('visibility', CampaignVisibility::Public);
+        return $query->where('visibility', ChallengeVisibility::Public);
     }
 }

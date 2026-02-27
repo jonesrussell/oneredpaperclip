@@ -120,9 +120,9 @@ class User extends Authenticatable
             : null;
     }
 
-    public function campaigns(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function challenges(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Campaign::class);
+        return $this->hasMany(Challenge::class);
     }
 
     public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
