@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Heart, Pencil, Share2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import CelebrationOverlay from '@/components/CelebrationOverlay.vue';
+import CreateOfferDialog from '@/components/CreateOfferDialog.vue';
+import OfferCard from '@/components/OfferCard.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
 import StatsPanel from '@/components/StatsPanel.vue';
+import TradeCard from '@/components/TradeCard.vue';
 import TradePathMap from '@/components/TradePathMap.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +29,9 @@ type TradeSummary = {
     status: string;
     position: number;
     offered_item?: ItemSummary | null;
+    offerer?: { id: number; name: string } | null;
+    owner_confirmed: boolean;
+    offerer_confirmed: boolean;
 };
 
 type OfferSummary = {
@@ -80,6 +86,17 @@ const isOwner = computed(() => {
     const userId = page.props.auth?.user?.id;
     return userId != null && userId === props.challenge.user_id;
 });
+
+const currentUser = computed(() => page.props.auth?.user);
+const showOfferDialog = ref(false);
+
+function handleMakeOffer(): void {
+    if (!currentUser.value) {
+        router.visit('/login');
+        return;
+    }
+    showOfferDialog.value = true;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Challenges', href: '/challenges' },
@@ -411,6 +428,7 @@ function formatDate(dateString: string): string {
                             <Button
                                 class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)]"
                                 size="lg"
+                                @click="handleMakeOffer"
                             >
                                 Make an Offer
                             </Button>
@@ -488,53 +506,13 @@ function formatDate(dateString: string): string {
                                 Be the first to make an offer!
                             </p>
                         </div>
-                        <div
+                        <OfferCard
                             v-for="offer in challenge.offers"
                             v-else
                             :key="offer.id"
-                            class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
-                        >
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-start gap-3">
-                                    <div
-                                        class="flex size-12 items-center justify-center rounded-xl bg-[var(--sunny-yellow)]/20"
-                                    >
-                                        <span class="text-xl">📦</span>
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-display font-semibold text-foreground"
-                                        >
-                                            {{
-                                                offer.offered_item?.title ??
-                                                'Unknown item'
-                                            }}
-                                        </p>
-                                        <p
-                                            class="mt-0.5 text-xs text-muted-foreground"
-                                        >
-                                            from
-                                            {{
-                                                offer.from_user?.name ??
-                                                'Anonymous'
-                                            }}
-                                        </p>
-                                        <p
-                                            v-if="offer.message"
-                                            class="mt-2 text-sm text-muted-foreground"
-                                        >
-                                            "{{ offer.message }}"
-                                        </p>
-                                    </div>
-                                </div>
-                                <Badge
-                                    variant="secondary"
-                                    class="shrink-0 rounded-full text-xs capitalize"
-                                >
-                                    {{ offer.status }}
-                                </Badge>
-                            </div>
-                        </div>
+                            :offer="offer"
+                            :is-owner="isOwner"
+                        />
                     </div>
 
                     <div v-show="activeTab === 'trades'" class="space-y-3">
@@ -550,65 +528,14 @@ function formatDate(dateString: string): string {
                                 The journey begins with a single trade!
                             </p>
                         </div>
-                        <div
+                        <TradeCard
                             v-for="trade in challenge.trades"
                             v-else
                             :key="trade.id"
-                            class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
-                        >
-                            <div
-                                class="flex items-center justify-between gap-3"
-                            >
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="flex size-12 items-center justify-center rounded-xl"
-                                        :class="
-                                            trade.status === 'completed'
-                                                ? 'bg-[var(--electric-mint)]/20'
-                                                : 'bg-[var(--hot-coral)]/20'
-                                        "
-                                    >
-                                        <span class="text-xl">
-                                            {{
-                                                trade.status === 'completed'
-                                                    ? '✓'
-                                                    : '⏳'
-                                            }}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-display font-semibold text-foreground"
-                                        >
-                                            Trade #{{ trade.position }}
-                                        </p>
-                                        <p
-                                            class="mt-0.5 text-sm text-muted-foreground"
-                                        >
-                                            {{
-                                                trade.offered_item?.title ??
-                                                'Unknown item'
-                                            }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <Badge
-                                    variant="secondary"
-                                    class="shrink-0 rounded-full text-xs capitalize"
-                                    :class="
-                                        trade.status === 'completed'
-                                            ? 'bg-[var(--electric-mint)]/15 text-[var(--electric-mint)]'
-                                            : 'bg-[var(--hot-coral)]/15 text-[var(--hot-coral)]'
-                                    "
-                                >
-                                    {{
-                                        trade.status === 'pending_confirmation'
-                                            ? 'Pending'
-                                            : trade.status
-                                    }}
-                                </Badge>
-                            </div>
-                        </div>
+                            :trade="trade"
+                            :is-owner="isOwner"
+                            :current-user-id="currentUser?.id ?? 0"
+                        />
                     </div>
 
                     <div v-show="activeTab === 'comments'" class="space-y-3">
@@ -680,10 +607,18 @@ function formatDate(dateString: string): string {
             <Button
                 class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg hover:bg-[var(--brand-red-hover)]"
                 size="lg"
+                @click="handleMakeOffer"
             >
                 Make an Offer
             </Button>
         </div>
+
+        <!-- Create offer dialog -->
+        <CreateOfferDialog
+            :challenge-id="challenge.id"
+            :current-item-title="challenge.current_item?.title ?? 'this item'"
+            v-model:open="showOfferDialog"
+        />
 
         <!-- Celebration overlay -->
         <CelebrationOverlay
