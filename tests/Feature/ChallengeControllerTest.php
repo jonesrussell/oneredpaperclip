@@ -1,26 +1,26 @@
 <?php
 
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\User;
 
-uses()->group('campaigns');
+uses()->group('challenges');
 
 beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
-test('get campaign create page requires auth', function () {
-    $response = $this->get(route('campaigns.create'));
+test('get challenge create page requires auth', function () {
+    $response = $this->get(route('challenges.create'));
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated user can get campaign create page', function () {
+test('authenticated user can get challenge create page', function () {
     Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
     Category::create(['name' => 'Collectibles', 'slug' => 'collectibles']);
 
-    $response = $this->actingAs($this->user)->get(route('campaigns.create'));
+    $response = $this->actingAs($this->user)->get(route('challenges.create'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
@@ -29,8 +29,8 @@ test('authenticated user can get campaign create page', function () {
     );
 });
 
-test('post valid campaign redirects to campaign show', function () {
-    $response = $this->actingAs($this->user)->post(route('campaigns.store'), [
+test('post valid challenge redirects to challenge show', function () {
+    $response = $this->actingAs($this->user)->post(route('challenges.store'), [
         'title' => 'Red paperclip to house',
         'story' => 'Starting with one red paperclip.',
         'start_item' => [
@@ -43,190 +43,190 @@ test('post valid campaign redirects to campaign show', function () {
         ],
     ]);
 
-    $campaign = Campaign::where('user_id', $this->user->id)->latest()->first();
-    $response->assertRedirect(route('campaigns.show', $campaign));
+    $challenge = Challenge::where('user_id', $this->user->id)->latest()->first();
+    $response->assertRedirect(route('challenges.show', $challenge));
 });
 
-test('guest can get campaign show page', function () {
+test('guest can get challenge show page', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->get(route('campaigns.show', $campaign));
+    $response = $this->get(route('challenges.show', $challenge));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Show')
-        ->has('campaign')
-        ->where('campaign.id', $campaign->id)
+        ->has('challenge')
+        ->where('challenge.id', $challenge->id)
     );
 });
 
-test('authenticated user can get campaign show page with follow state', function () {
+test('authenticated user can get challenge show page with follow state', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->actingAs($this->user)->get(route('campaigns.show', $campaign));
+    $response = $this->actingAs($this->user)->get(route('challenges.show', $challenge));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Show')
-        ->has('campaign')
+        ->has('challenge')
         ->has('isFollowing')
     );
 });
 
-test('guest cannot get dashboard campaigns page', function () {
-    $response = $this->get(route('dashboard.campaigns'));
+test('guest cannot get dashboard challenges page', function () {
+    $response = $this->get(route('dashboard.challenges'));
     $response->assertRedirect(route('login'));
 });
 
-test('authenticated user can get dashboard campaigns page', function () {
-    $response = $this->actingAs($this->user)->get(route('dashboard.campaigns'));
+test('authenticated user can get dashboard challenges page', function () {
+    $response = $this->actingAs($this->user)->get(route('dashboard.challenges'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('dashboard/challenges/Index')
-        ->has('campaigns')
-        ->has('campaigns.data')
+        ->has('challenges')
+        ->has('challenges.data')
     );
 });
 
-test('dashboard campaigns page shows only current user campaigns', function () {
+test('dashboard challenges page shows only current user challenges', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $myCampaign = Campaign::create([
+    $myChallenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $otherUser = User::factory()->create();
-    $otherCampaign = Campaign::create([
+    $otherChallenge = Challenge::create([
         'user_id' => $otherUser->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'Other user campaign',
+        'title' => 'Other user challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
 
-    $response = $this->actingAs($this->user)->get(route('dashboard.campaigns'));
+    $response = $this->actingAs($this->user)->get(route('dashboard.challenges'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('dashboard/challenges/Index')
-        ->has('campaigns.data', 1)
-        ->where('campaigns.data.0.id', $myCampaign->id)
+        ->has('challenges.data', 1)
+        ->where('challenges.data.0.id', $myChallenge->id)
     );
 });
 
-test('campaigns index does not include draft campaigns', function () {
+test('challenges index does not include draft challenges', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $activeCampaign = Campaign::create([
+    $activeChallenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'Active campaign',
+        'title' => 'Active challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
-    $draftCampaign = Campaign::create([
+    $draftChallenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'draft',
         'visibility' => 'public',
-        'title' => 'Draft campaign',
+        'title' => 'Draft challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
 
-    $response = $this->get(route('campaigns.index'));
+    $response = $this->get(route('challenges.index'));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Index')
-        ->has('campaigns.data', 1)
-        ->where('campaigns.data.0.id', $activeCampaign->id)
+        ->has('challenges.data', 1)
+        ->where('challenges.data.0.id', $activeChallenge->id)
     );
 });
 
-test('guest gets 404 when viewing draft campaign', function () {
+test('guest gets 404 when viewing draft challenge', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'draft',
         'visibility' => 'public',
-        'title' => 'Draft campaign',
+        'title' => 'Draft challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
 
-    $response = $this->get(route('campaigns.show', $campaign));
+    $response = $this->get(route('challenges.show', $challenge));
 
     $response->assertNotFound();
 });
 
-test('owner can view their own draft campaign', function () {
+test('owner can view their own draft challenge', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'draft',
@@ -237,151 +237,151 @@ test('owner can view their own draft campaign', function () {
         'goal_item_id' => null,
     ]);
 
-    $response = $this->actingAs($this->user)->get(route('campaigns.show', $campaign));
+    $response = $this->actingAs($this->user)->get(route('challenges.show', $challenge));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Show')
-        ->where('campaign.id', $campaign->id)
-        ->where('campaign.title', 'My draft')
+        ->where('challenge.id', $challenge->id)
+        ->where('challenge.title', 'My draft')
     );
 });
 
-test('get campaign edit page requires auth', function () {
+test('get challenge edit page requires auth', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->get(route('campaigns.edit', $campaign));
+    $response = $this->get(route('challenges.edit', $challenge));
 
     $response->assertRedirect(route('login'));
 });
 
-test('non-owner cannot get campaign edit page', function () {
+test('non-owner cannot get challenge edit page', function () {
     $otherUser = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $otherUser->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'Other campaign',
+        'title' => 'Other challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->actingAs($this->user)->get(route('campaigns.edit', $campaign));
+    $response = $this->actingAs($this->user)->get(route('challenges.edit', $challenge));
 
     $response->assertForbidden();
 });
 
-test('owner can get campaign edit page', function () {
+test('owner can get challenge edit page', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => null,
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->actingAs($this->user)->get(route('campaigns.edit', $campaign));
+    $response = $this->actingAs($this->user)->get(route('challenges.edit', $challenge));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Edit')
-        ->has('campaign')
+        ->has('challenge')
         ->has('categories')
-        ->where('campaign.id', $campaign->id)
+        ->where('challenge.id', $challenge->id)
     );
 });
 
-test('owner can update campaign', function () {
+test('owner can update challenge', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->user->id,
         'category_id' => $category->id,
         'status' => 'active',
         'visibility' => 'public',
-        'title' => 'My campaign',
+        'title' => 'My challenge',
         'story' => 'Old story',
         'current_item_id' => null,
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'Start',
         'description' => null,
     ]);
     $goalItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'goal',
         'title' => 'Goal',
         'description' => null,
     ]);
-    $campaign->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
+    $challenge->update(['current_item_id' => $startItem->id, 'goal_item_id' => $goalItem->id]);
 
-    $response = $this->actingAs($this->user)->put(route('campaigns.update', $campaign), [
+    $response = $this->actingAs($this->user)->put(route('challenges.update', $challenge), [
         'title' => 'Updated title',
         'story' => 'Updated story',
         'start_item' => [
@@ -394,14 +394,14 @@ test('owner can update campaign', function () {
         ],
     ]);
 
-    $response->assertRedirect(route('campaigns.show', $campaign));
+    $response->assertRedirect(route('challenges.show', $challenge));
 
-    $campaign->refresh();
-    $campaign->load(['startItem', 'goalItem']);
-    expect($campaign->title)->toBe('Updated title');
-    expect($campaign->story)->toBe('Updated story');
-    expect($campaign->startItem->title)->toBe('Updated start');
-    expect($campaign->startItem->description)->toBe('New start description');
-    expect($campaign->goalItem->title)->toBe('Updated goal');
-    expect($campaign->goalItem->description)->toBe('New goal description');
+    $challenge->refresh();
+    $challenge->load(['startItem', 'goalItem']);
+    expect($challenge->title)->toBe('Updated title');
+    expect($challenge->story)->toBe('Updated story');
+    expect($challenge->startItem->title)->toBe('Updated start');
+    expect($challenge->startItem->description)->toBe('New start description');
+    expect($challenge->goalItem->title)->toBe('Updated goal');
+    expect($challenge->goalItem->description)->toBe('New goal description');
 });
