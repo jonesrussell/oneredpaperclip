@@ -5,7 +5,7 @@ import ChallengeCard from '@/components/ChallengeCard.vue';
 import PaperclipIcon from '@/components/PaperclipIcon.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 
 type FeaturedCampaign = {
     id: number;
@@ -100,13 +100,13 @@ function stepNodeColor(color: string): string {
                         class="grid gap-10 md:grid-cols-[1fr,auto] md:grid-rows-[auto,auto] md:items-start md:gap-x-16 md:gap-y-4"
                     >
                         <p
-                            class="order-1 animate-in text-sm font-medium uppercase tracking-wider text-[var(--ink-muted)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:order-none md:col-start-1 md:row-start-1"
+                            class="order-1 animate-in text-sm font-medium tracking-wider text-[var(--ink-muted)] uppercase [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 md:order-none md:col-start-1 md:row-start-1"
                             style="animation-delay: 0ms"
                         >
                             Trading challenges
                         </p>
                         <h1
-                            class="order-2 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:col-start-1 md:row-start-1 md:text-6xl md:mt-1"
+                            class="order-2 animate-in font-display text-4xl leading-[1.15] font-semibold tracking-tight text-[var(--ink)] [animation-duration:0.6s] [animation-fill-mode:both] fade-in slide-in-from-bottom-4 sm:text-5xl md:order-none md:col-start-1 md:row-start-1 md:mt-1 md:text-6xl"
                             style="animation-delay: 40ms"
                         >
                             Start with one thing.
@@ -149,7 +149,7 @@ function stepNodeColor(color: string): string {
                             >
                                 <Link
                                     v-if="$page.props.auth.user"
-                                    :href="campaigns.create().url"
+                                    :href="challenges.create().url"
                                     class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
                                 >
                                     Start a challenge
@@ -162,7 +162,7 @@ function stepNodeColor(color: string): string {
                                     Create an account
                                 </Link>
                                 <Link
-                                    :href="campaigns.index().url"
+                                    :href="challenges.index().url"
                                     class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
                                 >
                                     Browse challenges
@@ -324,7 +324,7 @@ function stepNodeColor(color: string): string {
                         </p>
                     </div>
                     <Link
-                        :href="campaigns.index().url"
+                        :href="challenges.index().url"
                         class="text-sm font-medium text-[var(--brand-red)] transition-colors hover:underline"
                     >
                         View all &rarr;
@@ -337,7 +337,7 @@ function stepNodeColor(color: string): string {
                     No public challenges yet. Be the first to start one.
                     <Link
                         v-if="$page.props.auth.user"
-                        :href="campaigns.create().url"
+                        :href="challenges.create().url"
                         class="ml-1 font-medium text-[var(--brand-red)] hover:underline"
                     >
                         Create a challenge
@@ -385,7 +385,7 @@ function stepNodeColor(color: string): string {
                         Create an account
                     </Link>
                     <Link
-                        :href="campaigns.index().url"
+                        :href="challenges.index().url"
                         :class="
                             !$page.props.auth.user && props.canRegister
                                 ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'

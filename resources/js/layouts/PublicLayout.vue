@@ -4,7 +4,7 @@ import { computed } from 'vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
 import { about, dashboard, home, login, register } from '@/routes';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -78,7 +78,7 @@ const canRegister = computed(
                         About
                     </Link>
                     <Link
-                        :href="campaigns.index().url"
+                        :href="challenges.index().url"
                         class="rounded-lg px-3 py-2 text-sm font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--ink)]"
                     >
                         Explore challenges
@@ -144,7 +144,7 @@ const canRegister = computed(
                         About
                     </Link>
                     <Link
-                        :href="campaigns.index().url"
+                        :href="challenges.index().url"
                         class="hover:text-[var(--ink)]"
                     >
                         Challenges

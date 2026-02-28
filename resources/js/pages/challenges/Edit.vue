@@ -2,7 +2,7 @@
 import { Form, Head, router } from '@inertiajs/vue3';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { aiSuggest } from '@/actions/App/Http/Controllers/CampaignController';
+import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
 
 type ItemEdit = {
@@ -52,12 +52,12 @@ const goalItem = () =>
     props.campaign.goal_item ?? props.campaign.goalItem ?? null;
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Challenges', href: '/campaigns' },
+    { title: 'Challenges', href: '/challenges' },
     {
         title: props.campaign.title ?? 'Challenge',
-        href: `/campaigns/${props.campaign.id}`,
+        href: `/challenges/${props.campaign.id}`,
     },
-    { title: 'Edit', href: `/campaigns/${props.campaign.id}/edit` },
+    { title: 'Edit', href: `/challenges/${props.campaign.id}/edit` },
 ];
 
 const startTitle = ref(startItem()?.title ?? '');
@@ -92,7 +92,10 @@ function getCsrfToken(): string | null {
 
 function htmlToPlainText(html: string): string {
     if (!html) return '';
-    return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
 async function requestAiSuggest(
@@ -138,10 +141,14 @@ async function requestAiSuggest(
 }
 
 function cancel(): void {
-    router.visit(campaigns.show.url({ campaign: props.campaign.id }));
+    router.visit(challenges.show.url({ challenge: props.campaign.id }));
 }
 
-async function uploadItemPhoto(itemId: number, file: File, which: 'start' | 'goal'): Promise<void> {
+async function uploadItemPhoto(
+    itemId: number,
+    file: File,
+    which: 'start' | 'goal',
+): Promise<void> {
     uploadError.value = null;
     uploadLoading.value = which;
     try {
@@ -157,8 +164,14 @@ async function uploadItemPhoto(itemId: number, file: File, which: 'start' | 'goa
             body: formData,
         });
         if (!res.ok) {
-            const data = (await res.json()) as { message?: string; errors?: Record<string, string[]> };
-            const msg = data.message ?? data.errors?.image?.join(' ') ?? 'Upload failed';
+            const data = (await res.json()) as {
+                message?: string;
+                errors?: Record<string, string[]>;
+            };
+            const msg =
+                data.message ??
+                data.errors?.image?.join(' ') ??
+                'Upload failed';
             uploadError.value = msg;
             return;
         }
@@ -170,7 +183,11 @@ async function uploadItemPhoto(itemId: number, file: File, which: 'start' | 'goa
     }
 }
 
-function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event): void {
+function onItemPhotoChange(
+    itemId: number,
+    which: 'start' | 'goal',
+    event: Event,
+): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
@@ -199,7 +216,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                 {{ uploadError }}
             </p>
             <Form
-                v-bind="campaigns.update.form({ campaign: campaign.id })"
+                v-bind="challenges.update.form({ challenge: campaign.id })"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >
@@ -237,7 +254,10 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null || !startTitle.trim()"
+                                    :disabled="
+                                        aiSuggestLoading !== null ||
+                                        !startTitle.trim()
+                                    "
                                     @click="
                                         requestAiSuggest(
                                             'start_item',
@@ -247,9 +267,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     "
                                 >
                                     <Spinner
-                                        v-if="
-                                            aiSuggestLoading === 'start_item'
-                                        "
+                                        v-if="aiSuggestLoading === 'start_item'"
                                         class="size-3.5"
                                     />
                                     <Sparkles
@@ -279,7 +297,10 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                 {{ aiSuggestError }}
                             </p>
                         </div>
-                        <div v-if="startItem()" class="grid gap-2 border-t border-[var(--border)] pt-4">
+                        <div
+                            v-if="startItem()"
+                            class="grid gap-2 border-t border-[var(--border)] pt-4"
+                        >
                             <Label>Photo</Label>
                             <div class="flex flex-wrap items-center gap-3">
                                 <div
@@ -302,11 +323,20 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-white file:text-sm"
+                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-sm file:text-white"
                                         :disabled="uploadLoading === 'start'"
-                                        @change="onItemPhotoChange(startItem()!.id, 'start', $event)"
+                                        @change="
+                                            onItemPhotoChange(
+                                                startItem()!.id,
+                                                'start',
+                                                $event,
+                                            )
+                                        "
                                     />
-                                    <Spinner v-if="uploadLoading === 'start'" class="size-4" />
+                                    <Spinner
+                                        v-if="uploadLoading === 'start'"
+                                        class="size-4"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -347,7 +377,10 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null || !goalTitle.trim()"
+                                    :disabled="
+                                        aiSuggestLoading !== null ||
+                                        !goalTitle.trim()
+                                    "
                                     @click="
                                         requestAiSuggest(
                                             'goal_item',
@@ -357,9 +390,7 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     "
                                 >
                                     <Spinner
-                                        v-if="
-                                            aiSuggestLoading === 'goal_item'
-                                        "
+                                        v-if="aiSuggestLoading === 'goal_item'"
                                         class="size-3.5"
                                     />
                                     <Sparkles
@@ -389,7 +420,10 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                 {{ aiSuggestError }}
                             </p>
                         </div>
-                        <div v-if="goalItem()" class="grid gap-2 border-t border-[var(--border)] pt-4">
+                        <div
+                            v-if="goalItem()"
+                            class="grid gap-2 border-t border-[var(--border)] pt-4"
+                        >
                             <Label>Photo</Label>
                             <div class="flex flex-wrap items-center gap-3">
                                 <div
@@ -412,11 +446,20 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-white file:text-sm"
+                                        class="text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[var(--brand-red)] file:px-3 file:py-1.5 file:text-sm file:text-white"
                                         :disabled="uploadLoading === 'goal'"
-                                        @change="onItemPhotoChange(goalItem()!.id, 'goal', $event)"
+                                        @change="
+                                            onItemPhotoChange(
+                                                goalItem()!.id,
+                                                'goal',
+                                                $event,
+                                            )
+                                        "
                                     />
-                                    <Spinner v-if="uploadLoading === 'goal'" class="size-4" />
+                                    <Spinner
+                                        v-if="uploadLoading === 'goal'"
+                                        class="size-4"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -454,7 +497,10 @@ function onItemPhotoChange(itemId: number, which: 'start' | 'goal', event: Event
                                     variant="outline"
                                     size="sm"
                                     class="gap-1.5 text-xs"
-                                    :disabled="aiSuggestLoading !== null || !campaignTitle.trim()"
+                                    :disabled="
+                                        aiSuggestLoading !== null ||
+                                        !campaignTitle.trim()
+                                    "
                                     @click="
                                         requestAiSuggest(
                                             'story',

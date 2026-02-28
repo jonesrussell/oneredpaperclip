@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import Placeholder from '@tiptap/extension-placeholder';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
@@ -72,12 +71,7 @@ onBeforeUnmount(() => {
             class="rich-text-editor-content px-3 py-2 text-base md:text-sm"
         />
     </div>
-    <input
-        v-if="name"
-        type="hidden"
-        :name="name"
-        :value="modelValue"
-    />
+    <input v-if="name" type="hidden" :name="name" :value="modelValue" />
 </template>
 
 <style>

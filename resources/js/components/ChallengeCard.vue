@@ -5,7 +5,7 @@ import { ImageIcon } from 'lucide-vue-next';
 import ProgressRing from '@/components/ProgressRing.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useInitials } from '@/composables/useInitials';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 
 const props = defineProps<{
     campaign: {
@@ -77,7 +77,7 @@ const heroImageUrl = (): string | null =>
 
 <template>
     <Link
-        :href="campaigns.show({ campaign: campaign.id }).url"
+        :href="challenges.show({ challenge: campaign.id }).url"
         class="surface-light group relative block min-w-0 overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
         style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
         prefetch

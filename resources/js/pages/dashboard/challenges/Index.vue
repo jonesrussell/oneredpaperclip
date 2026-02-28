@@ -5,8 +5,8 @@ import { ref } from 'vue';
 import ChallengeCard from '@/components/ChallengeCard.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import campaignRoutes from '@/routes/campaigns';
-import { campaigns as dashboardCampaigns } from '@/routes/dashboard';
+import challengeRoutes from '@/routes/challenges';
+import { challenges as dashboardChallenges } from '@/routes/dashboard';
 import type { BreadcrumbItem } from '@/types';
 
 type CampaignItem = {
@@ -31,7 +31,7 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
-    { title: 'My Challenges', href: dashboardCampaigns().url },
+    { title: 'My Challenges', href: dashboardChallenges().url },
 ];
 
 const campaignList = ref(props.campaigns.data);
@@ -54,7 +54,7 @@ const campaignList = ref(props.campaigns.data);
                 You haven't started any challenges yet.
                 <br />
                 <Link
-                    :href="campaignRoutes.create().url"
+                    :href="challengeRoutes.create().url"
                     class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
                 >
                     Create a challenge

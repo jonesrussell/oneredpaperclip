@@ -1,4 +1,4 @@
-import * as CampaignApi from '@/actions/App/Http/Controllers/Api/CampaignApiController';
+import * as ChallengeApi from '@/actions/App/Http/Controllers/Api/ChallengeApiController';
 import * as OfferApi from '@/actions/App/Http/Controllers/Api/OfferApiController';
 import * as TradeApi from '@/actions/App/Http/Controllers/Api/TradeApiController';
 import type { ModelContextTool } from '@/types/webmcp';
@@ -58,16 +58,16 @@ async function parseJsonResponse(response: Response): Promise<unknown> {
 function buildTools(): ModelContextTool[] {
     return [
         {
-            name: 'list_public_campaigns',
+            name: 'list_public_challenges',
             description:
-                'List publicly visible, active trade-up campaigns for browsing. Returns campaign id, title, status, and current/goal item summaries.',
+                'List publicly visible, active trade-up challenges for browsing. Returns challenge id, title, status, and current/goal item summaries.',
             inputSchema: {
                 type: 'object',
                 properties: {
                     limit: {
                         type: 'number',
                         description:
-                            'Max number of campaigns to return (default 15, max 50)',
+                            'Max number of challenges to return (default 15, max 50)',
                     },
                 },
             },
@@ -75,7 +75,7 @@ function buildTools(): ModelContextTool[] {
             async execute(input) {
                 const limit =
                     typeof input.limit === 'number' ? input.limit : 15;
-                const route = CampaignApi.index({ query: { limit } });
+                const route = ChallengeApi.index({ query: { limit } });
                 const response = await apiFetch(route);
                 if (!response.ok) {
                     return {
@@ -90,23 +90,26 @@ function buildTools(): ModelContextTool[] {
             },
         },
         {
-            name: 'get_campaign',
+            name: 'get_challenge',
             description:
-                'Get one campaign by ID: title, status, current and goal items, and pending offer count.',
+                'Get one challenge by ID: title, status, current and goal items, and pending offer count.',
             inputSchema: {
                 type: 'object',
                 properties: {
-                    campaign_id: { type: 'number', description: 'Campaign ID' },
+                    challenge_id: {
+                        type: 'number',
+                        description: 'Challenge ID',
+                    },
                 },
-                required: ['campaign_id'],
+                required: ['challenge_id'],
             },
             annotations: { readOnlyHint: true },
             async execute(input) {
-                const campaignId = Number(input.campaign_id);
-                if (!Number.isFinite(campaignId)) {
-                    return { error: 'campaign_id must be a number' };
+                const challengeId = Number(input.challenge_id);
+                if (!Number.isFinite(challengeId)) {
+                    return { error: 'challenge_id must be a number' };
                 }
-                const route = CampaignApi.show({ campaign: campaignId });
+                const route = ChallengeApi.show({ challenge: challengeId });
                 const response = await apiFetch(route);
                 if (!response.ok) {
                     return {
@@ -118,9 +121,9 @@ function buildTools(): ModelContextTool[] {
             },
         },
         {
-            name: 'my_campaigns',
+            name: 'my_challenges',
             description:
-                "List the current user's campaigns. Requires authentication.",
+                "List the current user's challenges. Requires authentication.",
             inputSchema: {
                 type: 'object',
                 properties: {
@@ -135,10 +138,10 @@ function buildTools(): ModelContextTool[] {
             async execute(input) {
                 const limit =
                     typeof input.limit === 'number' ? input.limit : 15;
-                const route = CampaignApi.mine({ query: { limit } });
+                const route = ChallengeApi.mine({ query: { limit } });
                 const response = await apiFetch(route);
                 if (response.status === 401 || response.status === 302) {
-                    return { error: 'User must be logged in', campaigns: [] };
+                    return { error: 'User must be logged in', challenges: [] };
                 }
                 if (!response.ok) {
                     return {
@@ -150,13 +153,13 @@ function buildTools(): ModelContextTool[] {
             },
         },
         {
-            name: 'create_campaign',
+            name: 'create_challenge',
             description:
-                'Start a new trade-up campaign with a start item and a goal item. Requires authentication.',
+                'Start a new trade-up challenge with a start item and a goal item. Requires authentication.',
             inputSchema: {
                 type: 'object',
                 properties: {
-                    title: { type: 'string', description: 'Campaign title' },
+                    title: { type: 'string', description: 'Challenge title' },
                     start_item_title: {
                         type: 'string',
                         description: 'Start item title',
@@ -196,7 +199,7 @@ function buildTools(): ModelContextTool[] {
                             ? input.category_id
                             : null,
                 };
-                const route = CampaignApi.store();
+                const route = ChallengeApi.store();
                 const response = await apiFetch(
                     route,
                     body as Record<string, unknown>,
@@ -219,11 +222,14 @@ function buildTools(): ModelContextTool[] {
         {
             name: 'submit_offer',
             description:
-                "Submit an offer on a campaign's current item. Requires authentication.",
+                "Submit an offer on a challenge's current item. Requires authentication.",
             inputSchema: {
                 type: 'object',
                 properties: {
-                    campaign_id: { type: 'number', description: 'Campaign ID' },
+                    challenge_id: {
+                        type: 'number',
+                        description: 'Challenge ID',
+                    },
                     offered_item_title: {
                         type: 'string',
                         description: 'Title of the item you are offering',
@@ -233,12 +239,12 @@ function buildTools(): ModelContextTool[] {
                         description: 'Description of the offered item',
                     },
                 },
-                required: ['campaign_id', 'offered_item_title'],
+                required: ['challenge_id', 'offered_item_title'],
             },
             async execute(input) {
-                const campaignId = Number(input.campaign_id);
-                if (!Number.isFinite(campaignId)) {
-                    return { error: 'campaign_id must be a number' };
+                const challengeId = Number(input.challenge_id);
+                if (!Number.isFinite(challengeId)) {
+                    return { error: 'challenge_id must be a number' };
                 }
                 const body = {
                     offered_item: {
@@ -246,7 +252,7 @@ function buildTools(): ModelContextTool[] {
                         description: input.offered_item_description ?? null,
                     },
                 };
-                const route = OfferApi.store({ campaign: campaignId });
+                const route = OfferApi.store({ challenge: challengeId });
                 const response = await apiFetch(
                     route,
                     body as Record<string, unknown>,

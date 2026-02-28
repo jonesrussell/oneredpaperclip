@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/composables/useInitials';
 import AppLayout from '@/layouts/AppLayout.vue';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
 
 type ItemSummary = {
@@ -82,10 +82,10 @@ const isOwner = computed(() => {
 });
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Challenges', href: '/campaigns' },
+    { title: 'Challenges', href: '/challenges' },
     {
         title: props.campaign.title ?? 'Challenge',
-        href: `/campaigns/${props.campaign.id}`,
+        href: `/challenges/${props.campaign.id}`,
     },
 ];
 
@@ -266,7 +266,9 @@ function formatDate(dateString: string): string {
                         class="pointer-events-none absolute -top-4 -right-8 -left-8 h-40 rounded-b-3xl bg-gradient-to-br from-[var(--hot-coral)]/15 via-[var(--sunny-yellow)]/10 to-[var(--electric-mint)]/10"
                         aria-hidden="true"
                     />
-                    <div class="relative flex items-start justify-between gap-4">
+                    <div
+                        class="relative flex items-start justify-between gap-4"
+                    >
                         <div class="flex-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 <Badge
@@ -323,9 +325,7 @@ function formatDate(dateString: string): string {
                                         </AvatarFallback>
                                     </Avatar>
                                     <span class="font-medium">
-                                        {{
-                                            campaign.user?.name ?? 'Anonymous'
-                                        }}
+                                        {{ campaign.user?.name ?? 'Anonymous' }}
                                     </span>
                                     <Badge
                                         v-if="campaign.user?.level"
@@ -356,8 +356,8 @@ function formatDate(dateString: string): string {
                             <Link
                                 v-if="isOwner"
                                 :href="
-                                    campaigns.edit.url({
-                                        campaign: campaign.id,
+                                    challenges.edit.url({
+                                        challenge: campaign.id,
                                     })
                                 "
                             >
@@ -374,7 +374,7 @@ function formatDate(dateString: string): string {
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <!-- Trade Path Map (main area) -->
                     <div
-                        class="lg:col-span-2 rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm dark:shadow-[var(--shadow-card)]"
+                        class="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm lg:col-span-2 dark:shadow-[var(--shadow-card)]"
                     >
                         <div class="mb-4 flex items-center justify-between">
                             <h2
@@ -407,7 +407,7 @@ function formatDate(dateString: string): string {
                                 Have something to trade?
                             </p>
                             <Button
-                                class="w-full bg-[var(--brand-red)] text-white shadow-lg shadow-[var(--brand-red)]/25 hover:bg-[var(--brand-red-hover)] hover:-translate-y-0.5 transition-all"
+                                class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)]"
                                 size="lg"
                             >
                                 Make an Offer
@@ -554,7 +554,9 @@ function formatDate(dateString: string): string {
                             :key="trade.id"
                             class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
                         >
-                            <div class="flex items-center justify-between gap-3">
+                            <div
+                                class="flex items-center justify-between gap-3"
+                            >
                                 <div class="flex items-center gap-3">
                                     <div
                                         class="flex size-12 items-center justify-center rounded-xl"
@@ -674,7 +676,7 @@ function formatDate(dateString: string): string {
             class="fixed inset-x-0 bottom-16 z-40 border-t border-border bg-background/95 p-3 backdrop-blur-md lg:hidden"
         >
             <Button
-                class="w-full bg-[var(--brand-red)] text-white shadow-lg shadow-[var(--brand-red)]/25 hover:bg-[var(--brand-red-hover)]"
+                class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg hover:bg-[var(--brand-red-hover)]"
                 size="lg"
             >
                 Make an Offer

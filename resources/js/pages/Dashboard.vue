@@ -5,7 +5,7 @@ import { Compass, PlusCircle } from 'lucide-vue-next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
 
 const page = usePage();
@@ -107,7 +107,7 @@ const howItWorksSteps = [
 
             <!-- Shortcut cards -->
             <div class="grid gap-4 sm:grid-cols-2">
-                <Link :href="campaigns.create().url" class="block">
+                <Link :href="challenges.create().url" class="block">
                     <Card class="h-full">
                         <CardHeader>
                             <div
@@ -128,7 +128,7 @@ const howItWorksSteps = [
                     </Card>
                 </Link>
 
-                <Link :href="campaigns.index().url" class="block">
+                <Link :href="challenges.index().url" class="block">
                     <Card class="h-full">
                         <CardHeader>
                             <div

@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { register } from '@/routes';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 </script>
 
 <template>
@@ -281,8 +281,9 @@ import campaigns from '@/routes/campaigns';
                         <p
                             class="mt-2 text-sm leading-relaxed text-[var(--ink-muted)]"
                         >
-                            Kyle did it solo. Here, anyone can create a challenge
-                            and start trading up from whatever they have.
+                            Kyle did it solo. Here, anyone can create a
+                            challenge and start trading up from whatever they
+                            have.
                         </p>
                     </div>
 
@@ -414,8 +415,8 @@ import campaigns from '@/routes/campaigns';
                     Ready to start your own trade-up?
                 </h2>
                 <p class="mt-3 text-white/80">
-                    Create a challenge, list your start item, and see how far you
-                    can go.
+                    Create a challenge, list your start item, and see how far
+                    you can go.
                 </p>
                 <div
                     class="mt-8 flex flex-wrap items-center justify-center gap-4"
@@ -428,7 +429,7 @@ import campaigns from '@/routes/campaigns';
                         Create an account
                     </Link>
                     <Link
-                        :href="campaigns.index().url"
+                        :href="challenges.index().url"
                         :class="
                             !$page.props.auth.user
                                 ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'

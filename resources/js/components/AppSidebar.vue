@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { useNorthcloudNav } from '@/composables/use-northcloud-nav';
 import { dashboard } from '@/routes';
-import { campaigns as dashboardCampaigns } from '@/routes/dashboard';
+import { challenges as dashboardChallenges } from '@/routes/dashboard';
 import { type NavItem } from '@/types';
 import AppLogo from './AppLogo.vue';
 
@@ -27,7 +27,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'My Challenges',
-        href: dashboardCampaigns(),
+        href: dashboardChallenges(),
         icon: ListChecks,
     },
 ];

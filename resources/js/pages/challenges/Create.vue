@@ -3,7 +3,7 @@ import { Form, Head } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { aiSuggest } from '@/actions/App/Http/Controllers/CampaignController';
+import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
-import campaigns from '@/routes/campaigns';
+import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
 
 defineProps<{
@@ -27,8 +27,8 @@ defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Challenges', href: '/campaigns' },
-    { title: 'Create', href: '/campaigns/create' },
+    { title: 'Challenges', href: '/challenges' },
+    { title: 'Create', href: '/challenges/create' },
 ];
 
 const currentStep = ref(1);
@@ -94,7 +94,10 @@ function getCsrfToken(): string | null {
 
 function htmlToPlainText(html: string): string {
     if (!html) return '';
-    return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return html
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
 async function requestAiSuggest(
@@ -187,7 +190,7 @@ async function requestAiSuggest(
 
             <!-- Form -->
             <Form
-                v-bind="campaigns.store.form()"
+                v-bind="challenges.store.form()"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >
@@ -334,8 +337,7 @@ async function requestAiSuggest(
                                     >
                                         <Spinner
                                             v-if="
-                                                aiSuggestLoading ===
-                                                'goal_item'
+                                                aiSuggestLoading === 'goal_item'
                                             "
                                             class="size-3.5"
                                         />
@@ -418,9 +420,7 @@ async function requestAiSuggest(
                                         "
                                     >
                                         <Spinner
-                                            v-if="
-                                                aiSuggestLoading === 'story'
-                                            "
+                                            v-if="aiSuggestLoading === 'story'"
                                             class="size-3.5"
                                         />
                                         <Sparkles
@@ -528,7 +528,7 @@ async function requestAiSuggest(
                                 </p>
                                 <div
                                     v-if="startDescription"
-                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    class="prose prose-sm mt-1 max-w-none text-sm text-[var(--ink-muted)]"
                                     v-html="sanitizeForReview(startDescription)"
                                 />
                             </div>
@@ -550,7 +550,7 @@ async function requestAiSuggest(
                                 </p>
                                 <div
                                     v-if="goalDescription"
-                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    class="prose prose-sm mt-1 max-w-none text-sm text-[var(--ink-muted)]"
                                     v-html="sanitizeForReview(goalDescription)"
                                 />
                             </div>
@@ -570,7 +570,7 @@ async function requestAiSuggest(
                                 </p>
                                 <div
                                     v-if="campaignStory"
-                                    class="mt-1 text-sm text-[var(--ink-muted)] prose prose-sm max-w-none"
+                                    class="prose prose-sm mt-1 max-w-none text-sm text-[var(--ink-muted)]"
                                     v-html="sanitizeForReview(campaignStory)"
                                 />
                             </div>

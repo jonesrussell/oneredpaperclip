@@ -109,9 +109,7 @@ const streakFlameColor = computed(() => {
                         </span>
                     </div>
                     <!-- XP progress bar -->
-                    <div
-                        class="mt-2 h-2 overflow-hidden rounded-full bg-muted"
-                    >
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                         <div
                             class="h-full rounded-full bg-gradient-to-r from-[var(--soft-lavender)] to-[var(--sky-blue)] transition-all duration-1000 ease-out"
                             :style="{ width: `${stats.levelProgress}%` }"

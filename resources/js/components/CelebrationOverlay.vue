@@ -75,7 +75,10 @@ function generateFloatingXp(): void {
     floatingXp.value = Array.from({ length: numPieces }, (_, i) => ({
         id: i,
         x: 30 + Math.random() * 40,
-        value: i === numPieces - 1 ? props.xpGained - valuePerPiece * i : valuePerPiece,
+        value:
+            i === numPieces - 1
+                ? props.xpGained - valuePerPiece * i
+                : valuePerPiece,
         delay: i * 0.15,
     }));
 }
@@ -158,7 +161,9 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                 />
 
                 <!-- Confetti layer -->
-                <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                <div
+                    class="pointer-events-none absolute inset-0 overflow-hidden"
+                >
                     <div
                         v-for="piece in confettiPieces"
                         :key="piece.id"
@@ -175,7 +180,9 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                 </div>
 
                 <!-- Floating XP numbers -->
-                <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                <div
+                    class="pointer-events-none absolute inset-0 overflow-hidden"
+                >
                     <div
                         v-for="xp in floatingXp"
                         :key="xp.id"
@@ -207,10 +214,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                     </h2>
 
                     <!-- Message -->
-                    <p
-                        v-if="message"
-                        class="mt-2 text-muted-foreground"
-                    >
+                    <p v-if="message" class="mt-2 text-muted-foreground">
                         {{ message }}
                     </p>
 
@@ -227,10 +231,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                     </div>
 
                     <!-- Level up badge -->
-                    <div
-                        v-if="type === 'level-up' && newLevel"
-                        class="mt-4"
-                    >
+                    <div v-if="type === 'level-up' && newLevel" class="mt-4">
                         <div
                             class="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 font-display text-3xl font-bold text-white shadow-lg"
                         >
@@ -312,7 +313,8 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
 }
 
 .xp-toast {
-    animation: xp-toast-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    animation:
+        xp-toast-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
         xp-toast-out 0.3s ease-in 1.5s forwards;
 }
 

@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Challenges', href: '/campaigns' },
+    { title: 'Challenges', href: '/challenges' },
 ];
 
 const campaignList = ref(props.campaigns.data);
@@ -38,7 +38,7 @@ const activeCategory = ref<number | null>(null);
 function filterByCategory(categoryId: number | null): void {
     activeCategory.value = categoryId;
     router.get(
-        '/campaigns',
+        '/challenges',
         categoryId != null ? { category_id: categoryId } : {},
         { preserveState: true },
     );
@@ -95,7 +95,7 @@ function filterByCategory(categoryId: number | null): void {
                 No challenges yet. Be the first to start a trade-up.
                 <br />
                 <Link
-                    href="/campaigns/create"
+                    href="/challenges/create"
                     class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
                 >
                     Create a challenge

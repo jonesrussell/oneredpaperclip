@@ -16,7 +16,6 @@ defineProps<{
     nodes: PathNode[];
 }>();
 
-
 const getNodePosition = (index: number): 'left' | 'center' | 'right' => {
     const positions: ('left' | 'center' | 'right')[] = [
         'center',
@@ -208,7 +207,7 @@ const getConnectorStyle = (fromNode: PathNode): string => {
                         }"
                     >
                         <p
-                            class="text-xs font-medium uppercase tracking-wide"
+                            class="text-xs font-medium tracking-wide uppercase"
                             :class="
                                 node.status === 'current'
                                     ? 'text-[var(--hot-coral)]'

@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Bell, Compass, Home, PlusCircle, User } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { dashboard, home, login, register } from '@/routes';
-import campaigns from '@/routes/campaigns';
+import challengeRoutes from '@/routes/challenges';
 
 const page = usePage();
 const currentUrl = computed(() => page.url);
@@ -33,10 +33,10 @@ function isActive(path: string): boolean {
         </Link>
 
         <Link
-            :href="campaigns.index().url"
+            :href="challengeRoutes.index().url"
             class="flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-1 text-xs font-medium transition-colors sm:px-3"
             :class="
-                isActive('/campaigns') && !currentUrl.includes('/create')
+                isActive('/challenges') && !currentUrl.includes('/create')
                     ? 'text-[var(--brand-red)]'
                     : 'text-[var(--ink-muted)]'
             "
@@ -46,7 +46,7 @@ function isActive(path: string): boolean {
         </Link>
 
         <Link
-            :href="user ? campaigns.create().url : register().url"
+            :href="user ? challengeRoutes.create().url : register().url"
             class="-mt-5 flex min-w-0 flex-1 flex-col items-center gap-0.5"
         >
             <div
