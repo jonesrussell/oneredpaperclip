@@ -7,18 +7,18 @@ use App\Actions\CreateOffer;
 use App\Actions\DeclineOffer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOfferRequest;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Offer;
 use Illuminate\Http\JsonResponse;
 
 class OfferApiController extends Controller
 {
     /**
-     * Store a new offer on a campaign (authenticated).
+     * Store a new offer on a challenge (authenticated).
      */
-    public function store(StoreOfferRequest $request, Campaign $campaign, CreateOffer $createOffer): JsonResponse
+    public function store(StoreOfferRequest $request, Challenge $challenge, CreateOffer $createOffer): JsonResponse
     {
-        $offer = $createOffer($request->validated(), $campaign, $request->user());
+        $offer = $createOffer($request->validated(), $challenge, $request->user());
 
         return response()->json([
             'offer' => ['id' => $offer->id, 'status' => $offer->status->value],
@@ -27,7 +27,7 @@ class OfferApiController extends Controller
     }
 
     /**
-     * Accept an offer (campaign owner). Authenticated; authorization in controller.
+     * Accept an offer (challenge owner). Authenticated; authorization in controller.
      */
     public function accept(Offer $offer, AcceptOffer $acceptOffer): JsonResponse
     {
@@ -42,7 +42,7 @@ class OfferApiController extends Controller
     }
 
     /**
-     * Decline an offer (campaign owner).
+     * Decline an offer (challenge owner).
      */
     public function decline(Offer $offer, DeclineOffer $declineOffer): JsonResponse
     {

@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\User;
 
-class CampaignPolicy
+class ChallengePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -18,7 +18,7 @@ class CampaignPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Campaign $campaign): bool
+    public function view(User $user, Challenge $challenge): bool
     {
         return false;
     }
@@ -32,17 +32,17 @@ class CampaignPolicy
     }
 
     /**
-     * Determine whether the user can update the model (campaign owner only).
+     * Determine whether the user can update the model (challenge owner only).
      */
-    public function update(User $user, Campaign $campaign): bool
+    public function update(User $user, Challenge $challenge): bool
     {
-        return $campaign->user_id === $user->id;
+        return $challenge->user_id === $user->id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Campaign $campaign): bool
+    public function delete(User $user, Challenge $challenge): bool
     {
         return false;
     }
@@ -50,7 +50,7 @@ class CampaignPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Campaign $campaign): bool
+    public function restore(User $user, Challenge $challenge): bool
     {
         return false;
     }
@@ -58,7 +58,7 @@ class CampaignPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Campaign $campaign): bool
+    public function forceDelete(User $user, Challenge $challenge): bool
     {
         return false;
     }

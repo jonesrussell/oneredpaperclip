@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\CampaignStatus;
+use App\Enums\ChallengeStatus;
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
 use App\Models\Offer;
@@ -20,25 +20,25 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        $activeCampaignsCount = $user->campaigns()
-            ->where('status', CampaignStatus::Active)
+        $activeChallengesCount = $user->challenges()
+            ->where('status', ChallengeStatus::Active)
             ->count();
 
         $pendingOffersCount = Offer::query()
             ->where('status', OfferStatus::Pending)
-            ->whereHas('campaign', fn ($q) => $q->where('user_id', $user->id))
+            ->whereHas('challenge', fn ($q) => $q->where('user_id', $user->id))
             ->count();
 
         $completedTradesCount = Trade::query()
             ->where('status', TradeStatus::Completed)
             ->where(function ($q) use ($user) {
-                $q->whereHas('campaign', fn ($c) => $c->where('user_id', $user->id))
+                $q->whereHas('challenge', fn ($c) => $c->where('user_id', $user->id))
                     ->orWhereHas('offer', fn ($o) => $o->where('from_user_id', $user->id));
             })
             ->count();
 
         return Inertia::render('Dashboard', [
-            'activeCampaignsCount' => $activeCampaignsCount,
+            'activeChallengesCount' => $activeChallengesCount,
             'completedTradesCount' => $completedTradesCount,
             'pendingOffersCount' => $pendingOffersCount,
         ]);

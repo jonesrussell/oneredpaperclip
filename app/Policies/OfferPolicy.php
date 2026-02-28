@@ -65,8 +65,8 @@ class OfferPolicy
     }
 
     /**
-     * Determine whether the user (campaign owner) can accept the offer.
-     * Offer must be pending and campaign current item must still match the offer.
+     * Determine whether the user (challenge owner) can accept the offer.
+     * Offer must be pending and challenge current item must still match the offer.
      */
     public function accept(User $user, Offer $offer): bool
     {
@@ -74,15 +74,15 @@ class OfferPolicy
             return false;
         }
 
-        if ($offer->campaign->user_id !== $user->id) {
+        if ($offer->challenge->user_id !== $user->id) {
             return false;
         }
 
-        return $offer->campaign->current_item_id === $offer->for_campaign_item_id;
+        return $offer->challenge->current_item_id === $offer->for_challenge_item_id;
     }
 
     /**
-     * Determine whether the user (campaign owner) can decline the offer.
+     * Determine whether the user (challenge owner) can decline the offer.
      */
     public function decline(User $user, Offer $offer): bool
     {
@@ -90,6 +90,6 @@ class OfferPolicy
             return false;
         }
 
-        return $offer->campaign->user_id === $user->id;
+        return $offer->challenge->user_id === $user->id;
     }
 }

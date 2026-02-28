@@ -2,26 +2,26 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Campaign;
+use App\Models\Challenge;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreItemMediaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * Only the challenge (campaign) owner can add media to an item.
+     * Only the challenge owner can add media to an item.
      */
     public function authorize(): bool
     {
         $item = $this->route('item');
         $item->loadMissing('itemable');
 
-        $campaign = $item->itemable;
-        if (! $campaign instanceof Campaign) {
+        $challenge = $item->itemable;
+        if (! $challenge instanceof Challenge) {
             return false;
         }
 
-        return $campaign->user_id === $this->user()?->id;
+        return $challenge->user_id === $this->user()?->id;
     }
 
     /**

@@ -6,24 +6,24 @@ use App\Actions\AcceptOffer;
 use App\Actions\CreateOffer;
 use App\Actions\DeclineOffer;
 use App\Http\Requests\StoreOfferRequest;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Offer;
 use Illuminate\Http\RedirectResponse;
 
 class OfferController extends Controller
 {
     /**
-     * Store a newly created offer for a campaign.
+     * Store a newly created offer for a challenge.
      */
-    public function store(StoreOfferRequest $request, Campaign $campaign, CreateOffer $createOffer): RedirectResponse
+    public function store(StoreOfferRequest $request, Challenge $challenge, CreateOffer $createOffer): RedirectResponse
     {
-        $offer = $createOffer($request->validated(), $campaign, $request->user());
+        $offer = $createOffer($request->validated(), $challenge, $request->user());
 
-        return redirect()->route('campaigns.show', $campaign);
+        return redirect()->route('challenges.show', $challenge);
     }
 
     /**
-     * Accept an offer (campaign owner). Creates a trade and notifies the offerer.
+     * Accept an offer (challenge owner). Creates a trade and notifies the offerer.
      */
     public function accept(Offer $offer, AcceptOffer $acceptOffer): RedirectResponse
     {
@@ -31,11 +31,11 @@ class OfferController extends Controller
 
         $acceptOffer($offer);
 
-        return redirect()->route('campaigns.show', $offer->campaign);
+        return redirect()->route('challenges.show', $offer->challenge);
     }
 
     /**
-     * Decline an offer (campaign owner). Notifies the offerer.
+     * Decline an offer (challenge owner). Notifies the offerer.
      */
     public function decline(Offer $offer, DeclineOffer $declineOffer): RedirectResponse
     {
@@ -43,6 +43,6 @@ class OfferController extends Controller
 
         $declineOffer($offer);
 
-        return redirect()->route('campaigns.show', $offer->campaign);
+        return redirect()->route('challenges.show', $offer->challenge);
     }
 }

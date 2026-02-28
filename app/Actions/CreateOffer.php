@@ -4,7 +4,7 @@ namespace App\Actions;
 
 use App\Enums\ItemRole;
 use App\Enums\OfferStatus;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use App\Models\User;
@@ -12,15 +12,15 @@ use App\Models\User;
 class CreateOffer
 {
     /**
-     * Create an offer: create the offered item, then the offer targeting the campaign's current item.
+     * Create an offer: create the offered item, then the offer targeting the challenge's current item.
      *
      * @param  array{offered_item: array{title: string, description?: string|null}, message?: string|null}  $validated
      */
-    public function __invoke(array $validated, Campaign $campaign, User $user): Offer
+    public function __invoke(array $validated, Challenge $challenge, User $user): Offer
     {
-        $currentItem = $campaign->currentItem;
+        $currentItem = $challenge->currentItem;
         if (! $currentItem) {
-            throw new \InvalidArgumentException('Campaign has no current item.');
+            throw new \InvalidArgumentException('Challenge has no current item.');
         }
 
         $offeredItem = Item::create([
@@ -32,10 +32,10 @@ class CreateOffer
         ]);
 
         return Offer::create([
-            'campaign_id' => $campaign->id,
+            'challenge_id' => $challenge->id,
             'from_user_id' => $user->id,
             'offered_item_id' => $offeredItem->id,
-            'for_campaign_item_id' => $currentItem->id,
+            'for_challenge_item_id' => $currentItem->id,
             'message' => $validated['message'] ?? null,
             'status' => OfferStatus::Pending,
         ]);
