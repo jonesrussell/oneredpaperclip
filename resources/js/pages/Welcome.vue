@@ -309,7 +309,7 @@ function stepNodeColor(color: string): string {
             </div>
         </section>
 
-        <!-- Featured campaigns -->
+        <!-- Featured challenges -->
         <section class="border-t border-[var(--ink)]/8 py-16 sm:py-24">
             <div class="mx-auto max-w-6xl px-4 sm:px-6">
                 <div class="flex flex-wrap items-end justify-between gap-4">

@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref, watch } from 'vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
 import { Button } from '@/components/ui/button';
 
-type CelebrationType = 'xp' | 'level-up' | 'trade' | 'campaign-complete';
+type CelebrationType = 'xp' | 'level-up' | 'trade' | 'challenge-complete';
 
 const props = withDefaults(
     defineProps<{
@@ -127,7 +127,7 @@ function getTitle(): string {
             return `Level ${props.newLevel}!`;
         case 'trade':
             return 'Trade Complete!';
-        case 'campaign-complete':
+        case 'challenge-complete':
             return 'Challenge Complete!';
         default:
             return '';
@@ -137,7 +137,7 @@ function getTitle(): string {
 function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
     switch (props.type) {
         case 'level-up':
-        case 'campaign-complete':
+        case 'challenge-complete':
             return 'celebrating';
         case 'trade':
             return 'excited';
@@ -196,7 +196,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                     </div>
                 </div>
 
-                <!-- Modal content (for level-up, trade, campaign-complete) -->
+                <!-- Modal content (for level-up, trade, challenge-complete) -->
                 <div
                     v-if="type !== 'xp'"
                     class="celebration-modal relative z-10 mx-4 w-full max-w-sm rounded-3xl border border-border bg-card p-8 text-center shadow-2xl"
