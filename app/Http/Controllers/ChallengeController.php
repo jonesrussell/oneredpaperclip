@@ -126,8 +126,8 @@ class ChallengeController extends Controller
 
         $challenge->load([
             'items',
-            'trades' => fn ($q) => $q->with('offeredItem')->orderBy('position'),
-            'offers' => fn ($q) => $q->where('status', OfferStatus::Pending),
+            'trades' => fn ($q) => $q->with(['offeredItem', 'offer.fromUser'])->orderBy('position'),
+            'offers' => fn ($q) => $q->with(['offeredItem.media', 'fromUser'])->where('status', OfferStatus::Pending),
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',
             'category',
@@ -145,6 +145,14 @@ class ChallengeController extends Controller
 
         $sanitizer = app(RichTextHtmlSanitizer::class);
         $challenge->setAttribute('story_safe', $sanitizer->sanitize($challenge->story ?? ''));
+
+        $challenge->trades->transform(function ($trade) {
+            $trade->setAttribute('owner_confirmed', (bool) $trade->confirmed_by_owner_at);
+            $trade->setAttribute('offerer_confirmed', (bool) $trade->confirmed_by_offerer_at);
+            $trade->setAttribute('offerer', $trade->offer?->fromUser?->only('id', 'name'));
+
+            return $trade;
+        });
 
         $description = $challenge->story
             ? \Illuminate\Support\Str::limit(strip_tags($challenge->story), 160)
