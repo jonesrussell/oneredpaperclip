@@ -19,7 +19,7 @@ class DeclineOffer
             'user_id' => $offer->from_user_id,
             'type' => 'offer_declined',
             'data' => [
-                'campaign_id' => $offer->campaign_id,
+                'challenge_id' => $offer->challenge_id,
                 'offer_id' => $offer->id,
             ],
             'read_at' => null,

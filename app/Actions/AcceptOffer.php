@@ -20,14 +20,14 @@ class AcceptOffer
      */
     public function __invoke(Offer $offer): Trade
     {
-        $campaign = $offer->campaign;
+        $challenge = $offer->challenge;
 
         $trade = Trade::create([
-            'campaign_id' => $campaign->id,
+            'challenge_id' => $challenge->id,
             'offer_id' => $offer->id,
-            'position' => $campaign->trades()->count() + 1,
+            'position' => $challenge->trades()->count() + 1,
             'offered_item_id' => $offer->offered_item_id,
-            'received_item_id' => $campaign->current_item_id,
+            'received_item_id' => $challenge->current_item_id,
             'status' => TradeStatus::PendingConfirmation,
         ]);
 
@@ -37,14 +37,14 @@ class AcceptOffer
             'user_id' => $offer->from_user_id,
             'type' => 'offer_accepted',
             'data' => [
-                'campaign_id' => $campaign->id,
+                'challenge_id' => $challenge->id,
                 'offer_id' => $offer->id,
             ],
             'read_at' => null,
         ]);
 
-        if ($campaign->user) {
-            $this->xpService->awardOfferReceived($campaign->user);
+        if ($challenge->user) {
+            $this->xpService->awardOfferReceived($challenge->user);
         }
 
         return $trade;
