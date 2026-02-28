@@ -64,13 +64,13 @@ class TradePolicy
     }
 
     /**
-     * Determine whether the user (offerer or campaign owner) can confirm the trade.
+     * Determine whether the user (offerer or challenge owner) can confirm the trade.
      */
     public function confirm(User $user, Trade $trade): bool
     {
-        $trade->loadMissing(['offer', 'campaign']);
+        $trade->loadMissing(['offer', 'challenge']);
 
         return $trade->offer->from_user_id === $user->id
-            || $trade->campaign->user_id === $user->id;
+            || $trade->challenge->user_id === $user->id;
     }
 }
