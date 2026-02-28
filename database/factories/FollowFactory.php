@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +20,8 @@ class FollowFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'followable_type' => Campaign::class,
-            'followable_id' => Campaign::factory(),
+            'followable_type' => Challenge::class,
+            'followable_id' => Challenge::factory(),
         ];
     }
 }

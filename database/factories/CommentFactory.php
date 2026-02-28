@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,8 +20,8 @@ class CommentFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'commentable_type' => Campaign::class,
-            'commentable_id' => Campaign::factory(),
+            'commentable_type' => Challenge::class,
+            'commentable_id' => Challenge::factory(),
             'parent_id' => null,
             'body' => fake()->paragraph(),
         ];

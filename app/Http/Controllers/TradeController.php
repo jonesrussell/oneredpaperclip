@@ -9,8 +9,8 @@ use Illuminate\Http\RedirectResponse;
 class TradeController extends Controller
 {
     /**
-     * Confirm the trade (offerer or campaign owner). When both have confirmed,
-     * trade is completed and campaign current item is advanced.
+     * Confirm the trade (offerer or challenge owner). When both have confirmed,
+     * trade is completed and challenge current item is advanced.
      */
     public function confirm(Trade $trade, ConfirmTrade $confirmTrade): RedirectResponse
     {
@@ -18,6 +18,6 @@ class TradeController extends Controller
 
         $confirmTrade($trade, request()->user());
 
-        return redirect()->route('campaigns.show', $trade->campaign);
+        return redirect()->route('challenges.show', $trade->challenge);
     }
 }
