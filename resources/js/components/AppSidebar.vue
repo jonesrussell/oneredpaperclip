@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, ListChecks } from 'lucide-vue-next';
+import { Folder, LayoutGrid, ListChecks } from 'lucide-vue-next';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -39,11 +39,6 @@ const footerNavItems: NavItem[] = [
         title: 'GitHub',
         href: 'https://github.com/jonesrussell/oneredpaperclip',
         icon: Folder,
-    },
-    {
-        title: 'Laravel docs',
-        href: 'https://laravel.com/docs',
-        icon: BookOpen,
     },
 ];
 </script>
