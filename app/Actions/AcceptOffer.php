@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Trade;
 use App\Services\XpService;
+use Illuminate\Support\Facades\DB;
 
 class AcceptOffer
 {
@@ -20,33 +21,35 @@ class AcceptOffer
      */
     public function __invoke(Offer $offer): Trade
     {
-        $challenge = $offer->challenge;
+        return DB::transaction(function () use ($offer) {
+            $challenge = $offer->challenge;
 
-        $trade = Trade::create([
-            'challenge_id' => $challenge->id,
-            'offer_id' => $offer->id,
-            'position' => $challenge->trades()->count() + 1,
-            'offered_item_id' => $offer->offered_item_id,
-            'received_item_id' => $challenge->current_item_id,
-            'status' => TradeStatus::PendingConfirmation,
-        ]);
-
-        $offer->update(['status' => OfferStatus::Accepted]);
-
-        Notification::create([
-            'user_id' => $offer->from_user_id,
-            'type' => 'offer_accepted',
-            'data' => [
+            $trade = Trade::create([
                 'challenge_id' => $challenge->id,
                 'offer_id' => $offer->id,
-            ],
-            'read_at' => null,
-        ]);
+                'position' => $challenge->trades()->lockForUpdate()->count() + 1,
+                'offered_item_id' => $offer->offered_item_id,
+                'received_item_id' => $challenge->current_item_id,
+                'status' => TradeStatus::PendingConfirmation,
+            ]);
 
-        if ($challenge->user) {
-            $this->xpService->awardOfferReceived($challenge->user);
-        }
+            $offer->update(['status' => OfferStatus::Accepted]);
 
-        return $trade;
+            Notification::create([
+                'user_id' => $offer->from_user_id,
+                'type' => 'offer_accepted',
+                'data' => [
+                    'challenge_id' => $challenge->id,
+                    'offer_id' => $offer->id,
+                ],
+                'read_at' => null,
+            ]);
+
+            if ($challenge->user) {
+                $this->xpService->awardOfferReceived($challenge->user);
+            }
+
+            return $trade;
+        });
     }
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FlashMessage from '@/components/FlashMessage.vue';
 import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -13,6 +14,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
+        <FlashMessage />
         <slot />
     </AppLayout>
 </template>

@@ -286,7 +286,8 @@ watch(
                     :model-value="filterValues.status || 'all'"
                     @update:model-value="
                         (val) => {
-                            filterValues.status = val === 'all' ? undefined : val;
+                            filterValues.status =
+                                val === 'all' ? undefined : val;
                             applyFilters();
                         }
                     "
@@ -306,7 +307,8 @@ watch(
                     :model-value="filterValues.visibility || 'all'"
                     @update:model-value="
                         (val) => {
-                            filterValues.visibility = val === 'all' ? undefined : val;
+                            filterValues.visibility =
+                                val === 'all' ? undefined : val;
                             applyFilters();
                         }
                     "
@@ -324,7 +326,8 @@ watch(
                     :model-value="filterValues.category || 'all'"
                     @update:model-value="
                         (val) => {
-                            filterValues.category = val === 'all' ? undefined : val;
+                            filterValues.category =
+                                val === 'all' ? undefined : val;
                             applyFilters();
                         }
                     "
