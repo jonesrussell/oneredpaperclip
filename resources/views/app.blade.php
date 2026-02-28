@@ -6,28 +6,50 @@
 
         @php
             $pageMeta = $page['props']['meta'] ?? [];
+            $sharedMeta = $page['props']['sharedMeta'] ?? [];
             $metaTitle = $pageMeta['title'] ?? config('app.name');
             $metaDescription = $pageMeta['description'] ?? config('seo.description');
             $metaImage = $pageMeta['image'] ?? config('seo.og_image') ?? (config('app.url') . '/favicon.svg');
             $canonicalUrl = $pageMeta['canonical'] ?? url()->current();
+            $ogType = $pageMeta['og_type'] ?? 'website';
+            $robots = $pageMeta['robots'] ?? $sharedMeta['robots'] ?? null;
+            $schema = $pageMeta['schema'] ?? null;
         @endphp
         <meta name="description" content="{{ $metaDescription }}">
         <link rel="canonical" href="{{ $canonicalUrl }}">
+        @if($robots)
+        <meta name="robots" content="{{ $robots }}">
+        @endif
 
         {{-- Open Graph --}}
-        <meta property="og:type" content="website">
+        <meta property="og:type" content="{{ $ogType }}">
         <meta property="og:site_name" content="{{ config('app.name') }}">
         <meta property="og:title" content="{{ $metaTitle }}">
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:image" content="{{ $metaImage }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
         <meta property="og:url" content="{{ $canonicalUrl }}">
         <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
         {{-- Twitter Card --}}
         <meta name="twitter:card" content="summary_large_image">
+        @if(config('seo.twitter_site'))
+        <meta name="twitter:site" content="{{ config('seo.twitter_site') }}">
+        @endif
+        @if(config('seo.twitter_creator'))
+        <meta name="twitter:creator" content="{{ config('seo.twitter_creator') }}">
+        @endif
         <meta name="twitter:title" content="{{ $metaTitle }}">
         <meta name="twitter:description" content="{{ $metaDescription }}">
         <meta name="twitter:image" content="{{ $metaImage }}">
+
+        {{-- Structured Data (JSON-LD) --}}
+        @if($schema)
+        <script type="application/ld+json">
+            {!! json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
+        @endif
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>

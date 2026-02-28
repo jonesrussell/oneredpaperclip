@@ -25,4 +25,18 @@ return [
 
     'og_image' => env('OG_IMAGE_URL'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Twitter handles
+    |--------------------------------------------------------------------------
+    |
+    | Twitter @username for the site and content creator. Used in Twitter Card
+    | meta tags (twitter:site and twitter:creator).
+    |
+    */
+
+    'twitter_site' => env('TWITTER_SITE'),
+
+    'twitter_creator' => env('TWITTER_CREATOR'),
+
 ];

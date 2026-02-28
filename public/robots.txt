@@ -1,2 +1,6 @@
 User-agent: *
-Disallow:
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /api/
+
+Sitemap: https://oneredpaperclip.xyz/sitemap.xml

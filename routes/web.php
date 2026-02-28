@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\ChallengeController as DashboardChallengeCont
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TradeController;
 use App\Models\Challenge;
 use App\Models\Trade;
@@ -53,6 +54,8 @@ Route::get('about', fn () => Inertia::render('About', [
         'description' => 'The story behind One Red Paperclip: from Kyle MacDonald\'s red paperclip to a house, and the trade-up platform it inspired.',
     ],
 ]))->name('about');
+
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::get('challenges', [ChallengeController::class, 'index'])->name('challenges.index');
 Route::get('challenges/create', [ChallengeController::class, 'create'])->name('challenges.create')
