@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
+import FlashMessage from '@/components/FlashMessage.vue';
 import { about, dashboard, home, login, register } from '@/routes';
 import challenges from '@/routes/challenges';
 
@@ -44,6 +45,8 @@ const canRegister = computed(
             class="welcome-grain pointer-events-none fixed inset-0 z-[1] opacity-[0.03]"
             aria-hidden="true"
         />
+
+        <FlashMessage />
 
         <!-- Sticky top header -->
         <header
