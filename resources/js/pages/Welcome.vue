@@ -7,7 +7,7 @@ import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
 import challenges from '@/routes/challenges';
 
-type FeaturedCampaign = {
+type FeaturedChallenge = {
     id: number;
     title: string | null;
     status: string;
@@ -21,18 +21,18 @@ type FeaturedCampaign = {
 const props = withDefaults(
     defineProps<{
         canRegister: boolean;
-        featuredCampaigns: FeaturedCampaign[];
+        featuredChallenges: FeaturedChallenge[];
         stats: {
-            campaignsCount: number;
+            challengesCount: number;
             tradesCount: number;
             usersCount: number;
         };
     }>(),
     {
         canRegister: true,
-        featuredCampaigns: () => [],
+        featuredChallenges: () => [],
         stats: () => ({
-            campaignsCount: 0,
+            challengesCount: 0,
             tradesCount: 0,
             usersCount: 0,
         }),
@@ -185,7 +185,7 @@ function stepNodeColor(color: string): string {
                     <p
                         class="font-mono text-2xl font-bold text-[var(--brand-red)]"
                     >
-                        {{ formatStat(props.stats.campaignsCount) }}
+                        {{ formatStat(props.stats.challengesCount) }}
                     </p>
                     <p class="text-sm text-[var(--ink-muted)]">Challenges</p>
                 </div>
@@ -331,7 +331,7 @@ function stepNodeColor(color: string): string {
                     </Link>
                 </div>
                 <div
-                    v-if="props.featuredCampaigns.length === 0"
+                    v-if="props.featuredChallenges.length === 0"
                     class="mt-10 rounded-xl border border-dashed border-[var(--ink)]/20 bg-[var(--paper)]/60 py-16 text-center text-[var(--ink-muted)]"
                 >
                     No public challenges yet. Be the first to start one.
@@ -349,12 +349,12 @@ function stepNodeColor(color: string): string {
                     role="list"
                 >
                     <li
-                        v-for="(campaign, i) in props.featuredCampaigns"
-                        :key="campaign.id"
+                        v-for="(challenge, i) in props.featuredChallenges"
+                        :key="challenge.id"
                         class="min-w-0 animate-in [animation-duration:0.45s] [animation-fill-mode:both] fade-in slide-in-from-bottom-3"
                         :style="{ animationDelay: `${120 + i * 50}ms` }"
                     >
-                        <ChallengeCard :campaign="campaign" />
+                        <ChallengeCard :challenge="challenge" />
                     </li>
                 </ul>
             </div>

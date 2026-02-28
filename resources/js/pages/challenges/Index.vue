@@ -104,8 +104,8 @@ function filterByCategory(categoryId: number | null): void {
 
             <!-- Challenge grid -->
             <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <li v-for="campaign in campaignList" :key="campaign.id">
-                    <ChallengeCard :campaign="campaign" />
+                <li v-for="challenge in campaignList" :key="challenge.id">
+                    <ChallengeCard :challenge="challenge" />
                 </li>
             </ul>
 
