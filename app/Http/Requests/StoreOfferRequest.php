@@ -18,6 +18,7 @@ class StoreOfferRequest extends FormRequest
             'offered_item' => ['required', 'array'],
             'offered_item.title' => ['required', 'string', 'max:255'],
             'offered_item.description' => ['nullable', 'string', 'max:2000'],
+            'offered_item.image' => ['nullable', 'file', 'image', 'max:5120'],
             'message' => ['nullable', 'string', 'max:1000'],
         ];
     }

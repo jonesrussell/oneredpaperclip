@@ -6,8 +6,10 @@ use App\Enums\ItemRole;
 use App\Enums\OfferStatus;
 use App\Models\Challenge;
 use App\Models\Item;
+use App\Models\Media;
 use App\Models\Offer;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 
 class CreateOffer
 {
@@ -30,6 +32,19 @@ class CreateOffer
             'title' => $validated['offered_item']['title'],
             'description' => $validated['offered_item']['description'] ?? null,
         ]);
+
+        if (($image = $validated['offered_item']['image'] ?? null) instanceof UploadedFile) {
+            $path = $image->store('items/'.$offeredItem->id, 'public');
+            Media::query()->create([
+                'model_type' => Item::class,
+                'model_id' => $offeredItem->id,
+                'collection_name' => 'default',
+                'file_name' => $image->getClientOriginalName(),
+                'disk' => 'public',
+                'path' => $path,
+                'size' => $image->getSize(),
+            ]);
+        }
 
         return Offer::create([
             'challenge_id' => $challenge->id,

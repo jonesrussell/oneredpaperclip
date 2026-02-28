@@ -4,6 +4,8 @@ use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses()->group('offers');
 
@@ -46,6 +48,30 @@ test('authenticated user can create offer and sees flash message', function () {
 
     $response->assertRedirect()
         ->assertSessionHas('success', 'Offer submitted!');
+});
+
+test('offer can include an image for the offered item', function () {
+    Storage::fake('public');
+
+    $response = $this->actingAs($this->offerer)->post(
+        route('challenges.offers.store', $this->challenge),
+        [
+            'offered_item' => [
+                'title' => 'A pen',
+                'description' => 'Blue ballpoint.',
+                'image' => UploadedFile::fake()->image('pen.jpg', 640, 480),
+            ],
+            'message' => 'I offer my pen.',
+        ]
+    );
+
+    $response->assertRedirect();
+
+    $offer = \App\Models\Offer::where('challenge_id', $this->challenge->id)->latest()->first();
+    $item = $offer->offeredItem;
+
+    expect($item->media)->toHaveCount(1);
+    Storage::disk('public')->assertExists($item->media->first()->path);
 });
 
 test('guest cannot create offer', function () {
