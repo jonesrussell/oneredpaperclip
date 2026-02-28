@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**One Red Paperclip** — a trade-up platform where users create campaigns with a start item and goal item, receive offers from other users, and confirm trades that advance the campaign's current item toward the goal. Inspired by Kyle MacDonald's barter experiment.
+**One Red Paperclip** — a trade-up platform where users create challenges with a start item and goal item, receive offers from other users, and confirm trades that advance the challenge's current item toward the goal. Inspired by Kyle MacDonald's barter experiment.
 
 ## Commands
 
@@ -13,8 +13,8 @@ composer dev                # Start server + queue + Pail logs + Vite (all-in-on
 composer dev:ddev           # Same but no PHP server (use with DDEV; DDEV serves the app)
 composer test               # Pint lint check + Pest tests
 php artisan test --compact  # Run all tests
-php artisan test --compact --filter=CampaignControllerTest  # Run specific test file
-php artisan test --compact --filter="test campaign show"     # Run single test by name
+php artisan test --compact --filter=ChallengeControllerTest  # Run specific test file
+php artisan test --compact --filter="test challenge show"     # Run single test by name
 vendor/bin/pint --dirty --format agent   # Format only changed PHP files
 npm run lint                # ESLint fix
 npm run format              # Prettier format resources/
@@ -29,20 +29,20 @@ DDEV is available but optional — prefix commands with `ddev exec` if using it.
 ### Domain Model (the trade-up flow)
 
 ```
-User creates Campaign (with start Item + goal Item)
-  → Other users submit Offers (each has an offered Item targeting a campaign Item)
-  → Campaign owner accepts/declines Offers (via OfferPolicy)
+User creates Challenge (with start Item + goal Item)
+  → Other users submit Offers (each has an offered Item targeting a challenge Item)
+  → Challenge owner accepts/declines Offers (via OfferPolicy)
   → Accepted Offer creates a Trade (status: PendingConfirmation)
   → Both parties confirm the Trade (dual-confirmation via TradePolicy)
-  → Completed Trade advances Campaign.current_item_id to the offered Item
+  → Completed Trade advances Challenge.current_item_id to the offered Item
 ```
 
 ### Key Models and Relationships
 
-- **Campaign** — central entity. Has `status` (CampaignStatus enum), `visibility` (CampaignVisibility enum), belongs to User and Category. References `current_item_id` and `goal_item_id` on the items table.
-- **Item** — polymorphic (`itemable_type`/`itemable_id`). Role enum: Start, Goal, Offered. Attached to campaigns or offers.
-- **Offer** — links a user's offered Item to a campaign's current Item. Status enum: Pending, Accepted, Declined, Withdrawn, Expired.
-- **Trade** — created from an accepted Offer. Dual-confirmation design (`confirmed_by_offerer_at`, `confirmed_by_owner_at`). Status enum: PendingConfirmation, Completed, Disputed. Unique constraint on `(campaign_id, position)`.
+- **Challenge** — central entity. Has `status` (ChallengeStatus enum), `visibility` (ChallengeVisibility enum), belongs to User and Category. References `current_item_id` and `goal_item_id` on the items table. Supports soft deletes for admin moderation.
+- **Item** — polymorphic (`itemable_type`/`itemable_id`). Role enum: Start, Goal, Offered. Attached to challenges or offers.
+- **Offer** — links a user's offered Item to a challenge's current Item. Status enum: Pending, Accepted, Declined, Withdrawn, Expired.
+- **Trade** — created from an accepted Offer. Dual-confirmation design (`confirmed_by_offerer_at`, `confirmed_by_owner_at`). Status enum: PendingConfirmation, Completed, Disputed. Unique constraint on `(challenge_id, position)`.
 - **Comment** — polymorphic, supports nested replies via `parent_id`.
 - **Follow** — polymorphic followable.
 - **Media** — custom polymorphic media model (not Spatie).
@@ -51,23 +51,23 @@ User creates Campaign (with start Item + goal Item)
 ### Action Classes (`app/Actions/`)
 
 Business logic lives in Action classes, not controllers:
-- `CreateCampaign` — creates campaign + start/goal items, links item IDs
-- `UpdateCampaign` — updates campaign details
-- `CreateOffer` — creates offer with offered item targeting a campaign item
+- `CreateChallenge` — creates challenge + start/goal items, links item IDs
+- `UpdateChallenge` — updates challenge details
+- `CreateOffer` — creates offer with offered item targeting a challenge item
 - `AcceptOffer` — creates Trade, marks offer accepted, sends notification
 - `DeclineOffer` — marks offer declined, sends notification
-- `ConfirmTrade` — records confirmation timestamp; when both confirm, completes trade and advances campaign
+- `ConfirmTrade` — records confirmation timestamp; when both confirm, completes trade and advances challenge
 
 Controllers delegate to these actions. Follow this pattern for new business logic.
 
 ### Enums (`app/Enums/`)
 
-All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility`, `ItemRole`, `OfferStatus`, `TradeStatus`. Use these enums (not raw strings) in code.
+All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibility`, `ItemRole`, `OfferStatus`, `TradeStatus`. Use these enums (not raw strings) in code.
 
 ### Authorization
 
-- `OfferPolicy` — accept/decline: caller must be campaign owner, offer must be Pending
-- `TradePolicy` — confirm: caller must be offerer or campaign owner
+- `OfferPolicy` — accept/decline: caller must be challenge owner, offer must be Pending
+- `TradePolicy` — confirm: caller must be offerer or challenge owner
 
 ### Frontend
 
@@ -76,7 +76,7 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
 - **Fonts:** DM Sans (body), Fredoka (display headings), JetBrains Mono (stats/data) — loaded via Bunny Fonts
 - **Design tokens:** CSS variables in `resources/css/app.css` — `--brand-red`, `--electric-mint`, `--sunny-yellow`, `--hot-coral`, `--soft-lavender`, `--sky-blue`, `--paper`, `--ink`
 - **Layouts:**
-  - `PublicLayout` — public pages (Welcome, campaign browsing): sticky header, decorative blobs, mobile bottom tab bar, footer
+  - `PublicLayout` — public pages (Welcome, challenge browsing): sticky header, decorative blobs, mobile bottom tab bar, footer
   - `AppLayout` (wraps `AppSidebarLayout`) — authenticated pages: sidebar on desktop, bottom tab bar on mobile
   - `AdminLayout` — admin/dashboard pages (NorthCloud articles, users)
   - `AuthLayout` — auth pages: centered card with accent blobs
@@ -93,7 +93,7 @@ All status fields use backed string enums: `CampaignStatus`, `CampaignVisibility
 
 ### JSON API (`routes/web.php` → `/api/*`)
 
-Parallel JSON API under `api.*` route names using `Api\CampaignApiController`, `Api\OfferApiController`, `Api\TradeApiController`. Same session auth as web — intended for WebMCP / agent access, not a separate Sanctum-based API.
+Parallel JSON API under `api.*` route names using `Api\ChallengeApiController`, `Api\OfferApiController`, `Api\TradeApiController`. Same session auth as web — intended for WebMCP / agent access, not a separate Sanctum-based API.
 
 ### Middleware
 
@@ -107,11 +107,11 @@ Fortify headless with Inertia views. Features: registration, password reset, ema
 
 ### Database
 
-MariaDB. Default queue connection is `database`. Categories seeded with 9 predefined values. `CampaignSeeder` creates sample campaigns using the `CreateCampaign` action.
+MariaDB. Default queue connection is `database`. Categories seeded with 9 predefined values. `ChallengeSeeder` creates sample challenges using the `CreateChallenge` action.
 
 ### Validation
 
-Form Requests use **array-style** rules (not pipe-delimited strings). Check `StoreCampaignRequest` for the pattern.
+Form Requests use **array-style** rules (not pipe-delimited strings). Check `StoreChallengeRequest` for the pattern.
 
 ### NorthCloud (`jonesrussell/northcloud-laravel`)
 
@@ -120,14 +120,13 @@ Form Requests use **array-style** rules (not pipe-delimited strings). Check `Sto
 - **Article feed (optional):** To ingest from North Cloud Redis pipeline, set Redis connection (e.g. `NORTHCLOUD_REDIS_HOST`) and run `php artisan articles:subscribe` (long-running). Production: optional systemd user service `oneredpaperclip-northcloud-subscribe.service`; enable with `systemctl --user enable oneredpaperclip-northcloud-subscribe.service` when using the feed.
 - **First admin:** Set `is_admin = 1` for a user in the DB (or run a one-off tinker/seed) so someone can access the dashboard.
 
-## Naming Convention: Campaign vs Challenge
+## Admin Dashboard
 
-The UI displays "Challenge" as user-facing terminology, while the backend domain model uses "Campaign" throughout (models, database tables, routes, enums, controllers, actions). This is intentional:
-- **Backend code**: `Campaign` model, `campaigns` table, `campaigns.*` routes, `CampaignStatus` enum
-- **Frontend display**: Vue pages at `resources/js/pages/challenges/`, component named `ChallengeCard`, UI text says "Challenge"
-- **Props/types in Vue**: Use `campaign` to match the backend data shape passed via Inertia
-
-Do not rename backend models/tables/routes to "challenge" — the domain model is "Campaign."
+Admin CRUD for challenges is available at `/dashboard/challenges` (protected by `northcloud-admin` middleware). Features:
+- Table view with filters (status, visibility, category, search)
+- Quick unpublish (sets status to Draft)
+- Soft delete with trashed view for recovery
+- Bulk unpublish and bulk delete
 
 ## Known Gaps
 
