@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
+use App\Enums\ItemRole;
 use App\Enums\OfferStatus;
 use App\Models\Category;
 use App\Models\Challenge;
@@ -17,8 +20,8 @@ beforeEach(function () {
     $challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
-        'status' => 'active',
-        'visibility' => 'public',
+        'status' => ChallengeStatus::Active,
+        'visibility' => ChallengeVisibility::Public,
         'title' => 'Red paperclip to house',
         'story' => 'Starting with one red paperclip.',
         'current_item_id' => null,
@@ -27,7 +30,7 @@ beforeEach(function () {
     $startItem = Item::create([
         'itemable_type' => Challenge::class,
         'itemable_id' => $challenge->id,
-        'role' => 'start',
+        'role' => ItemRole::Start,
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
@@ -37,7 +40,7 @@ beforeEach(function () {
     $offeredItem = Item::create([
         'itemable_type' => Offer::class,
         'itemable_id' => 0,
-        'role' => 'offered',
+        'role' => ItemRole::Offered,
         'title' => 'A pen',
         'description' => 'Blue ballpoint.',
     ]);

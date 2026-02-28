@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { confirm } from '@/actions/App/Http/Controllers/TradeController';
 import { Badge } from '@/components/ui/badge';
@@ -13,20 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-
-type TradeSummary = {
-    id: number;
-    status: string;
-    position: number;
-    offered_item?: {
-        id: number;
-        title: string;
-        image_url?: string | null;
-    } | null;
-    offerer?: { id: number; name: string } | null;
-    owner_confirmed: boolean;
-    offerer_confirmed: boolean;
-};
+import type { TradeSummary } from '@/types/models';
 
 const props = defineProps<{
     trade: TradeSummary;
@@ -37,13 +24,21 @@ const props = defineProps<{
 const showConfirmDialog = ref(false);
 const processing = ref(false);
 
-const userHasConfirmed = props.isOwner
-    ? props.trade.owner_confirmed
-    : props.trade.offerer_confirmed;
+const isOfferer = computed(
+    () => props.trade.offerer?.id === props.currentUserId,
+);
 
-const otherPartyName = props.isOwner
-    ? (props.trade.offerer?.name ?? 'the offerer')
-    : 'the challenge owner';
+const canConfirm = computed(() => {
+    if (props.isOwner) return !props.trade.owner_confirmed;
+    if (isOfferer.value) return !props.trade.offerer_confirmed;
+    return false;
+});
+
+const otherPartyName = computed(() =>
+    props.isOwner
+        ? (props.trade.offerer?.name ?? 'the offerer')
+        : 'the challenge owner',
+);
 
 function confirmTrade() {
     processing.value = true;
@@ -51,9 +46,11 @@ function confirmTrade() {
         confirm.url({ trade: props.trade.id }),
         {},
         {
+            onSuccess: () => {
+                showConfirmDialog.value = false;
+            },
             onFinish: () => {
                 processing.value = false;
-                showConfirmDialog.value = false;
             },
         },
     );
@@ -111,7 +108,7 @@ function confirmTrade() {
 
             <!-- Pending: user needs to confirm -->
             <Button
-                v-else-if="!userHasConfirmed"
+                v-else-if="canConfirm"
                 variant="brand"
                 size="sm"
                 @click="showConfirmDialog = true"
@@ -119,13 +116,22 @@ function confirmTrade() {
                 Confirm Trade
             </Button>
 
-            <!-- Pending: waiting for other party -->
+            <!-- Pending: waiting for other party or viewing as third party -->
             <Badge
-                v-else
+                v-else-if="isOwner || isOfferer"
                 variant="secondary"
                 class="shrink-0 rounded-full bg-[var(--hot-coral)]/15 text-xs text-[var(--hot-coral)]"
             >
                 Waiting for {{ otherPartyName }}
+            </Badge>
+
+            <!-- Third-party viewer -->
+            <Badge
+                v-else
+                variant="secondary"
+                class="shrink-0 rounded-full text-xs"
+            >
+                Pending
             </Badge>
         </div>
     </div>

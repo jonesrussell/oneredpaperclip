@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
+use App\Enums\ItemRole;
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
 use App\Models\Category;
@@ -16,8 +19,8 @@ beforeEach(function () {
     $challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
-        'status' => 'active',
-        'visibility' => 'public',
+        'status' => ChallengeStatus::Active,
+        'visibility' => ChallengeVisibility::Public,
         'title' => 'Test challenge',
         'current_item_id' => null,
         'goal_item_id' => null,
@@ -25,7 +28,7 @@ beforeEach(function () {
     $startItem = Item::create([
         'itemable_type' => Challenge::class,
         'itemable_id' => $challenge->id,
-        'role' => 'start',
+        'role' => ItemRole::Start,
         'title' => 'Paperclip',
     ]);
     $challenge->update(['current_item_id' => $startItem->id]);
@@ -36,7 +39,7 @@ test('show page includes offer from_user data', function () {
     $offeredItem = Item::create([
         'itemable_type' => User::class,
         'itemable_id' => $this->offerer->id,
-        'role' => 'offered',
+        'role' => ItemRole::Offered,
         'title' => 'A pen',
     ]);
     Offer::create([
@@ -61,7 +64,7 @@ test('show page includes trade confirmation booleans and offerer', function () {
     $offeredItem = Item::create([
         'itemable_type' => User::class,
         'itemable_id' => $this->offerer->id,
-        'role' => 'offered',
+        'role' => ItemRole::Offered,
         'title' => 'A pen',
     ]);
     $offer = Offer::create([

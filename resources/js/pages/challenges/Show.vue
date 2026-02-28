@@ -17,44 +17,20 @@ import { useInitials } from '@/composables/useInitials';
 import AppLayout from '@/layouts/AppLayout.vue';
 import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
-
-type ItemSummary = {
-    id: number;
-    title: string;
-    image_url?: string | null;
-};
-
-type TradeSummary = {
-    id: number;
-    status: string;
-    position: number;
-    offered_item?: ItemSummary | null;
-    offerer?: { id: number; name: string } | null;
-    owner_confirmed: boolean;
-    offerer_confirmed: boolean;
-};
-
-type OfferSummary = {
-    id: number;
-    status: string;
-    message?: string | null;
-    from_user?: { id: number; name: string } | null;
-    offered_item?: ItemSummary | null;
-};
-
-type CommentSummary = {
-    id: number;
-    body: string;
-    user?: { id: number; name: string } | null;
-    created_at: string;
-};
+import type {
+    ChallengeStatus,
+    CommentSummary,
+    ItemSummary,
+    OfferSummary,
+    TradeSummary,
+} from '@/types/models';
 
 type Challenge = {
     id: number;
     title?: string | null;
     story?: string | null;
     story_safe?: string;
-    status: string;
+    status: ChallengeStatus;
     user_id?: number;
     user?: {
         id: number;
@@ -113,17 +89,17 @@ const tabs = computed(() => [
     {
         key: 'offers' as const,
         label: 'Offers',
-        count: props.challenge.offers?.length || 0,
+        count: props.challenge.offers?.length ?? 0,
     },
     {
         key: 'trades' as const,
         label: 'Trades',
-        count: props.challenge.trades?.length || 0,
+        count: props.challenge.trades?.length ?? 0,
     },
     {
         key: 'comments' as const,
         label: 'Comments',
-        count: props.challenge.comments?.length || 0,
+        count: props.challenge.comments?.length ?? 0,
     },
 ]);
 

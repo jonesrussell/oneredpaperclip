@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
+use App\Enums\ItemRole;
 use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\Item;
@@ -16,8 +19,8 @@ beforeEach(function () {
     $challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
-        'status' => 'active',
-        'visibility' => 'public',
+        'status' => ChallengeStatus::Active,
+        'visibility' => ChallengeVisibility::Public,
         'title' => 'Red paperclip to house',
         'story' => 'Starting with one red paperclip.',
         'current_item_id' => null,
@@ -26,7 +29,7 @@ beforeEach(function () {
     $startItem = Item::create([
         'itemable_type' => Challenge::class,
         'itemable_id' => $challenge->id,
-        'role' => 'start',
+        'role' => ItemRole::Start,
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
@@ -83,4 +86,15 @@ test('guest cannot create offer', function () {
     );
 
     $response->assertRedirect('/login');
+});
+
+test('challenge owner cannot create offer on their own challenge', function () {
+    $response = $this->actingAs($this->owner)->post(
+        route('challenges.offers.store', $this->challenge),
+        [
+            'offered_item' => ['title' => 'Self-trade item'],
+        ]
+    );
+
+    $response->assertForbidden();
 });

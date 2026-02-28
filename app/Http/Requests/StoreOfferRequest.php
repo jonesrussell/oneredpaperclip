@@ -8,6 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 class StoreOfferRequest extends FormRequest
 {
     /**
+     * Determine if the user is authorized to make this request.
+     * Challenge owner cannot make offers on their own challenge.
+     */
+    public function authorize(): bool
+    {
+        $challenge = $this->route('challenge');
+
+        return $this->user()->id !== $challenge->user_id;
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, ValidationRule|array<mixed>|string>

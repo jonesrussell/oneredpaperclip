@@ -17,18 +17,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-
-type OfferSummary = {
-    id: number;
-    status: string;
-    message?: string | null;
-    from_user?: { id: number; name: string } | null;
-    offered_item?: {
-        id: number;
-        title: string;
-        image_url?: string | null;
-    } | null;
-};
+import type { OfferSummary } from '@/types/models';
 
 const props = defineProps<{
     offer: OfferSummary;
@@ -45,9 +34,11 @@ function acceptOffer() {
         accept.url({ offer: props.offer.id }),
         {},
         {
+            onSuccess: () => {
+                showAcceptDialog.value = false;
+            },
             onFinish: () => {
                 processing.value = false;
-                showAcceptDialog.value = false;
             },
         },
     );
@@ -59,9 +50,11 @@ function declineOffer() {
         decline.url({ offer: props.offer.id }),
         {},
         {
+            onSuccess: () => {
+                showDeclineDialog.value = false;
+            },
             onFinish: () => {
                 processing.value = false;
-                showDeclineDialog.value = false;
             },
         },
     );
