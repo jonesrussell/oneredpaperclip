@@ -33,13 +33,13 @@ describe('XP calculations', function () {
 });
 
 describe('XP awards', function () {
-    it('awards XP for campaign creation', function () {
+    it('awards XP for challenge creation', function () {
         $user = User::factory()->create(['xp' => 0, 'level' => 1]);
 
-        $result = $this->xpService->awardCampaignCreation($user);
+        $result = $this->xpService->awardChallengeCreation($user);
 
-        expect($result['xp_gained'])->toBe(XpService::XP_CREATE_CAMPAIGN);
-        expect($user->fresh()->xp)->toBe(XpService::XP_CREATE_CAMPAIGN);
+        expect($result['xp_gained'])->toBe(XpService::XP_CREATE_CHALLENGE);
+        expect($user->fresh()->xp)->toBe(XpService::XP_CREATE_CHALLENGE);
     });
 
     it('awards XP for receiving an offer', function () {
@@ -60,13 +60,13 @@ describe('XP awards', function () {
         expect($user->fresh()->xp)->toBe(XpService::XP_COMPLETE_TRADE);
     });
 
-    it('awards XP for completing a campaign', function () {
+    it('awards XP for completing a challenge', function () {
         $user = User::factory()->create(['xp' => 0, 'level' => 1]);
 
-        $result = $this->xpService->awardCampaignCompletion($user);
+        $result = $this->xpService->awardChallengeCompletion($user);
 
-        expect($result['xp_gained'])->toBe(XpService::XP_COMPLETE_CAMPAIGN);
-        expect($user->fresh()->xp)->toBe(XpService::XP_COMPLETE_CAMPAIGN);
+        expect($result['xp_gained'])->toBe(XpService::XP_COMPLETE_CHALLENGE);
+        expect($user->fresh()->xp)->toBe(XpService::XP_COMPLETE_CHALLENGE);
     });
 
     it('awards XP for daily login', function () {
@@ -104,18 +104,18 @@ describe('Streak bonus', function () {
     it('applies streak multiplier to XP awards', function () {
         $user = User::factory()->create(['xp' => 0, 'level' => 1, 'current_streak' => 5]);
 
-        $result = $this->xpService->awardCampaignCreation($user);
+        $result = $this->xpService->awardChallengeCreation($user);
 
-        $expectedXp = (int) round(XpService::XP_CREATE_CAMPAIGN * 1.4);
+        $expectedXp = (int) round(XpService::XP_CREATE_CHALLENGE * 1.4);
         expect($result['xp_gained'])->toBe($expectedXp);
     });
 
     it('does not apply multiplier for streak of 1', function () {
         $user = User::factory()->create(['xp' => 0, 'level' => 1, 'current_streak' => 1]);
 
-        $result = $this->xpService->awardCampaignCreation($user);
+        $result = $this->xpService->awardChallengeCreation($user);
 
-        expect($result['xp_gained'])->toBe(XpService::XP_CREATE_CAMPAIGN);
+        expect($result['xp_gained'])->toBe(XpService::XP_CREATE_CHALLENGE);
     });
 });
 
