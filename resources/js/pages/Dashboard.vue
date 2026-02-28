@@ -12,7 +12,7 @@ const page = usePage();
 const user = page.props.auth.user;
 
 const props = defineProps<{
-    activeCampaignsCount: number;
+    activeChallengesCount: number;
     completedTradesCount: number;
     pendingOffersCount: number;
 }>();
@@ -73,7 +73,7 @@ const howItWorksSteps = [
                     <p
                         class="font-mono text-2xl font-bold text-[var(--hot-coral)]"
                     >
-                        {{ props.activeCampaignsCount }}
+                        {{ props.activeChallengesCount }}
                     </p>
                     <p class="mt-1 text-xs font-medium text-[var(--ink-muted)]">
                         Active Challenges

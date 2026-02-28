@@ -6,7 +6,7 @@ import ChallengeCard from '@/components/ChallengeCard.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
-type CampaignItem = {
+type ChallengeItem = {
     id: number;
     title: string | null;
     status: string;
@@ -18,8 +18,8 @@ type CampaignItem = {
 };
 
 const props = defineProps<{
-    campaigns: {
-        data: CampaignItem[];
+    challenges: {
+        data: ChallengeItem[];
         current_page: number;
         last_page: number;
         links: { url: string | null; label: string; active: boolean }[];
@@ -31,7 +31,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Challenges', href: '/challenges' },
 ];
 
-const campaignList = ref(props.campaigns.data);
+const challengeList = ref(props.challenges.data);
 const categoryList = ref(props.categories);
 const activeCategory = ref<number | null>(null);
 
@@ -89,7 +89,7 @@ function filterByCategory(categoryId: number | null): void {
 
             <!-- Empty state -->
             <div
-                v-if="campaignList.length === 0"
+                v-if="challengeList.length === 0"
                 class="rounded-2xl border border-dashed border-[var(--border)] bg-white/60 py-16 text-center text-[var(--ink-muted)]"
             >
                 No challenges yet. Be the first to start a trade-up.
@@ -104,18 +104,18 @@ function filterByCategory(categoryId: number | null): void {
 
             <!-- Challenge grid -->
             <ul v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <li v-for="campaign in campaignList" :key="campaign.id">
-                    <ChallengeCard :campaign="campaign" />
+                <li v-for="challenge in challengeList" :key="challenge.id">
+                    <ChallengeCard :challenge="challenge" />
                 </li>
             </ul>
 
             <!-- Pagination -->
             <nav
-                v-if="campaigns.last_page > 1"
+                v-if="challenges.last_page > 1"
                 class="flex flex-wrap items-center justify-center gap-2 pt-4"
                 aria-label="Challenge pagination"
             >
-                <template v-for="link in campaigns.links" :key="link.label">
+                <template v-for="link in challenges.links" :key="link.label">
                     <Link
                         v-if="link.url"
                         :href="link.url"

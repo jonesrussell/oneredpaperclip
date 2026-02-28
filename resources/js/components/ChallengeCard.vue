@@ -8,7 +8,7 @@ import { useInitials } from '@/composables/useInitials';
 import challenges from '@/routes/challenges';
 
 const props = defineProps<{
-    campaign: {
+    challenge: {
         id: number;
         title: string | null;
         status: string;
@@ -70,14 +70,14 @@ function statusStyles(status: string): string {
 }
 
 const heroImageUrl = (): string | null =>
-    props.campaign.current_item?.image_url ??
-    props.campaign.goal_item?.image_url ??
+    props.challenge.current_item?.image_url ??
+    props.challenge.goal_item?.image_url ??
     null;
 </script>
 
 <template>
     <Link
-        :href="challenges.show({ challenge: campaign.id }).url"
+        :href="challenges.show({ challenge: challenge.id }).url"
         class="surface-light group relative block min-w-0 overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
         style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
         prefetch
@@ -86,7 +86,7 @@ const heroImageUrl = (): string | null =>
         <div
             class="absolute top-0 bottom-0 left-0 w-1 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
             :style="{
-                backgroundColor: getCategoryColor(campaign.category?.name),
+                backgroundColor: getCategoryColor(challenge.category?.name),
             }"
             aria-hidden="true"
         />
@@ -125,12 +125,12 @@ const heroImageUrl = (): string | null =>
             <h3
                 class="line-clamp-2 pr-12 font-display text-xl leading-snug font-semibold text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
             >
-                {{ campaign.title ?? 'Untitled challenge' }}
+                {{ challenge.title ?? 'Untitled challenge' }}
             </h3>
 
             <!-- Journey: current → goal (with optional item thumbnails) -->
             <p
-                v-if="campaign.current_item?.title || campaign.goal_item?.title"
+                v-if="challenge.current_item?.title || challenge.goal_item?.title"
                 class="mt-2.5 flex min-w-0 items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
             >
                 <!-- Current item thumbnail -->
@@ -138,9 +138,9 @@ const heroImageUrl = (): string | null =>
                     class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
                 >
                     <img
-                        v-if="campaign.current_item?.image_url"
-                        :src="campaign.current_item.image_url"
-                        :alt="campaign.current_item?.title ?? 'Current item'"
+                        v-if="challenge.current_item?.image_url"
+                        :src="challenge.current_item.image_url"
+                        :alt="challenge.current_item?.title ?? 'Current item'"
                         class="size-8 object-cover"
                     />
                     <span
@@ -152,7 +152,7 @@ const heroImageUrl = (): string | null =>
                     </span>
                 </span>
                 <span class="min-w-0 truncate">
-                    {{ campaign.current_item?.title ?? 'Start' }}
+                    {{ challenge.current_item?.title ?? 'Start' }}
                 </span>
                 <span
                     class="shrink-0 font-mono text-[var(--brand-red)]"
@@ -165,9 +165,9 @@ const heroImageUrl = (): string | null =>
                     class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
                 >
                     <img
-                        v-if="campaign.goal_item?.image_url"
-                        :src="campaign.goal_item.image_url"
-                        :alt="campaign.goal_item?.title ?? 'Goal item'"
+                        v-if="challenge.goal_item?.image_url"
+                        :src="challenge.goal_item.image_url"
+                        :alt="challenge.goal_item?.title ?? 'Goal item'"
                         class="size-8 object-cover"
                     />
                     <span
@@ -181,7 +181,7 @@ const heroImageUrl = (): string | null =>
                 <span
                     class="min-w-0 truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]"
                 >
-                    {{ campaign.goal_item?.title ?? 'Goal' }}
+                    {{ challenge.goal_item?.title ?? 'Goal' }}
                 </span>
             </p>
 
@@ -191,38 +191,38 @@ const heroImageUrl = (): string | null =>
             >
                 <span
                     v-if="
-                        campaign.trades_count != null &&
-                        campaign.trades_count > 0
+                        challenge.trades_count != null &&
+                        challenge.trades_count > 0
                     "
                     class="font-mono text-xs font-semibold text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
-                    {{ campaign.trades_count }}
-                    {{ campaign.trades_count === 1 ? 'trade' : 'trades' }}
+                    {{ challenge.trades_count }}
+                    {{ challenge.trades_count === 1 ? 'trade' : 'trades' }}
                 </span>
                 <span
-                    v-if="campaign.user?.name"
+                    v-if="challenge.user?.name"
                     class="flex items-center gap-2 text-xs text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
                 >
                     <Avatar class="h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                         <AvatarImage
-                            v-if="campaign.user.avatar"
-                            :src="campaign.user.avatar"
-                            :alt="campaign.user.name"
+                            v-if="challenge.user.avatar"
+                            :src="challenge.user.avatar"
+                            :alt="challenge.user.name"
                         />
                         <AvatarFallback
                             class="rounded-lg text-black dark:text-white"
                         >
-                            {{ getInitials(campaign.user.name) }}
+                            {{ getInitials(challenge.user.name) }}
                         </AvatarFallback>
                     </Avatar>
-                    {{ campaign.user.name }}
+                    {{ challenge.user.name }}
                 </span>
                 <span class="flex-1" />
                 <span
                     class="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-                    :class="statusStyles(campaign.status)"
+                    :class="statusStyles(challenge.status)"
                 >
-                    {{ statusLabel(campaign.status) }}
+                    {{ statusLabel(challenge.status) }}
                 </span>
             </div>
         </div>

@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
 
+import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,6 @@ import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
-import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 defineProps<{
     categories: { id: number; name: string; slug: string }[];
@@ -38,8 +38,8 @@ const startTitle = ref('');
 const startDescription = ref('');
 const goalTitle = ref('');
 const goalDescription = ref('');
-const campaignTitle = ref('');
-const campaignStory = ref('');
+const challengeTitle = ref('');
+const challengeStory = ref('');
 const categoryId = ref('');
 const visibility = ref('public');
 const status = ref('draft');
@@ -134,7 +134,7 @@ async function requestAiSuggest(
         const wrapped = suggestion ? `<p>${suggestion}</p>` : '';
         if (context === 'start_item') startDescription.value = wrapped;
         else if (context === 'goal_item') goalDescription.value = wrapped;
-        else campaignStory.value = wrapped;
+        else challengeStory.value = wrapped;
     } catch {
         aiSuggestError.value = 'Something went wrong. Try again.';
     } finally {
@@ -390,7 +390,7 @@ async function requestAiSuggest(
                                 <Label for="title">Challenge title</Label>
                                 <Input
                                     id="title"
-                                    v-model="campaignTitle"
+                                    v-model="challengeTitle"
                                     name="title"
                                     type="text"
                                     placeholder="e.g. From paperclip to house"
@@ -409,13 +409,13 @@ async function requestAiSuggest(
                                         class="gap-1.5 text-xs"
                                         :disabled="
                                             aiSuggestLoading !== null ||
-                                            !campaignTitle.trim()
+                                            !challengeTitle.trim()
                                         "
                                         @click="
                                             requestAiSuggest(
                                                 'story',
-                                                campaignStory,
-                                                campaignTitle,
+                                                challengeStory,
+                                                challengeTitle,
                                             )
                                         "
                                     >
@@ -433,7 +433,7 @@ async function requestAiSuggest(
                                 </div>
                                 <RichTextEditor
                                     id="story"
-                                    v-model="campaignStory"
+                                    v-model="challengeStory"
                                     name="story"
                                     placeholder="Why are you starting this challenge?"
                                     min-height="min-h-[6rem]"
@@ -555,7 +555,7 @@ async function requestAiSuggest(
                                 />
                             </div>
                             <div
-                                v-if="campaignTitle"
+                                v-if="challengeTitle"
                                 class="rounded-xl bg-[var(--paper)] p-4"
                             >
                                 <p
@@ -566,12 +566,12 @@ async function requestAiSuggest(
                                 <p
                                     class="font-display font-semibold text-[var(--ink)]"
                                 >
-                                    {{ campaignTitle }}
+                                    {{ challengeTitle }}
                                 </p>
                                 <div
-                                    v-if="campaignStory"
+                                    v-if="challengeStory"
                                     class="prose prose-sm mt-1 max-w-none text-sm text-[var(--ink-muted)]"
-                                    v-html="sanitizeForReview(campaignStory)"
+                                    v-html="sanitizeForReview(challengeStory)"
                                 />
                             </div>
                             <div class="flex gap-3">

@@ -1,7 +1,7 @@
-import type { ModelContextTool } from '@/types/webmcp';
 import * as ChallengeApi from '@/actions/App/Http/Controllers/Api/ChallengeApiController';
 import * as OfferApi from '@/actions/App/Http/Controllers/Api/OfferApiController';
 import * as TradeApi from '@/actions/App/Http/Controllers/Api/TradeApiController';
+import type { ModelContextTool } from '@/types/webmcp';
 
 function getCsrfToken(): string | null {
     if (typeof document === 'undefined') {
@@ -275,7 +275,7 @@ function buildTools(): ModelContextTool[] {
         {
             name: 'accept_offer',
             description:
-                'Accept a pending offer (campaign owner only). Creates a trade. Requires user confirmation.',
+                'Accept a pending offer (challenge owner only). Creates a trade. Requires user confirmation.',
             inputSchema: {
                 type: 'object',
                 properties: {
@@ -321,7 +321,7 @@ function buildTools(): ModelContextTool[] {
         {
             name: 'decline_offer',
             description:
-                'Decline a pending offer (campaign owner only). Requires authentication.',
+                'Decline a pending offer (challenge owner only). Requires authentication.',
             inputSchema: {
                 type: 'object',
                 properties: {
@@ -354,7 +354,7 @@ function buildTools(): ModelContextTool[] {
         {
             name: 'confirm_trade',
             description:
-                'Confirm a trade (offerer or campaign owner). When both parties have confirmed, the trade completes. Requires user confirmation.',
+                'Confirm a trade (offerer or challenge owner). When both parties have confirmed, the trade completes. Requires user confirmation.',
             inputSchema: {
                 type: 'object',
                 properties: {

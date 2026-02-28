@@ -3,6 +3,7 @@ import { Form, Head, router } from '@inertiajs/vue3';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
 
+import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,6 @@ import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
-import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 type ItemEdit = {
     id: number;
@@ -28,7 +28,7 @@ type ItemEdit = {
     image_url?: string | null;
 } | null;
 
-type CampaignEdit = {
+type ChallengeEdit = {
     id: number;
     title?: string | null;
     story?: string | null;
@@ -42,37 +42,37 @@ type CampaignEdit = {
 };
 
 const props = defineProps<{
-    campaign: CampaignEdit;
+    challenge: ChallengeEdit;
     categories: { id: number; name: string; slug: string }[];
 }>();
 
 const startItem = () =>
-    props.campaign.start_item ?? props.campaign.startItem ?? null;
+    props.challenge.start_item ?? props.challenge.startItem ?? null;
 const goalItem = () =>
-    props.campaign.goal_item ?? props.campaign.goalItem ?? null;
+    props.challenge.goal_item ?? props.challenge.goalItem ?? null;
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Challenges', href: '/challenges' },
     {
-        title: props.campaign.title ?? 'Challenge',
-        href: `/challenges/${props.campaign.id}`,
+        title: props.challenge.title ?? 'Challenge',
+        href: `/challenges/${props.challenge.id}`,
     },
-    { title: 'Edit', href: `/challenges/${props.campaign.id}/edit` },
+    { title: 'Edit', href: `/challenges/${props.challenge.id}/edit` },
 ];
 
 const startTitle = ref(startItem()?.title ?? '');
 const startDescription = ref(startItem()?.description ?? '');
 const goalTitle = ref(goalItem()?.title ?? '');
 const goalDescription = ref(goalItem()?.description ?? '');
-const campaignTitle = ref(props.campaign.title ?? '');
-const campaignStory = ref(props.campaign.story ?? '');
+const challengeTitle = ref(props.challenge.title ?? '');
+const challengeStory = ref(props.challenge.story ?? '');
 const categoryId = ref(
-    props.campaign.category_id != null
-        ? String(props.campaign.category_id)
+    props.challenge.category_id != null
+        ? String(props.challenge.category_id)
         : '',
 );
-const visibility = ref(props.campaign.visibility ?? 'public');
-const status = ref(props.campaign.status ?? 'active');
+const visibility = ref(props.challenge.visibility ?? 'public');
+const status = ref(props.challenge.status ?? 'active');
 
 const aiSuggestLoading = ref<'start_item' | 'goal_item' | 'story' | null>(null);
 const aiSuggestError = ref<string | null>(null);
@@ -132,7 +132,7 @@ async function requestAiSuggest(
         const wrapped = suggestion ? `<p>${suggestion}</p>` : '';
         if (context === 'start_item') startDescription.value = wrapped;
         else if (context === 'goal_item') goalDescription.value = wrapped;
-        else campaignStory.value = wrapped;
+        else challengeStory.value = wrapped;
     } catch {
         aiSuggestError.value = 'Something went wrong. Try again.';
     } finally {
@@ -141,7 +141,7 @@ async function requestAiSuggest(
 }
 
 function cancel(): void {
-    router.visit(challenges.show.url({ challenge: props.campaign.id }));
+    router.visit(challenges.show.url({ challenge: props.challenge.id }));
 }
 
 async function uploadItemPhoto(
@@ -198,7 +198,7 @@ function onItemPhotoChange(
 
 <template>
     <Head
-        :title="campaign.title ? `Edit: ${campaign.title}` : 'Edit challenge'"
+        :title="challenge.title ? `Edit: ${challenge.title}` : 'Edit challenge'"
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -216,7 +216,7 @@ function onItemPhotoChange(
                 {{ uploadError }}
             </p>
             <Form
-                v-bind="challenges.update.form({ challenge: campaign.id })"
+                v-bind="challenges.update.form({ challenge: challenge.id })"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >
@@ -480,7 +480,7 @@ function onItemPhotoChange(
                             <Label for="title">Challenge title</Label>
                             <Input
                                 id="title"
-                                v-model="campaignTitle"
+                                v-model="challengeTitle"
                                 name="title"
                                 type="text"
                                 placeholder="e.g. From paperclip to house"
@@ -499,13 +499,13 @@ function onItemPhotoChange(
                                     class="gap-1.5 text-xs"
                                     :disabled="
                                         aiSuggestLoading !== null ||
-                                        !campaignTitle.trim()
+                                        !challengeTitle.trim()
                                     "
                                     @click="
                                         requestAiSuggest(
                                             'story',
-                                            campaignStory,
-                                            campaignTitle,
+                                            challengeStory,
+                                            challengeTitle,
                                         )
                                     "
                                 >
@@ -523,7 +523,7 @@ function onItemPhotoChange(
                             </div>
                             <RichTextEditor
                                 id="story"
-                                v-model="campaignStory"
+                                v-model="challengeStory"
                                 name="story"
                                 placeholder="Why are you starting this challenge?"
                                 min-height="min-h-[6rem]"

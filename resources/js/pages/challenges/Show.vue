@@ -43,7 +43,7 @@ type CommentSummary = {
     created_at: string;
 };
 
-type Campaign = {
+type Challenge = {
     id: number;
     title?: string | null;
     story?: string | null;
@@ -69,7 +69,7 @@ type Campaign = {
 };
 
 const props = defineProps<{
-    campaign: Campaign;
+    challenge: Challenge;
     isFollowing: boolean;
 }>();
 
@@ -78,14 +78,14 @@ const { getInitials } = useInitials();
 
 const isOwner = computed(() => {
     const userId = page.props.auth?.user?.id;
-    return userId != null && userId === props.campaign.user_id;
+    return userId != null && userId === props.challenge.user_id;
 });
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Challenges', href: '/challenges' },
     {
-        title: props.campaign.title ?? 'Challenge',
-        href: `/challenges/${props.campaign.id}`,
+        title: props.challenge.title ?? 'Challenge',
+        href: `/challenges/${props.challenge.id}`,
     },
 ];
 
@@ -96,29 +96,29 @@ const tabs = computed(() => [
     {
         key: 'offers' as const,
         label: 'Offers',
-        count: props.campaign.offers?.length || 0,
+        count: props.challenge.offers?.length || 0,
     },
     {
         key: 'trades' as const,
         label: 'Trades',
-        count: props.campaign.trades?.length || 0,
+        count: props.challenge.trades?.length || 0,
     },
     {
         key: 'comments' as const,
         label: 'Comments',
-        count: props.campaign.comments?.length || 0,
+        count: props.challenge.comments?.length || 0,
     },
 ]);
 
 const tradesCompleted = computed(
     () =>
-        props.campaign.trades?.filter((t) => t.status === 'completed').length ??
-        0,
+        props.challenge.trades?.filter((t) => t.status === 'completed')
+            .length ?? 0,
 );
 
 const daysActive = computed(() => {
-    if (!props.campaign.created_at) return 0;
-    const created = new Date(props.campaign.created_at);
+    if (!props.challenge.created_at) return 0;
+    const created = new Date(props.challenge.created_at);
     const now = new Date();
     return Math.ceil(
         (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24),
@@ -126,12 +126,12 @@ const daysActive = computed(() => {
 });
 
 const ownerStats = computed(() => ({
-    xp: props.campaign.user?.xp ?? 0,
-    level: props.campaign.user?.level ?? 1,
+    xp: props.challenge.user?.xp ?? 0,
+    level: props.challenge.user?.level ?? 1,
     levelProgress: 35,
     xpForNextLevel: 500,
-    currentStreak: props.campaign.user?.current_streak ?? 0,
-    longestStreak: props.campaign.user?.longest_streak ?? 0,
+    currentStreak: props.challenge.user?.current_streak ?? 0,
+    longestStreak: props.challenge.user?.longest_streak ?? 0,
     tradesCompleted: tradesCompleted.value,
     daysActive: daysActive.value,
 }));
@@ -147,7 +147,7 @@ type PathNode = {
 
 const pathNodes = computed<PathNode[]>(() => {
     const nodes: PathNode[] = [];
-    const trades = props.campaign.trades ?? [];
+    const trades = props.challenge.trades ?? [];
     const completedTrades = trades.filter((t) => t.status === 'completed');
     const hasCurrentTrade = trades.some(
         (t) => t.status === 'pending_confirmation',
@@ -157,8 +157,8 @@ const pathNodes = computed<PathNode[]>(() => {
         id: 'start',
         type: 'start',
         status: 'completed',
-        title: props.campaign.current_item?.title ?? 'Start Item',
-        imageUrl: props.campaign.current_item?.image_url,
+        title: props.challenge.current_item?.title ?? 'Start Item',
+        imageUrl: props.challenge.current_item?.image_url,
     });
 
     completedTrades.forEach((trade, i) => {
@@ -202,7 +202,7 @@ const pathNodes = computed<PathNode[]>(() => {
     }
 
     const goalStatus =
-        props.campaign.status === 'completed'
+        props.challenge.status === 'completed'
             ? 'completed'
             : nodes.some((n) => n.status === 'current')
               ? 'locked'
@@ -214,21 +214,21 @@ const pathNodes = computed<PathNode[]>(() => {
         id: 'goal',
         type: 'goal',
         status: goalStatus,
-        title: props.campaign.goal_item?.title ?? 'Goal Item',
-        imageUrl: props.campaign.goal_item?.image_url,
+        title: props.challenge.goal_item?.title ?? 'Goal Item',
+        imageUrl: props.challenge.goal_item?.image_url,
     });
 
     return nodes;
 });
 
 const mascotMood = computed(() => {
-    if (props.campaign.status === 'completed') return 'celebrating';
+    if (props.challenge.status === 'completed') return 'celebrating';
     if (tradesCompleted.value > 0) return 'encouraging';
     return 'happy';
 });
 
 const showCelebration = ref(false);
-const celebrationType = ref<'xp' | 'level-up' | 'trade' | 'campaign-complete'>(
+const celebrationType = ref<'xp' | 'level-up' | 'trade' | 'challenge-complete'>(
     'xp',
 );
 const celebrationXp = ref(0);
@@ -254,7 +254,7 @@ function formatDate(dateString: string): string {
 
 <template>
     <Head
-        :title="`${campaign.title ?? 'Challenge'} — ${page.props.name ?? 'One Red Paperclip'}`"
+        :title="`${challenge.title ?? 'Challenge'} — ${page.props.name ?? 'One Red Paperclip'}`"
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -272,7 +272,7 @@ function formatDate(dateString: string): string {
                         <div class="flex-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 <Badge
-                                    v-if="campaign.category?.name"
+                                    v-if="challenge.category?.name"
                                     variant="secondary"
                                     class="rounded-full border-0 text-xs"
                                     :style="{
@@ -280,20 +280,20 @@ function formatDate(dateString: string): string {
                                         color: 'var(--foreground)',
                                     }"
                                 >
-                                    {{ campaign.category.name }}
+                                    {{ challenge.category.name }}
                                 </Badge>
                                 <Badge
                                     variant="secondary"
                                     class="rounded-full border-0 text-xs capitalize"
-                                    :class="getStatusClasses(campaign.status)"
+                                    :class="getStatusClasses(challenge.status)"
                                 >
-                                    {{ campaign.status }}
+                                    {{ challenge.status }}
                                 </Badge>
                             </div>
                             <h1
                                 class="mt-3 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
                             >
-                                {{ campaign.title ?? 'Untitled challenge' }}
+                                {{ challenge.title ?? 'Untitled challenge' }}
                             </h1>
                             <div
                                 class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
@@ -306,10 +306,10 @@ function formatDate(dateString: string): string {
                                         class="size-8 shrink-0 overflow-hidden rounded-full ring-2 ring-[var(--electric-mint)]/30"
                                     >
                                         <AvatarImage
-                                            v-if="campaign.user?.avatar"
-                                            :src="campaign.user.avatar"
+                                            v-if="challenge.user?.avatar"
+                                            :src="challenge.user.avatar"
                                             :alt="
-                                                campaign.user?.name ??
+                                                challenge.user?.name ??
                                                 'Challenge owner'
                                             "
                                         />
@@ -318,20 +318,22 @@ function formatDate(dateString: string): string {
                                         >
                                             {{
                                                 getInitials(
-                                                    campaign.user?.name ??
+                                                    challenge.user?.name ??
                                                         'Anonymous',
                                                 )
                                             }}
                                         </AvatarFallback>
                                     </Avatar>
                                     <span class="font-medium">
-                                        {{ campaign.user?.name ?? 'Anonymous' }}
+                                        {{
+                                            challenge.user?.name ?? 'Anonymous'
+                                        }}
                                     </span>
                                     <Badge
-                                        v-if="campaign.user?.level"
+                                        v-if="challenge.user?.level"
                                         class="rounded-full bg-gradient-to-r from-violet-500 to-purple-600 px-2 py-0.5 text-[10px] text-white"
                                     >
-                                        Lvl {{ campaign.user.level }}
+                                        Lvl {{ challenge.user.level }}
                                     </Badge>
                                 </Link>
                             </div>
@@ -357,7 +359,7 @@ function formatDate(dateString: string): string {
                                 v-if="isOwner"
                                 :href="
                                     challenges.edit.url({
-                                        challenge: campaign.id,
+                                        challenge: challenge.id,
                                     })
                                 "
                             >
@@ -458,9 +460,9 @@ function formatDate(dateString: string): string {
                 <div class="mt-4">
                     <div v-show="activeTab === 'story'" class="space-y-4">
                         <div
-                            v-if="campaign.story || campaign.story_safe"
+                            v-if="challenge.story || challenge.story_safe"
                             class="prose prose-sm dark:prose-invert max-w-none rounded-2xl border border-border bg-card p-6 text-foreground shadow-sm dark:shadow-[var(--shadow-card)]"
-                            v-html="campaign.story_safe ?? ''"
+                            v-html="challenge.story_safe ?? ''"
                         />
                         <div
                             v-else
@@ -475,7 +477,7 @@ function formatDate(dateString: string): string {
 
                     <div v-show="activeTab === 'offers'" class="space-y-3">
                         <div
-                            v-if="!campaign.offers?.length"
+                            v-if="!challenge.offers?.length"
                             class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/60 py-16 text-center"
                         >
                             <PaperclipMascot mood="encouraging" :size="64" />
@@ -487,7 +489,7 @@ function formatDate(dateString: string): string {
                             </p>
                         </div>
                         <div
-                            v-for="offer in campaign.offers"
+                            v-for="offer in challenge.offers"
                             v-else
                             :key="offer.id"
                             class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
@@ -537,7 +539,7 @@ function formatDate(dateString: string): string {
 
                     <div v-show="activeTab === 'trades'" class="space-y-3">
                         <div
-                            v-if="!campaign.trades?.length"
+                            v-if="!challenge.trades?.length"
                             class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/60 py-16 text-center"
                         >
                             <PaperclipMascot mood="happy" :size="64" />
@@ -549,7 +551,7 @@ function formatDate(dateString: string): string {
                             </p>
                         </div>
                         <div
-                            v-for="trade in campaign.trades"
+                            v-for="trade in challenge.trades"
                             v-else
                             :key="trade.id"
                             class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
@@ -611,7 +613,7 @@ function formatDate(dateString: string): string {
 
                     <div v-show="activeTab === 'comments'" class="space-y-3">
                         <div
-                            v-if="!campaign.comments?.length"
+                            v-if="!challenge.comments?.length"
                             class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/60 py-16 text-center"
                         >
                             <PaperclipMascot mood="thinking" :size="64" />
@@ -623,7 +625,7 @@ function formatDate(dateString: string): string {
                             </p>
                         </div>
                         <div
-                            v-for="comment in campaign.comments"
+                            v-for="comment in challenge.comments"
                             v-else
                             :key="comment.id"
                             class="rounded-2xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
