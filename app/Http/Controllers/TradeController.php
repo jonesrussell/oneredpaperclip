@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\ConfirmTrade;
+use App\Enums\TradeStatus;
 use App\Models\Trade;
 use Illuminate\Http\RedirectResponse;
 
@@ -16,8 +17,13 @@ class TradeController extends Controller
     {
         $this->authorize('confirm', $trade);
 
-        $confirmTrade($trade, request()->user());
+        $trade = $confirmTrade($trade, request()->user());
 
-        return redirect()->route('challenges.show', $trade->challenge);
+        $message = $trade->status === TradeStatus::Completed
+            ? 'Trade complete!'
+            : 'Trade confirmed! Waiting for the other party.';
+
+        return redirect()->route('challenges.show', $trade->challenge)
+            ->with('success', $message);
     }
 }

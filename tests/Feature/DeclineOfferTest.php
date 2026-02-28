@@ -55,7 +55,8 @@ beforeEach(function () {
 test('challenge owner can decline offer and offerer is notified', function () {
     $response = $this->actingAs($this->owner)->post(route('offers.decline', $this->offer));
 
-    $response->assertRedirect();
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Offer declined.');
 
     expect($this->offer->fresh()->status)->toBe(OfferStatus::Declined);
 

@@ -59,7 +59,8 @@ beforeEach(function () {
 test('offerer can confirm trade and confirmed_by_offerer_at is set', function () {
     $response = $this->actingAs($this->offerer)->post(route('trades.confirm', $this->trade));
 
-    $response->assertRedirect();
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Trade confirmed! Waiting for the other party.');
     $this->trade->refresh();
     expect($this->trade->confirmed_by_offerer_at)->not->toBeNull()
         ->and($this->trade->confirmed_by_owner_at)->toBeNull()
@@ -81,7 +82,8 @@ test('when both confirm trade status is completed and challenge current_item_id 
 
     $response = $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
 
-    $response->assertRedirect();
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Trade complete!');
     $this->trade->refresh();
     $this->challenge->refresh();
     expect($this->trade->status)->toBe(TradeStatus::Completed)

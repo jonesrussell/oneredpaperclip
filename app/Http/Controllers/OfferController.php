@@ -19,7 +19,8 @@ class OfferController extends Controller
     {
         $offer = $createOffer($request->validated(), $challenge, $request->user());
 
-        return redirect()->route('challenges.show', $challenge);
+        return redirect()->route('challenges.show', $challenge)
+            ->with('success', 'Offer submitted!');
     }
 
     /**
@@ -31,7 +32,8 @@ class OfferController extends Controller
 
         $acceptOffer($offer);
 
-        return redirect()->route('challenges.show', $offer->challenge);
+        return redirect()->route('challenges.show', $offer->challenge)
+            ->with('success', 'Offer accepted — trade created!');
     }
 
     /**
@@ -43,6 +45,7 @@ class OfferController extends Controller
 
         $declineOffer($offer);
 
-        return redirect()->route('challenges.show', $offer->challenge);
+        return redirect()->route('challenges.show', $offer->challenge)
+            ->with('success', 'Offer declined.');
     }
 }

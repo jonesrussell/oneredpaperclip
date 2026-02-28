@@ -57,7 +57,8 @@ beforeEach(function () {
 test('challenge owner can accept offer and trade is created with correct fields and offerer is notified', function () {
     $response = $this->actingAs($this->owner)->post(route('offers.accept', $this->offer));
 
-    $response->assertRedirect();
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Offer accepted — trade created!');
 
     $trade = Trade::where('offer_id', $this->offer->id)->first();
     $challengeTradesCount = $this->challenge->trades()->count();
