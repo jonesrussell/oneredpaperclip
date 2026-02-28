@@ -94,7 +94,7 @@ const handleSubmit = (publish: boolean = false) => {
               : null,
     };
 
-    router.patch(`${routePrefix}/${props.article.id}`, data, {
+    router.patch(`${routePrefix}/${props.article.id}`, data as Record<string, string | number | boolean | null | undefined>, {
         preserveScroll: true,
         onError: (err) => {
             errors.value = err;

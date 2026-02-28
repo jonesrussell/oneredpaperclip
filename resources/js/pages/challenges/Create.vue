@@ -190,7 +190,8 @@ async function requestAiSuggest(
 
             <!-- Form -->
             <Form
-                v-bind="challenges.store.form()"
+                :action="challenges.store.url()"
+                method="post"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >

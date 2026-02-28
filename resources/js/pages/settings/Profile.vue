@@ -30,7 +30,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 const page = usePage();
-const user = page.props.auth.user;
+const user = page.props.auth.user!;
 const { getInitials } = useInitials();
 </script>
 
@@ -49,7 +49,8 @@ const { getInitials } = useInitials();
                 />
 
                 <Form
-                    v-bind="ProfileController.update.form()"
+                    :action="ProfileController.update.url()"
+                    method="patch"
                     class="space-y-6"
                     v-slot="{ errors, processing, recentlySuccessful }"
                 >

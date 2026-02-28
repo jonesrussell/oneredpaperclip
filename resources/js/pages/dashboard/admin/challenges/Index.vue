@@ -287,7 +287,7 @@ watch(
                     @update:model-value="
                         (val) => {
                             filterValues.status =
-                                val === 'all' ? undefined : val;
+                                val === 'all' ? undefined : String(val);
                             applyFilters();
                         }
                     "
@@ -308,7 +308,7 @@ watch(
                     @update:model-value="
                         (val) => {
                             filterValues.visibility =
-                                val === 'all' ? undefined : val;
+                                val === 'all' ? undefined : String(val);
                             applyFilters();
                         }
                     "
@@ -327,7 +327,7 @@ watch(
                     @update:model-value="
                         (val) => {
                             filterValues.category =
-                                val === 'all' ? undefined : val;
+                                val === 'all' ? undefined : String(val);
                             applyFilters();
                         }
                     "

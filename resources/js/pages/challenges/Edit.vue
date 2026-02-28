@@ -216,7 +216,8 @@ function onItemPhotoChange(
                 {{ uploadError }}
             </p>
             <Form
-                v-bind="challenges.update.form({ challenge: challenge.id })"
+                :action="challenges.update.url({ challenge: challenge.id })"
+                method="put"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >

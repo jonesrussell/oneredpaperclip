@@ -50,7 +50,7 @@ watch(
         if (!ed) return;
         const current = ed.getHTML();
         if (newVal !== current) {
-            ed.commands.setContent(newVal ?? '', false);
+            ed.commands.setContent(newVal ?? '', { emitUpdate: false });
         }
     },
 );

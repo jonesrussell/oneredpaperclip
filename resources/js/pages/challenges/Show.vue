@@ -67,6 +67,11 @@ const isOwner = computed(() => {
 const currentUser = computed(() => page.props.auth?.user);
 const showOfferDialog = ref(false);
 
+const shareUrl = computed(() => {
+    if (typeof window === 'undefined') return '';
+    return `${window.location.origin}/challenges/${props.challenge.id}`;
+});
+
 function handleMakeOffer(): void {
     if (!currentUser.value) {
         router.visit('/login');
@@ -343,7 +348,7 @@ function formatDate(dateString: string): string {
                                 <Heart class="size-4" />
                             </Button>
                             <ShareDropdown
-                                :url="`${window.location.origin}/challenges/${challenge.id}`"
+                                :url="shareUrl"
                                 :title="
                                     challenge.title ??
                                     'Check out this challenge!'

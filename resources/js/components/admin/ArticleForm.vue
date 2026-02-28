@@ -292,7 +292,7 @@ const clearArticleable = () => {
                                 >
                             </Label>
                             <Select
-                                :model-value="modelValue[field.name]"
+                                :model-value="(modelValue[field.name] as string | number | undefined)"
                                 @update:model-value="
                                     updateField(field.name, $event)
                                 "
@@ -338,7 +338,7 @@ const clearArticleable = () => {
                             </Label>
                             <TagMultiSelect
                                 :model-value="
-                                    (modelValue[field.name] as number[]) ?? []
+                                    ((modelValue[field.name] as number[]) ?? [])
                                 "
                                 :options="getRelationOptions(field)"
                                 :display-field="field.display_field ?? 'name'"
@@ -360,7 +360,7 @@ const clearArticleable = () => {
                                 >
                             </Label>
                             <Select
-                                :model-value="modelValue[field.name]"
+                                :model-value="(modelValue[field.name] as string | number | undefined)"
                                 @update:model-value="
                                     updateField(field.name, $event)
                                 "
