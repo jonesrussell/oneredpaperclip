@@ -42,12 +42,15 @@ class ConfirmTrade
             }
 
             if ($isOwner && $trade->confirmed_by_owner_at === null) {
-                $trade->update(['confirmed_by_owner_at' => Carbon::now()]);
+                $trade->update([
+                    'confirmed_by_owner_at' => Carbon::now(),
+                    'confirmed_by_offerer_at' => $trade->confirmed_by_offerer_at ?? Carbon::now(),
+                ]);
             }
 
             $trade->refresh();
 
-            if ($trade->confirmed_by_offerer_at !== null && $trade->confirmed_by_owner_at !== null) {
+            if ($trade->confirmed_by_owner_at !== null) {
                 $trade->update(['status' => TradeStatus::Completed]);
                 $trade->challenge->update(['current_item_id' => $trade->offered_item_id]);
                 $trade->challenge->increment('trades_count');

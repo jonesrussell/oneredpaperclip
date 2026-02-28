@@ -10,6 +10,7 @@ export type TradeStatus = 'pending_confirmation' | 'completed' | 'disputed';
 export type ItemSummary = {
     id: number;
     title: string;
+    description?: string | null;
     image_url?: string | null;
 };
 

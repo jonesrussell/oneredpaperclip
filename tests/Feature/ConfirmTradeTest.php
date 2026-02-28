@@ -73,18 +73,21 @@ test('offerer can confirm trade and confirmed_by_offerer_at is set', function ()
         ->and($this->trade->status)->toBe(TradeStatus::PendingConfirmation);
 });
 
-test('owner can confirm trade and confirmed_by_owner_at is set', function () {
-    $this->trade->update(['confirmed_by_offerer_at' => now()]);
-
+test('owner can auto-complete trade without offerer confirmation', function () {
     $response = $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
 
-    $response->assertRedirect();
+    $response->assertRedirect()
+        ->assertSessionHas('success', 'Trade complete!');
     $this->trade->refresh();
-    expect($this->trade->confirmed_by_owner_at)->not->toBeNull();
+    $this->challenge->refresh();
+    expect($this->trade->confirmed_by_owner_at)->not->toBeNull()
+        ->and($this->trade->confirmed_by_offerer_at)->not->toBeNull()
+        ->and($this->trade->status)->toBe(TradeStatus::Completed)
+        ->and($this->challenge->current_item_id)->toBe($this->trade->offered_item_id);
 });
 
-test('when both confirm trade status is completed and challenge current_item_id is offered_item_id', function () {
-    $this->trade->update(['confirmed_by_offerer_at' => now()]);
+test('when offerer confirms first then owner confirms trade is completed', function () {
+    $this->actingAs($this->offerer)->post(route('trades.confirm', $this->trade));
 
     $response = $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
 
@@ -119,7 +122,6 @@ test('confirm is idempotent for offerer', function () {
 });
 
 test('confirm is idempotent for owner', function () {
-    $this->trade->update(['confirmed_by_offerer_at' => now()]);
     $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
     $firstConfirmedAt = $this->trade->fresh()->confirmed_by_owner_at;
 

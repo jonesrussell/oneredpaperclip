@@ -130,7 +130,7 @@ class ChallengeController extends Controller
 
         $challenge->load([
             'items',
-            'trades' => fn ($q) => $q->with(['offeredItem', 'offer.fromUser'])->orderBy('position'),
+            'trades' => fn ($q) => $q->with(['offeredItem.media', 'offer.fromUser'])->orderBy('position'),
             'offers' => fn ($q) => $q->with(['offeredItem.media', 'fromUser'])->where('status', OfferStatus::Pending),
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',

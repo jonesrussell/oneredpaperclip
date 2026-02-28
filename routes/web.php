@@ -75,6 +75,8 @@ Route::post('offers/{offer}/accept', [OfferController::class, 'accept'])->name('
     ->middleware(['auth', 'verified']);
 Route::post('offers/{offer}/decline', [OfferController::class, 'decline'])->name('offers.decline')
     ->middleware(['auth', 'verified']);
+Route::patch('trades/{trade}', [TradeController::class, 'update'])->name('trades.update')
+    ->middleware(['auth', 'verified']);
 Route::post('trades/{trade}/confirm', [TradeController::class, 'confirm'])->name('trades.confirm')
     ->middleware(['auth', 'verified']);
 Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('items.media.store')

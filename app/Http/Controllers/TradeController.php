@@ -3,12 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Actions\ConfirmTrade;
+use App\Actions\UpdateTrade;
 use App\Enums\TradeStatus;
+use App\Http\Requests\UpdateTradeRequest;
 use App\Models\Trade;
 use Illuminate\Http\RedirectResponse;
 
 class TradeController extends Controller
 {
+    /**
+     * Update the traded item (title, description, image).
+     */
+    public function update(UpdateTradeRequest $request, Trade $trade, UpdateTrade $updateTrade): RedirectResponse
+    {
+        $updateTrade($trade, $request->validated());
+
+        return redirect()->route('challenges.show', $trade->challenge)
+            ->with('success', 'Trade item updated.');
+    }
+
     /**
      * Confirm the trade (offerer or challenge owner). When both have confirmed,
      * trade is completed and challenge current item is advanced.
