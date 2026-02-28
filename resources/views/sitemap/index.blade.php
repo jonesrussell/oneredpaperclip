@@ -19,7 +19,9 @@
 @foreach($challenges as $challenge)
     <url>
         <loc>{{ route('challenges.show', $challenge) }}</loc>
+        @if($challenge->updated_at)
         <lastmod>{{ $challenge->updated_at->toW3cString() }}</lastmod>
+        @endif
         <changefreq>weekly</changefreq>
     </url>
 @endforeach

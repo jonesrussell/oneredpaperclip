@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'description' => env('SEO_DESCRIPTION', 'Trade up from one thing to something better. Start a campaign, get offers, and see how far you can go.'),
+    'description' => env('SEO_DESCRIPTION', 'Trade up from one thing to something better. Start a challenge, get offers, and see how far you can go.'),
 
     /*
     |--------------------------------------------------------------------------

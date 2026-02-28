@@ -27,8 +27,10 @@
         <meta property="og:title" content="{{ $metaTitle }}">
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:image" content="{{ $metaImage }}">
+        @if(config('seo.og_image') || ($pageMeta['image'] ?? null))
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
+        @endif
         <meta property="og:url" content="{{ $canonicalUrl }}">
         <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -47,7 +49,7 @@
         {{-- Structured Data (JSON-LD) --}}
         @if($schema)
         <script type="application/ld+json">
-            {!! json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+            {!! json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
         </script>
         @endif
 

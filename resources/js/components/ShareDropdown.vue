@@ -18,7 +18,7 @@ const props = withDefaults(
         title?: string;
     }>(),
     {
-        url: () => window.location.href,
+        url: () => (typeof window !== 'undefined' ? window.location.href : ''),
         title: 'Check out this challenge!',
     },
 );
@@ -52,28 +52,42 @@ const shareLinks = computed(() => [
 ]);
 
 function openShareLink(url: string): void {
-    window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
+    const popup = window.open(
+        url,
+        '_blank',
+        'noopener,noreferrer,width=600,height=400',
+    );
+    if (!popup) {
+        window.location.href = url;
+    }
 }
 
 async function copyToClipboard(): Promise<void> {
     try {
         await navigator.clipboard.writeText(props.url);
-        copied.value = true;
-        setTimeout(() => {
-            copied.value = false;
-        }, 2000);
-    } catch {
+    } catch (err) {
+        console.warn('Clipboard API failed, using fallback:', err);
+
         const textArea = document.createElement('textarea');
         textArea.value = props.url;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
         document.body.appendChild(textArea);
         textArea.select();
-        document.execCommand('copy');
+
+        const success = document.execCommand('copy');
         document.body.removeChild(textArea);
-        copied.value = true;
-        setTimeout(() => {
-            copied.value = false;
-        }, 2000);
+
+        if (!success) {
+            console.error('Both clipboard methods failed');
+            return;
+        }
     }
+
+    copied.value = true;
+    setTimeout(() => {
+        copied.value = false;
+    }, 2000);
 }
 </script>
 

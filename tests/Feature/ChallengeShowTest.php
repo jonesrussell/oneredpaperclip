@@ -97,14 +97,21 @@ test('show page includes trade confirmation booleans and offerer', function () {
     );
 });
 
-test('show page provides challenge data needed for social sharing', function () {
+test('show page provides SEO meta with og_type, description, and JSON-LD schema', function () {
     $response = $this->get(route('challenges.show', $this->challenge));
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('challenges/Show')
-        ->has('challenge.id')
-        ->has('challenge.title')
-        ->where('challenge.title', 'Test challenge')
+        ->where('meta.og_type', 'article')
+        ->has('meta.description')
+        ->has('meta.title')
+        ->has('meta.schema')
+        ->where('meta.schema.@type', 'Article')
+        ->where('meta.schema.headline', 'Test challenge')
+        ->where('meta.schema.author.@type', 'Person')
+        ->where('meta.schema.author.name', $this->owner->name)
+        ->has('meta.schema.datePublished')
+        ->has('meta.schema.publisher')
     );
 });
