@@ -81,14 +81,12 @@ const handleApply = () => {
                     <!-- Select filter (static options) -->
                     <Select
                         v-else-if="filter.type === 'select'"
-                        :model-value="modelValue[filter.name] ?? ''"
+                        :model-value="modelValue[filter.name] ?? 'all'"
                         @update:model-value="
                             (val: unknown) => {
                                 updateFilter(
                                     filter.name,
-                                    val != null &&
-                                        (typeof val === 'string' ||
-                                            typeof val === 'number')
+                                    val !== 'all' && val != null
                                         ? String(val)
                                         : undefined,
                                 );
@@ -104,8 +102,8 @@ const handleApply = () => {
                         <SelectContent>
                             <SelectItem
                                 v-for="opt in filter.options"
-                                :key="opt.value"
-                                :value="opt.value"
+                                :key="opt.value || 'all'"
+                                :value="opt.value || 'all'"
                             >
                                 {{ opt.label }}
                             </SelectItem>

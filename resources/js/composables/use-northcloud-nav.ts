@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/vue3';
-import { FileText, Users, type LucideIcon } from 'lucide-vue-next';
+import { FileText, ListChecks, Users, type LucideIcon } from 'lucide-vue-next';
 import { computed, type ComputedRef } from 'vue';
+import { index as adminChallengesIndex } from '@/routes/admin/challenges';
 import type { NavItem } from '@/types';
 
 interface NorthcloudNavItem {
@@ -11,6 +12,7 @@ interface NorthcloudNavItem {
 
 const iconMap: Record<string, LucideIcon> = {
     FileText,
+    ListChecks,
     Users,
 };
 
@@ -23,7 +25,11 @@ export function useNorthcloudNav(): { items: ComputedRef<NavItem[]> } {
             | undefined;
         const nav = northcloud?.navigation ?? [];
 
-        return nav.map((item): NavItem => {
+        if (nav.length === 0) {
+            return [];
+        }
+
+        const northcloudItems = nav.map((item): NavItem => {
             const icon = iconMap[item.icon];
             return {
                 title: item.title,
@@ -31,6 +37,14 @@ export function useNorthcloudNav(): { items: ComputedRef<NavItem[]> } {
                 ...(icon !== undefined && { icon }),
             };
         });
+
+        const challengesItem: NavItem = {
+            title: 'Challenges',
+            href: adminChallengesIndex().url,
+            icon: ListChecks,
+        };
+
+        return [...northcloudItems, challengesItem];
     });
 
     return { items };

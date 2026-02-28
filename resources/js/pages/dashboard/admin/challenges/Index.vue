@@ -283,14 +283,19 @@ watch(
                     @keyup.enter="applyFilters"
                 />
                 <Select
-                    v-model="filterValues.status"
-                    @update:model-value="applyFilters"
+                    :model-value="filterValues.status || 'all'"
+                    @update:model-value="
+                        (val) => {
+                            filterValues.status = val === 'all' ? undefined : val;
+                            applyFilters();
+                        }
+                    "
                 >
                     <SelectTrigger class="w-40">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Statuses</SelectItem>
+                        <SelectItem value="all">All Statuses</SelectItem>
                         <SelectItem value="draft">Draft</SelectItem>
                         <SelectItem value="active">Active</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
@@ -298,27 +303,37 @@ watch(
                     </SelectContent>
                 </Select>
                 <Select
-                    v-model="filterValues.visibility"
-                    @update:model-value="applyFilters"
+                    :model-value="filterValues.visibility || 'all'"
+                    @update:model-value="
+                        (val) => {
+                            filterValues.visibility = val === 'all' ? undefined : val;
+                            applyFilters();
+                        }
+                    "
                 >
                     <SelectTrigger class="w-40">
                         <SelectValue placeholder="Visibility" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Visibility</SelectItem>
+                        <SelectItem value="all">All Visibility</SelectItem>
                         <SelectItem value="public">Public</SelectItem>
                         <SelectItem value="unlisted">Unlisted</SelectItem>
                     </SelectContent>
                 </Select>
                 <Select
-                    v-model="filterValues.category"
-                    @update:model-value="applyFilters"
+                    :model-value="filterValues.category || 'all'"
+                    @update:model-value="
+                        (val) => {
+                            filterValues.category = val === 'all' ? undefined : val;
+                            applyFilters();
+                        }
+                    "
                 >
                     <SelectTrigger class="w-48">
                         <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="">All Categories</SelectItem>
+                        <SelectItem value="all">All Categories</SelectItem>
                         <SelectItem
                             v-for="category in categories"
                             :key="category.id"
