@@ -3,7 +3,10 @@ import { router } from '@inertiajs/vue3';
 import { Check, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-import { accept, decline } from '@/actions/App/Http/Controllers/OfferController';
+import {
+    accept,
+    decline,
+} from '@/actions/App/Http/Controllers/OfferController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,22 +41,30 @@ const processing = ref(false);
 
 function acceptOffer() {
     processing.value = true;
-    router.post(accept.url({ offer: props.offer.id }), {}, {
-        onFinish: () => {
-            processing.value = false;
-            showAcceptDialog.value = false;
+    router.post(
+        accept.url({ offer: props.offer.id }),
+        {},
+        {
+            onFinish: () => {
+                processing.value = false;
+                showAcceptDialog.value = false;
+            },
         },
-    });
+    );
 }
 
 function declineOffer() {
     processing.value = true;
-    router.post(decline.url({ offer: props.offer.id }), {}, {
-        onFinish: () => {
-            processing.value = false;
-            showDeclineDialog.value = false;
+    router.post(
+        decline.url({ offer: props.offer.id }),
+        {},
+        {
+            onFinish: () => {
+                processing.value = false;
+                showDeclineDialog.value = false;
+            },
         },
-    });
+    );
 }
 </script>
 
@@ -133,15 +144,12 @@ function declineOffer() {
                     Accept
                     <strong>{{ offer.offered_item?.title }}</strong>
                     from
-                    <strong>{{ offer.from_user?.name }}</strong>?
-                    This will create a trade.
+                    <strong>{{ offer.from_user?.name }}</strong
+                    >? This will create a trade.
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-                <Button
-                    variant="outline"
-                    @click="showAcceptDialog = false"
-                >
+                <Button variant="outline" @click="showAcceptDialog = false">
                     Cancel
                 </Button>
                 <Button
@@ -162,14 +170,12 @@ function declineOffer() {
                 <DialogTitle class="font-display">Decline Offer</DialogTitle>
                 <DialogDescription>
                     Decline this offer from
-                    <strong>{{ offer.from_user?.name }}</strong>?
+                    <strong>{{ offer.from_user?.name }}</strong
+                    >?
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-                <Button
-                    variant="outline"
-                    @click="showDeclineDialog = false"
-                >
+                <Button variant="outline" @click="showDeclineDialog = false">
                     Cancel
                 </Button>
                 <Button

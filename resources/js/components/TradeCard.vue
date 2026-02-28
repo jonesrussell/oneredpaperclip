@@ -18,7 +18,11 @@ type TradeSummary = {
     id: number;
     status: string;
     position: number;
-    offered_item?: { id: number; title: string; image_url?: string | null } | null;
+    offered_item?: {
+        id: number;
+        title: string;
+        image_url?: string | null;
+    } | null;
     offerer?: { id: number; name: string } | null;
     owner_confirmed: boolean;
     offerer_confirmed: boolean;
@@ -43,12 +47,16 @@ const otherPartyName = props.isOwner
 
 function confirmTrade() {
     processing.value = true;
-    router.post(confirm.url({ trade: props.trade.id }), {}, {
-        onFinish: () => {
-            processing.value = false;
-            showConfirmDialog.value = false;
+    router.post(
+        confirm.url({ trade: props.trade.id }),
+        {},
+        {
+            onFinish: () => {
+                processing.value = false;
+                showConfirmDialog.value = false;
+            },
         },
-    });
+    );
 }
 </script>
 
@@ -129,14 +137,12 @@ function confirmTrade() {
                 <DialogTitle class="font-display">Confirm Trade</DialogTitle>
                 <DialogDescription>
                     Confirm that you've completed this trade for
-                    <strong>{{ trade.offered_item?.title }}</strong>?
+                    <strong>{{ trade.offered_item?.title }}</strong
+                    >?
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-                <Button
-                    variant="outline"
-                    @click="showConfirmDialog = false"
-                >
+                <Button variant="outline" @click="showConfirmDialog = false">
                     Cancel
                 </Button>
                 <Button
