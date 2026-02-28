@@ -26,6 +26,6 @@ class DatabaseSeeder extends Seeder
             User::factory(5 - User::count())->create();
         }
 
-        $this->call(CampaignSeeder::class);
+        $this->call(ChallengeSeeder::class);
     }
 }

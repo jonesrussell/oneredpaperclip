@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Enums\CampaignStatus;
-use App\Enums\CampaignVisibility;
+use App\Enums\ChallengeStatus;
+use App\Enums\ChallengeVisibility;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Campaign>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Challenge>
  */
-class CampaignFactory extends Factory
+class ChallengeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -23,50 +23,50 @@ class CampaignFactory extends Factory
         return [
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
-            'status' => CampaignStatus::Active,
-            'visibility' => CampaignVisibility::Public,
+            'status' => ChallengeStatus::Active,
+            'visibility' => ChallengeVisibility::Public,
             'title' => fake()->sentence(4),
             'story' => '<p>'.fake()->paragraph().'</p>',
         ];
     }
 
     /**
-     * Set the campaign as a draft.
+     * Set the challenge as a draft.
      */
     public function draft(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => CampaignStatus::Draft,
+            'status' => ChallengeStatus::Draft,
         ]);
     }
 
     /**
-     * Set the campaign as completed.
+     * Set the challenge as completed.
      */
     public function completed(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => CampaignStatus::Completed,
+            'status' => ChallengeStatus::Completed,
         ]);
     }
 
     /**
-     * Set the campaign as paused.
+     * Set the challenge as paused.
      */
     public function paused(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => CampaignStatus::Paused,
+            'status' => ChallengeStatus::Paused,
         ]);
     }
 
     /**
-     * Set the campaign as unlisted.
+     * Set the challenge as unlisted.
      */
     public function unlisted(): static
     {
         return $this->state(fn (array $attributes) => [
-            'visibility' => CampaignVisibility::Unlisted,
+            'visibility' => ChallengeVisibility::Unlisted,
         ]);
     }
 }
