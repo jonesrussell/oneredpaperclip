@@ -96,3 +96,15 @@ test('show page includes trade confirmation booleans and offerer', function () {
         ->where('challenge.trades.0.offerer.name', $this->offerer->name)
     );
 });
+
+test('show page provides challenge data needed for social sharing', function () {
+    $response = $this->get(route('challenges.show', $this->challenge));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('challenges/Show')
+        ->has('challenge.id')
+        ->has('challenge.title')
+        ->where('challenge.title', 'Test challenge')
+    );
+});

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Heart, Pencil, Share2 } from 'lucide-vue-next';
+import { Heart, Pencil } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import CelebrationOverlay from '@/components/CelebrationOverlay.vue';
 import CreateOfferDialog from '@/components/CreateOfferDialog.vue';
 import OfferCard from '@/components/OfferCard.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
+import ShareDropdown from '@/components/ShareDropdown.vue';
 import StatsPanel from '@/components/StatsPanel.vue';
 import TradeCard from '@/components/TradeCard.vue';
 import TradePathMap from '@/components/TradePathMap.vue';
@@ -341,13 +342,13 @@ function formatDate(dateString: string): string {
                             >
                                 <Heart class="size-4" />
                             </Button>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                class="rounded-full"
-                            >
-                                <Share2 class="size-4" />
-                            </Button>
+                            <ShareDropdown
+                                :url="`${window.location.origin}/challenges/${challenge.id}`"
+                                :title="
+                                    challenge.title ??
+                                    'Check out this challenge!'
+                                "
+                            />
                             <Link
                                 v-if="isOwner"
                                 :href="
