@@ -8,10 +8,13 @@ use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Trade;
 use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 uses()->group('api', 'webmcp');
 
 beforeEach(function () {
+    Notification::fake();
+
     $this->owner = User::factory()->create();
     $this->offerer = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);

@@ -3,8 +3,8 @@
 namespace App\Actions;
 
 use App\Enums\OfferStatus;
-use App\Models\Notification;
 use App\Models\Offer;
+use App\Notifications\OfferDeclinedNotification;
 
 class DeclineOffer
 {
@@ -15,15 +15,11 @@ class DeclineOffer
     {
         $offer->update(['status' => OfferStatus::Declined]);
 
-        Notification::create([
-            'user_id' => $offer->from_user_id,
-            'type' => 'offer_declined',
-            'data' => [
-                'challenge_id' => $offer->challenge_id,
-                'offer_id' => $offer->id,
-            ],
-            'read_at' => null,
-        ]);
+        $offer->load(['fromUser', 'challenge']);
+
+        if ($offer->fromUser) {
+            $offer->fromUser->notify(new OfferDeclinedNotification($offer));
+        }
 
         return $offer->fresh();
     }

@@ -4,9 +4,9 @@ namespace App\Actions;
 
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
-use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Trade;
+use App\Notifications\OfferAcceptedNotification;
 use App\Services\XpService;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +21,7 @@ class AcceptOffer
      */
     public function __invoke(Offer $offer): Trade
     {
-        return DB::transaction(function () use ($offer) {
+        $trade = DB::transaction(function () use ($offer) {
             $challenge = $offer->challenge;
 
             $trade = Trade::create([
@@ -35,21 +35,20 @@ class AcceptOffer
 
             $offer->update(['status' => OfferStatus::Accepted]);
 
-            Notification::create([
-                'user_id' => $offer->from_user_id,
-                'type' => 'offer_accepted',
-                'data' => [
-                    'challenge_id' => $challenge->id,
-                    'offer_id' => $offer->id,
-                ],
-                'read_at' => null,
-            ]);
-
             if ($challenge->user) {
                 $this->xpService->awardOfferReceived($challenge->user);
             }
 
             return $trade;
         });
+
+        $offer->load(['fromUser', 'challenge']);
+        $trade->load(['challenge', 'offeredItem']);
+
+        if ($offer->fromUser) {
+            $offer->fromUser->notify(new OfferAcceptedNotification($offer, $trade));
+        }
+
+        return $trade;
     }
 }

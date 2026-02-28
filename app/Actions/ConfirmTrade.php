@@ -4,8 +4,12 @@ namespace App\Actions;
 
 use App\Enums\ChallengeStatus;
 use App\Enums\TradeStatus;
+use App\Models\Follow;
 use App\Models\Trade;
 use App\Models\User;
+use App\Notifications\ChallengeCompletedNotification;
+use App\Notifications\TradeCompletedNotification;
+use App\Notifications\TradePendingConfirmationNotification;
 use App\Services\XpService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +26,11 @@ class ConfirmTrade
      */
     public function __invoke(Trade $trade, User $user): Trade
     {
-        return DB::transaction(function () use ($trade, $user) {
+        $wasAlreadyCompleted = $trade->status === TradeStatus::Completed;
+        $previouslyConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
+        $previouslyConfirmedByOwner = $trade->confirmed_by_owner_at !== null;
+
+        $trade = DB::transaction(function () use ($trade, $user) {
             $trade = Trade::lockForUpdate()->findOrFail($trade->id);
             $trade->load(['offer', 'challenge']);
 
@@ -64,5 +72,59 @@ class ConfirmTrade
 
             return $trade->fresh();
         });
+
+        $trade->load(['offer.fromUser', 'challenge.user', 'challenge.goalItem', 'offeredItem']);
+
+        $offerer = $trade->offer->fromUser;
+        $owner = $trade->challenge->user;
+        $isNowCompleted = $trade->status === TradeStatus::Completed;
+        $nowConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
+        $nowConfirmedByOwner = $trade->confirmed_by_owner_at !== null;
+
+        if ($isNowCompleted && ! $wasAlreadyCompleted) {
+            if ($offerer) {
+                $offerer->notify(new TradeCompletedNotification($trade));
+            }
+            if ($owner) {
+                $owner->notify(new TradeCompletedNotification($trade));
+            }
+
+            if ($trade->challenge->status === ChallengeStatus::Completed) {
+                $this->notifyChallengeCompleted($trade);
+            }
+        } elseif (! $isNowCompleted) {
+            if ($nowConfirmedByOfferer && ! $previouslyConfirmedByOfferer && $owner) {
+                $owner->notify(new TradePendingConfirmationNotification($trade, $offerer));
+            }
+
+            if ($nowConfirmedByOwner && ! $previouslyConfirmedByOwner && $offerer) {
+                $offerer->notify(new TradePendingConfirmationNotification($trade, $owner));
+            }
+        }
+
+        return $trade;
+    }
+
+    /**
+     * Notify challenge owner and followers when a challenge is completed.
+     */
+    private function notifyChallengeCompleted(Trade $trade): void
+    {
+        $challenge = $trade->challenge;
+
+        if ($challenge->user) {
+            $challenge->user->notify(new ChallengeCompletedNotification($challenge));
+        }
+
+        $followerIds = Follow::query()
+            ->where('followable_type', $challenge->getMorphClass())
+            ->where('followable_id', $challenge->id)
+            ->where('user_id', '!=', $challenge->user_id)
+            ->pluck('user_id');
+
+        $followers = User::whereIn('id', $followerIds)->get();
+        foreach ($followers as $follower) {
+            $follower->notify(new ChallengeCompletedNotification($challenge));
+        }
     }
 }

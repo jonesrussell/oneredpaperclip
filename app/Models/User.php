@@ -40,6 +40,7 @@ class User extends Authenticatable
         'current_streak',
         'longest_streak',
         'last_activity_at',
+        'notification_preferences',
     ];
 
     /**
@@ -72,7 +73,47 @@ class User extends Authenticatable
             'current_streak' => 'integer',
             'longest_streak' => 'integer',
             'last_activity_at' => 'datetime',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    /**
+     * Default notification preferences.
+     *
+     * @return array<string, array{database: bool, email: bool}>
+     */
+    public static function defaultNotificationPreferences(): array
+    {
+        return [
+            'offer_received' => ['database' => true, 'email' => true],
+            'offer_accepted' => ['database' => true, 'email' => true],
+            'offer_declined' => ['database' => true, 'email' => false],
+            'trade_pending_confirmation' => ['database' => true, 'email' => true],
+            'trade_completed' => ['database' => true, 'email' => true],
+            'challenge_completed' => ['database' => true, 'email' => true],
+        ];
+    }
+
+    /**
+     * Check if user wants a specific notification type via a specific channel.
+     */
+    public function wantsNotification(string $type, string $channel): bool
+    {
+        $preferences = $this->notification_preferences ?? self::defaultNotificationPreferences();
+
+        return $preferences[$type][$channel] ?? true;
+    }
+
+    /**
+     * Get merged notification preferences (user prefs + defaults for any missing).
+     *
+     * @return array<string, array{database: bool, email: bool}>
+     */
+    public function getNotificationPreferencesAttribute(?string $value): array
+    {
+        $userPrefs = $value ? json_decode($value, true) : [];
+
+        return array_merge(self::defaultNotificationPreferences(), $userPrefs);
     }
 
     /**

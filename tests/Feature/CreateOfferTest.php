@@ -8,11 +8,14 @@ use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 uses()->group('offers');
 
 beforeEach(function () {
+    Notification::fake();
+
     $this->owner = User::factory()->create();
     $this->offerer = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);

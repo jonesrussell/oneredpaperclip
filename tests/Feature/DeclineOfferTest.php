@@ -7,9 +7,10 @@ use App\Enums\OfferStatus;
 use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\Item;
-use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\User;
+use App\Notifications\OfferDeclinedNotification;
+use Illuminate\Support\Facades\Notification;
 
 uses()->group('offers');
 
@@ -56,6 +57,8 @@ beforeEach(function () {
 });
 
 test('challenge owner can decline offer and offerer is notified', function () {
+    Notification::fake();
+
     $response = $this->actingAs($this->owner)->post(route('offers.decline', $this->offer));
 
     $response->assertRedirect()
@@ -63,15 +66,11 @@ test('challenge owner can decline offer and offerer is notified', function () {
 
     expect($this->offer->fresh()->status)->toBe(OfferStatus::Declined);
 
-    $notification = Notification::where('user_id', $this->offerer->id)
-        ->where('type', 'offer_declined')
-        ->whereNull('read_at')
-        ->first();
-    expect($notification)->not->toBeNull()
-        ->and($notification->data)->toMatchArray([
-            'challenge_id' => $this->challenge->id,
-            'offer_id' => $this->offer->id,
-        ]);
+    Notification::assertSentTo(
+        $this->offerer,
+        OfferDeclinedNotification::class,
+        fn ($notification) => $notification->offer->id === $this->offer->id
+    );
 });
 
 test('non-owner cannot decline offer', function () {
