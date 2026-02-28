@@ -4,7 +4,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { Bell, Check, CheckCheck, Gift, HandshakeIcon, Trophy, XCircle } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-import NotificationController from '@/actions/App/Http/Controllers/NotificationController';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -14,6 +13,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import NotificationController from '@/actions/App/Http/Controllers/NotificationController';
 
 type Notification = {
     id: string;

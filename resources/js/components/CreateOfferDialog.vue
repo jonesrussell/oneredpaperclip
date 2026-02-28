@@ -3,7 +3,6 @@ import { useForm } from '@inertiajs/vue3';
 import { ImagePlus, X } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
-import { store } from '@/actions/App/Http/Controllers/OfferController';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { store } from '@/actions/App/Http/Controllers/OfferController';
 
 const props = defineProps<{
     challengeId: number;
