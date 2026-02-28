@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\OfferStatus;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,10 +21,10 @@ class OfferFactory extends Factory
     public function definition(): array
     {
         return [
-            'campaign_id' => Campaign::factory(),
+            'challenge_id' => Challenge::factory(),
             'from_user_id' => User::factory(),
             'offered_item_id' => Item::factory()->offered(),
-            'for_campaign_item_id' => null,
+            'for_challenge_item_id' => null,
             'message' => fake()->optional()->sentence(),
             'status' => OfferStatus::Pending,
             'expires_at' => null,

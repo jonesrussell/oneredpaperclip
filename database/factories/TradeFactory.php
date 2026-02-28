@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\TradeStatus;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,7 +21,7 @@ class TradeFactory extends Factory
     public function definition(): array
     {
         return [
-            'campaign_id' => Campaign::factory(),
+            'challenge_id' => Challenge::factory(),
             'offer_id' => Offer::factory(),
             'position' => 1,
             'offered_item_id' => Item::factory()->offered(),

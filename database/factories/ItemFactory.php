@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\ItemRole;
-use App\Models\Campaign;
+use App\Models\Challenge;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,8 +19,8 @@ class ItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'itemable_type' => Campaign::class,
-            'itemable_id' => Campaign::factory(),
+            'itemable_type' => Challenge::class,
+            'itemable_id' => Challenge::factory(),
             'role' => ItemRole::Start,
             'title' => fake()->words(3, true),
             'description' => fake()->sentence(),
