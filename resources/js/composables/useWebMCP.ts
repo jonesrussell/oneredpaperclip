@@ -1,7 +1,7 @@
+import type { ModelContextTool } from '@/types/webmcp';
 import * as ChallengeApi from '@/actions/App/Http/Controllers/Api/ChallengeApiController';
 import * as OfferApi from '@/actions/App/Http/Controllers/Api/OfferApiController';
 import * as TradeApi from '@/actions/App/Http/Controllers/Api/TradeApiController';
-import type { ModelContextTool } from '@/types/webmcp';
 
 function getCsrfToken(): string | null {
     if (typeof document === 'undefined') {

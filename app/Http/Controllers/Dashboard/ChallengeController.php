@@ -35,7 +35,7 @@ class ChallengeController extends Controller
             'paused' => Challenge::where('status', ChallengeStatus::Paused)->count(),
         ];
 
-        return Inertia::render('dashboard/challenges/Index', [
+        return Inertia::render('dashboard/admin/challenges/Index', [
             'challenges' => $challenges,
             'filters' => $request->only(['search', 'status', 'visibility', 'category_id', 'sort', 'direction']),
             'stats' => $stats,
@@ -56,7 +56,7 @@ class ChallengeController extends Controller
         $challenge->load(['user', 'category', 'currentItem.media', 'goalItem.media']);
         $challenge->loadCount(['offers', 'trades']);
 
-        return Inertia::render('dashboard/challenges/Show', [
+        return Inertia::render('dashboard/admin/challenges/Show', [
             'challenge' => $challenge,
         ]);
     }
@@ -69,7 +69,7 @@ class ChallengeController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('dashboard/challenges/Trashed', [
+        return Inertia::render('dashboard/admin/challenges/Trashed', [
             'challenges' => $challenges,
         ]);
     }
@@ -114,11 +114,29 @@ class ChallengeController extends Controller
         return back()->with('success', 'Challenge restored.');
     }
 
+    public function bulkRestore(Request $request): RedirectResponse
+    {
+        $request->validate(['ids' => ['required', 'array'], 'ids.*' => ['integer']]);
+
+        Challenge::onlyTrashed()->whereIn('id', $request->ids)->restore();
+
+        return back()->with('success', count($request->ids).' challenges restored.');
+    }
+
     public function forceDelete(int $id): RedirectResponse
     {
         $challenge = Challenge::onlyTrashed()->findOrFail($id);
         $challenge->forceDelete();
 
         return back()->with('success', 'Challenge permanently deleted.');
+    }
+
+    public function bulkForceDelete(Request $request): RedirectResponse
+    {
+        $request->validate(['ids' => ['required', 'array'], 'ids.*' => ['integer']]);
+
+        Challenge::onlyTrashed()->whereIn('id', $request->ids)->forceDelete();
+
+        return back()->with('success', count($request->ids).' challenges permanently deleted.');
     }
 }

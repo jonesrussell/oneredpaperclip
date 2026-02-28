@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\ChallengeApiController;
 use App\Http\Controllers\Api\OfferApiController;
 use App\Http\Controllers\Api\TradeApiController;
 use App\Http\Controllers\ChallengeController;
+use App\Http\Controllers\Dashboard\ChallengeController as DashboardChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemMediaController;
 use App\Http\Controllers\OfferController;
@@ -80,6 +81,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('dashboard/challenges', [ChallengeController::class, 'myChallenges'])->name('dashboard.challenges');
 });
+
+// Admin dashboard routes (protected by northcloud-admin middleware)
+Route::prefix('dashboard/admin')
+    ->name('admin.')
+    ->middleware(['auth', 'verified', 'northcloud-admin'])
+    ->group(function () {
+        Route::get('challenges', [DashboardChallengeController::class, 'index'])->name('challenges.index');
+        Route::get('challenges/trashed', [DashboardChallengeController::class, 'trashed'])->name('challenges.trashed');
+        Route::get('challenges/{challenge}', [DashboardChallengeController::class, 'show'])->name('challenges.show');
+        Route::post('challenges/{challenge}/unpublish', [DashboardChallengeController::class, 'unpublish'])->name('challenges.unpublish');
+        Route::post('challenges/bulk-unpublish', [DashboardChallengeController::class, 'bulkUnpublish'])->name('challenges.bulk-unpublish');
+        Route::delete('challenges/{challenge}', [DashboardChallengeController::class, 'destroy'])->name('challenges.destroy');
+        Route::post('challenges/bulk-delete', [DashboardChallengeController::class, 'bulkDelete'])->name('challenges.bulk-delete');
+        Route::post('challenges/{challenge}/restore', [DashboardChallengeController::class, 'restore'])->name('challenges.restore')->withTrashed();
+        Route::post('challenges/bulk-restore', [DashboardChallengeController::class, 'bulkRestore'])->name('challenges.bulk-restore');
+        Route::delete('challenges/{challenge}/force', [DashboardChallengeController::class, 'forceDelete'])->name('challenges.force-delete')->withTrashed();
+        Route::post('challenges/bulk-force-delete', [DashboardChallengeController::class, 'bulkForceDelete'])->name('challenges.bulk-force-delete');
+    });
 
 // WebMCP / agent API (JSON only; same session auth as web)
 Route::prefix('api')->name('api.')->group(function () {

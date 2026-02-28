@@ -3,7 +3,6 @@ import { Form, Head } from '@inertiajs/vue3';
 import DOMPurify from 'dompurify';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
@@ -21,6 +20,7 @@ import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
+import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 
 defineProps<{
     categories: { id: number; name: string; slug: string }[];

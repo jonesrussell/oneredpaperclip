@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Challenge;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\User;
 
