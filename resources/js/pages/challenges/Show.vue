@@ -257,7 +257,7 @@ function formatDate(dateString: string): string {
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="min-h-full bg-background">
+        <div class="bg-background">
             <div class="mx-auto w-full max-w-6xl p-4 sm:p-6">
                 <!-- Header -->
                 <div class="relative mb-6">
