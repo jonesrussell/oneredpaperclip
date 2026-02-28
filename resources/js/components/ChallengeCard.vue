@@ -130,7 +130,9 @@ const heroImageUrl = (): string | null =>
 
             <!-- Journey: current → goal (with optional item thumbnails) -->
             <p
-                v-if="challenge.current_item?.title || challenge.goal_item?.title"
+                v-if="
+                    challenge.current_item?.title || challenge.goal_item?.title
+                "
                 class="mt-2.5 flex min-w-0 items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
             >
                 <!-- Current item thumbnail -->
