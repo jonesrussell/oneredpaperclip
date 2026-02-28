@@ -2,8 +2,8 @@
 
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Trade;
@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->owner = User::factory()->create();
     $this->offerer = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
         'status' => 'active',
@@ -26,14 +26,14 @@ beforeEach(function () {
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
-    $campaign->update(['current_item_id' => $startItem->id]);
-    $this->campaign = $campaign->fresh();
+    $challenge->update(['current_item_id' => $startItem->id]);
+    $this->challenge = $challenge->fresh();
 
     $offeredItem = Item::create([
         'itemable_type' => Offer::class,
@@ -43,10 +43,10 @@ beforeEach(function () {
         'description' => 'Blue ballpoint.',
     ]);
     $this->offer = Offer::create([
-        'campaign_id' => $this->campaign->id,
+        'challenge_id' => $this->challenge->id,
         'from_user_id' => $this->offerer->id,
         'offered_item_id' => $offeredItem->id,
-        'for_campaign_item_id' => $this->campaign->current_item_id,
+        'for_challenge_item_id' => $this->challenge->current_item_id,
         'message' => 'I offer my pen.',
         'status' => OfferStatus::Pending,
     ]);
@@ -76,21 +76,21 @@ test('owner can confirm trade and confirmed_by_owner_at is set', function () {
     expect($this->trade->confirmed_by_owner_at)->not->toBeNull();
 });
 
-test('when both confirm trade status is completed and campaign current_item_id is offered_item_id', function () {
+test('when both confirm trade status is completed and challenge current_item_id is offered_item_id', function () {
     $this->trade->update(['confirmed_by_offerer_at' => now()]);
 
     $response = $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
 
     $response->assertRedirect();
     $this->trade->refresh();
-    $this->campaign->refresh();
+    $this->challenge->refresh();
     expect($this->trade->status)->toBe(TradeStatus::Completed)
         ->and($this->trade->confirmed_by_offerer_at)->not->toBeNull()
         ->and($this->trade->confirmed_by_owner_at)->not->toBeNull()
-        ->and($this->campaign->current_item_id)->toBe($this->trade->offered_item_id);
+        ->and($this->challenge->current_item_id)->toBe($this->trade->offered_item_id);
 });
 
-test('user who is neither offerer nor campaign owner cannot confirm trade', function () {
+test('user who is neither offerer nor challenge owner cannot confirm trade', function () {
     $other = User::factory()->create();
 
     $response = $this->actingAs($other)->post(route('trades.confirm', $this->trade));

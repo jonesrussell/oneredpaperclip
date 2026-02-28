@@ -1,19 +1,19 @@
 <?php
 
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use App\Models\User;
 
-test('offer belongs to campaign and has campaign_id and campaign relation', function () {
+test('offer belongs to challenge and has challenge_id and challenge relation', function () {
     $user = User::factory()->create();
     $category = Category::create([
         'name' => 'Electronics',
         'slug' => 'electronics',
     ]);
 
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $user->id,
         'category_id' => $category->id,
         'status' => 'active',
@@ -25,33 +25,33 @@ test('offer belongs to campaign and has campaign_id and campaign relation', func
     ]);
 
     $offeredItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'offered',
         'title' => 'Pen',
         'description' => 'A pen to trade.',
     ]);
 
-    $forCampaignItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+    $forChallengeItem = Item::create([
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
 
     $offer = Offer::create([
-        'campaign_id' => $campaign->id,
+        'challenge_id' => $challenge->id,
         'from_user_id' => $user->id,
         'offered_item_id' => $offeredItem->id,
-        'for_campaign_item_id' => $forCampaignItem->id,
+        'for_challenge_item_id' => $forChallengeItem->id,
         'message' => 'I offer my pen for your paperclip.',
         'status' => 'pending',
     ]);
 
-    expect($offer->campaign_id)->toBe($campaign->id)
-        ->and($offer->campaign)->not->toBeNull()
-        ->and($offer->campaign->id)->toBe($campaign->id)
+    expect($offer->challenge_id)->toBe($challenge->id)
+        ->and($offer->challenge)->not->toBeNull()
+        ->and($offer->challenge->id)->toBe($challenge->id)
         ->and($offer->fromUser)->not->toBeNull()
         ->and($offer->fromUser->id)->toBe($user->id);
 });

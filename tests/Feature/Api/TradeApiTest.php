@@ -2,8 +2,8 @@
 
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Trade;
@@ -15,7 +15,7 @@ beforeEach(function () {
     $this->owner = User::factory()->create();
     $this->offerer = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $this->campaign = Campaign::create([
+    $this->challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
         'status' => 'active',
@@ -26,14 +26,14 @@ beforeEach(function () {
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $this->campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $this->challenge->id,
         'role' => 'start',
         'title' => 'One red paperclip',
         'description' => null,
     ]);
-    $this->campaign->update(['current_item_id' => $startItem->id]);
-    $this->campaign = $this->campaign->fresh();
+    $this->challenge->update(['current_item_id' => $startItem->id]);
+    $this->challenge = $this->challenge->fresh();
 
     $offeredItem = Item::create([
         'itemable_type' => User::class,
@@ -43,15 +43,15 @@ beforeEach(function () {
         'description' => null,
     ]);
     $offer = Offer::create([
-        'campaign_id' => $this->campaign->id,
+        'challenge_id' => $this->challenge->id,
         'from_user_id' => $this->offerer->id,
         'offered_item_id' => $offeredItem->id,
-        'for_campaign_item_id' => $this->campaign->current_item_id,
+        'for_challenge_item_id' => $this->challenge->current_item_id,
         'message' => null,
         'status' => OfferStatus::Accepted,
     ]);
     $this->trade = Trade::create([
-        'campaign_id' => $this->campaign->id,
+        'challenge_id' => $this->challenge->id,
         'offer_id' => $offer->id,
         'position' => 1,
         'offered_item_id' => $offeredItem->id,

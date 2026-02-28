@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Media;
 use App\Models\User;
@@ -13,7 +13,7 @@ beforeEach(function () {
     $this->owner = User::factory()->create();
     $this->other = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $this->campaign = Campaign::create([
+    $this->challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
         'status' => 'active',
@@ -24,8 +24,8 @@ beforeEach(function () {
         'goal_item_id' => null,
     ]);
     $this->item = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $this->campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $this->challenge->id,
         'role' => 'start',
         'title' => 'Start item',
         'description' => null,

@@ -1,10 +1,10 @@
 <?php
 
-use App\Enums\CampaignStatus;
+use App\Enums\ChallengeStatus;
 use App\Enums\OfferStatus;
 use App\Enums\TradeStatus;
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Trade;
@@ -23,24 +23,24 @@ test('authenticated users can visit the dashboard', function () {
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('Dashboard')
-        ->has('activeCampaignsCount')
+        ->has('activeChallengesCount')
         ->has('pendingOffersCount')
         ->has('completedTradesCount')
-        ->where('activeCampaignsCount', 0)
+        ->where('activeChallengesCount', 0)
         ->where('pendingOffersCount', 0)
         ->where('completedTradesCount', 0));
 });
 
-test('dashboard shows correct stats for user with campaigns, pending offers and completed trades', function () {
+test('dashboard shows correct stats for user with challenges, pending offers and completed trades', function () {
     $owner = User::factory()->create();
     $offerer1 = User::factory()->create();
     $offerer2 = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
 
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $owner->id,
         'category_id' => $category->id,
-        'status' => CampaignStatus::Active,
+        'status' => ChallengeStatus::Active,
         'visibility' => 'public',
         'title' => 'Red paperclip to house',
         'story' => 'Starting with one red paperclip.',
@@ -48,14 +48,14 @@ test('dashboard shows correct stats for user with campaigns, pending offers and 
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
-    $campaign->update(['current_item_id' => $startItem->id]);
-    $campaign = $campaign->fresh();
+    $challenge->update(['current_item_id' => $startItem->id]);
+    $challenge = $challenge->fresh();
 
     $pendingOfferedItem = Item::create([
         'itemable_type' => Offer::class,
@@ -65,10 +65,10 @@ test('dashboard shows correct stats for user with campaigns, pending offers and 
         'description' => 'Blue ballpoint.',
     ]);
     $pendingOffer = Offer::create([
-        'campaign_id' => $campaign->id,
+        'challenge_id' => $challenge->id,
         'from_user_id' => $offerer1->id,
         'offered_item_id' => $pendingOfferedItem->id,
-        'for_campaign_item_id' => $campaign->current_item_id,
+        'for_challenge_item_id' => $challenge->current_item_id,
         'message' => 'I offer my pen.',
         'status' => OfferStatus::Pending,
     ]);
@@ -82,21 +82,21 @@ test('dashboard shows correct stats for user with campaigns, pending offers and 
         'description' => 'Fish-shaped pen.',
     ]);
     $acceptedOffer = Offer::create([
-        'campaign_id' => $campaign->id,
+        'challenge_id' => $challenge->id,
         'from_user_id' => $offerer2->id,
         'offered_item_id' => $acceptedOfferedItem->id,
-        'for_campaign_item_id' => $campaign->current_item_id,
+        'for_challenge_item_id' => $challenge->current_item_id,
         'message' => 'I offer my fish pen.',
         'status' => OfferStatus::Accepted,
     ]);
     $acceptedOfferedItem->update(['itemable_id' => $acceptedOffer->id]);
 
     $trade = Trade::create([
-        'campaign_id' => $campaign->id,
+        'challenge_id' => $challenge->id,
         'offer_id' => $acceptedOffer->id,
         'position' => 1,
         'offered_item_id' => $acceptedOffer->offered_item_id,
-        'received_item_id' => $campaign->current_item_id,
+        'received_item_id' => $challenge->current_item_id,
         'status' => TradeStatus::Completed,
         'confirmed_by_offerer_at' => now(),
         'confirmed_by_owner_at' => now(),
@@ -106,7 +106,7 @@ test('dashboard shows correct stats for user with campaigns, pending offers and 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
         ->component('Dashboard')
-        ->where('activeCampaignsCount', 1)
+        ->where('activeChallengesCount', 1)
         ->where('pendingOffersCount', 1)
         ->where('completedTradesCount', 1));
 });

@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\ItemRole;
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Comment;
 use App\Models\Follow;
 use App\Models\Item;
@@ -19,19 +19,19 @@ it('creates a category via factory', function () {
         ->and($category->slug)->not->toBeEmpty();
 });
 
-it('creates a campaign via factory', function () {
-    $campaign = Campaign::factory()->create();
+it('creates a challenge via factory', function () {
+    $challenge = Challenge::factory()->create();
 
-    expect($campaign)->toBeInstanceOf(Campaign::class)
-        ->and($campaign->title)->not->toBeEmpty()
-        ->and($campaign->user)->not->toBeNull()
-        ->and($campaign->category)->not->toBeNull();
+    expect($challenge)->toBeInstanceOf(Challenge::class)
+        ->and($challenge->title)->not->toBeEmpty()
+        ->and($challenge->user)->not->toBeNull()
+        ->and($challenge->category)->not->toBeNull();
 });
 
-it('creates a campaign with draft state', function () {
-    $campaign = Campaign::factory()->draft()->create();
+it('creates a challenge with draft state', function () {
+    $challenge = Challenge::factory()->draft()->create();
 
-    expect($campaign->status->value)->toBe('draft');
+    expect($challenge->status->value)->toBe('draft');
 });
 
 it('creates items with different roles', function () {

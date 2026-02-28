@@ -1,8 +1,8 @@
 <?php
 
 use App\Enums\OfferStatus;
-use App\Models\Campaign;
 use App\Models\Category;
+use App\Models\Challenge;
 use App\Models\Item;
 use App\Models\Notification;
 use App\Models\Offer;
@@ -14,7 +14,7 @@ beforeEach(function () {
     $this->owner = User::factory()->create();
     $this->offerer = User::factory()->create();
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
-    $campaign = Campaign::create([
+    $challenge = Challenge::create([
         'user_id' => $this->owner->id,
         'category_id' => $category->id,
         'status' => 'active',
@@ -25,14 +25,14 @@ beforeEach(function () {
         'goal_item_id' => null,
     ]);
     $startItem = Item::create([
-        'itemable_type' => Campaign::class,
-        'itemable_id' => $campaign->id,
+        'itemable_type' => Challenge::class,
+        'itemable_id' => $challenge->id,
         'role' => 'start',
         'title' => 'One red paperclip',
         'description' => 'A single red paperclip.',
     ]);
-    $campaign->update(['current_item_id' => $startItem->id]);
-    $this->campaign = $campaign->fresh();
+    $challenge->update(['current_item_id' => $startItem->id]);
+    $this->challenge = $challenge->fresh();
 
     $offeredItem = Item::create([
         'itemable_type' => Offer::class,
@@ -42,17 +42,17 @@ beforeEach(function () {
         'description' => 'Blue ballpoint.',
     ]);
     $this->offer = Offer::create([
-        'campaign_id' => $this->campaign->id,
+        'challenge_id' => $this->challenge->id,
         'from_user_id' => $this->offerer->id,
         'offered_item_id' => $offeredItem->id,
-        'for_campaign_item_id' => $this->campaign->current_item_id,
+        'for_challenge_item_id' => $this->challenge->current_item_id,
         'message' => 'I offer my pen.',
         'status' => OfferStatus::Pending,
     ]);
     $offeredItem->update(['itemable_id' => $this->offer->id]);
 });
 
-test('campaign owner can decline offer and offerer is notified', function () {
+test('challenge owner can decline offer and offerer is notified', function () {
     $response = $this->actingAs($this->owner)->post(route('offers.decline', $this->offer));
 
     $response->assertRedirect();
@@ -65,7 +65,7 @@ test('campaign owner can decline offer and offerer is notified', function () {
         ->first();
     expect($notification)->not->toBeNull()
         ->and($notification->data)->toMatchArray([
-            'campaign_id' => $this->campaign->id,
+            'challenge_id' => $this->challenge->id,
             'offer_id' => $this->offer->id,
         ]);
 });
