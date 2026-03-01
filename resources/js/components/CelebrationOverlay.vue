@@ -199,7 +199,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                 <!-- Modal content (for level-up, trade, challenge-complete) -->
                 <div
                     v-if="type !== 'xp'"
-                    class="celebration-modal relative z-10 mx-4 w-full max-w-sm rounded-3xl border border-border bg-card p-8 text-center shadow-2xl"
+                    class="celebration-modal relative z-10 mx-4 w-full max-w-sm rounded-3xl border-2 border-[var(--border)] bg-card p-8 text-center"
                 >
                     <!-- Mascot -->
                     <div class="mb-4 flex justify-center">
@@ -233,7 +233,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                     <!-- Level up badge -->
                     <div v-if="type === 'level-up' && newLevel" class="mt-4">
                         <div
-                            class="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600 font-display text-3xl font-bold text-white shadow-lg"
+                            class="mx-auto flex size-20 items-center justify-center rounded-full border-2 border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] font-display text-3xl font-bold text-white"
                         >
                             {{ newLevel }}
                         </div>
@@ -241,7 +241,8 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
 
                     <!-- Continue button -->
                     <Button
-                        class="mt-6 w-full bg-[var(--brand-red)] text-white hover:bg-[var(--brand-red-hover)]"
+                        variant="brand"
+                        class="mt-6 w-full"
                         size="lg"
                         @click="handleClose"
                     >
@@ -252,9 +253,11 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                 <!-- XP-only toast (auto-closes) -->
                 <div
                     v-else
-                    class="xp-toast pointer-events-none relative z-10 rounded-2xl bg-gradient-to-r from-[var(--sunny-yellow)] to-amber-500 px-6 py-4 text-center shadow-2xl"
+                    class="xp-toast pointer-events-none relative z-10 rounded-2xl border-2 border-[var(--sunny-yellow-border)] bg-[var(--sunny-yellow)] px-6 py-4 text-center"
                 >
-                    <span class="font-display text-2xl font-bold text-white">
+                    <span
+                        class="font-display text-2xl font-bold text-amber-900"
+                    >
                         +{{ xpGained }} XP
                     </span>
                 </div>

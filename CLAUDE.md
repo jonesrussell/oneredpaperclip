@@ -73,11 +73,11 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
 ### Frontend
 
 - **UI library:** shadcn-vue (new-york-v4 style, reka-ui primitives, lucide icons)
-- **Design:** "Swap Shop" aesthetic — vibrant marketplace feel (Depop meets Duolingo), warm cream backgrounds, fun accent colors
+- **Design:** Duolingo-inspired playful design — chunky 3D buttons (border-b-4 + active press), gamification elements (XP, streaks, levels), Duolingo-style path map, vibrant accent colors
 - **Fonts:** DM Sans (body), Fredoka (display headings), JetBrains Mono (stats/data) — loaded via Bunny Fonts
 - **Design tokens:** CSS variables in `resources/css/app.css` — `--brand-red`, `--electric-mint`, `--sunny-yellow`, `--hot-coral`, `--soft-lavender`, `--sky-blue`, `--paper`, `--ink`
 - **Layouts:**
-  - `PublicLayout` — public pages (Welcome, challenge browsing): sticky header, decorative blobs, mobile bottom tab bar, footer
+  - `PublicLayout` — public pages (Welcome, challenge browsing): sticky header, mobile bottom tab bar, footer
   - `AppLayout` (wraps `AppSidebarLayout`) — authenticated pages: sidebar on desktop, bottom tab bar on mobile
   - `AdminLayout` — admin/dashboard pages (NorthCloud articles, users)
   - `AuthLayout` — auth pages: centered card with accent blobs
@@ -139,6 +139,8 @@ Admin CRUD for challenges is available at `/dashboard/challenges` (protected by 
 
 - `docs/plans/2026-02-20-swap-shop-redesign-design.md` — Swap Shop design system (colors, typography, components, page layouts)
 - `docs/plans/2026-02-20-swap-shop-implementation.md` — implementation plan for the redesign
+- `docs/plans/2026-03-01-duolingo-playful-redesign-design.md` — Duolingo-style playful redesign design document
+- `docs/plans/2026-03-01-duolingo-playful-redesign.md` — Duolingo-style playful redesign implementation plan
 - `docs/plans/2025-02-18-tradeup-design.md` — original TradeUp product architecture and data model
 - `docs/plans/2025-02-18-tradeup-mvp-implementation.md` — original MVP implementation plan
 

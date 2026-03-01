@@ -263,7 +263,7 @@ function formatDate(dateString: string): string {
                 <!-- Header -->
                 <div class="relative mb-6">
                     <div
-                        class="pointer-events-none absolute -top-4 -right-8 -left-8 h-40 rounded-b-3xl bg-gradient-to-br from-[var(--hot-coral)]/15 via-[var(--sunny-yellow)]/10 to-[var(--electric-mint)]/10"
+                        class="pointer-events-none absolute -top-4 -right-8 -left-8 h-40 rounded-b-3xl bg-[var(--muted)]"
                         aria-hidden="true"
                     />
                     <div
@@ -331,7 +331,7 @@ function formatDate(dateString: string): string {
                                     </span>
                                     <Badge
                                         v-if="challenge.user?.level"
-                                        class="rounded-full bg-gradient-to-r from-violet-500 to-purple-600 px-2 py-0.5 text-[10px] text-white"
+                                        class="rounded-full border border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] px-2 py-0.5 text-[10px] text-white"
                                     >
                                         Lvl {{ challenge.user.level }}
                                     </Badge>
@@ -376,7 +376,7 @@ function formatDate(dateString: string): string {
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <!-- Trade Path Map (main area) -->
                     <div
-                        class="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm lg:col-span-2 dark:shadow-[var(--shadow-card)]"
+                        class="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm lg:col-span-2"
                     >
                         <div class="mb-4 flex items-center justify-between">
                             <h2
@@ -401,7 +401,7 @@ function formatDate(dateString: string): string {
                         <!-- Make an Offer CTA -->
                         <div
                             v-if="!isOwner"
-                            class="rounded-2xl border border-[var(--brand-red)]/20 bg-gradient-to-br from-[var(--brand-red)]/5 to-[var(--hot-coral)]/5 p-4"
+                            class="rounded-2xl border border-[var(--brand-red)]/20 bg-[var(--brand-red)]/5 p-4"
                         >
                             <p
                                 class="mb-3 text-center text-sm text-muted-foreground"
@@ -409,7 +409,8 @@ function formatDate(dateString: string): string {
                                 Have something to trade?
                             </p>
                             <Button
-                                class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)]"
+                                variant="brand"
+                                class="w-full"
                                 size="lg"
                                 @click="handleMakeOffer"
                             >
@@ -462,7 +463,7 @@ function formatDate(dateString: string): string {
                     <div v-show="activeTab === 'story'" class="space-y-4">
                         <div
                             v-if="challenge.story || challenge.story_safe"
-                            class="prose prose-sm dark:prose-invert max-w-none rounded-2xl border border-border bg-card p-6 text-foreground shadow-sm dark:shadow-[var(--shadow-card)]"
+                            class="prose prose-sm dark:prose-invert max-w-none rounded-2xl border border-border bg-card p-6 text-foreground shadow-sm"
                             v-html="challenge.story_safe ?? ''"
                         />
                         <div
@@ -538,7 +539,7 @@ function formatDate(dateString: string): string {
                             v-for="comment in challenge.comments"
                             v-else
                             :key="comment.id"
-                            class="rounded-2xl border border-border bg-card p-4 shadow-sm dark:shadow-[var(--shadow-card)]"
+                            class="rounded-2xl border border-border bg-card p-4 shadow-sm"
                         >
                             <div class="flex items-start gap-3">
                                 <Avatar
@@ -588,7 +589,8 @@ function formatDate(dateString: string): string {
             class="fixed inset-x-0 bottom-16 z-40 border-t border-border bg-background/95 p-3 backdrop-blur-md lg:hidden"
         >
             <Button
-                class="w-full bg-[var(--brand-red)] text-white shadow-[var(--brand-red)]/25 shadow-lg hover:bg-[var(--brand-red-hover)]"
+                variant="brand"
+                class="w-full"
                 size="lg"
                 @click="handleMakeOffer"
             >

@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
 import FlashMessage from '@/components/FlashMessage.vue';
+import { buttonVariants } from '@/components/ui/button';
 import { about, dashboard, home, login, register } from '@/routes';
 import challenges from '@/routes/challenges';
 
@@ -18,39 +19,11 @@ const canRegister = computed(
     <div
         class="min-h-screen w-full overflow-x-hidden bg-[var(--paper)] text-[var(--ink)]"
     >
-        <!-- Decorative background blobs -->
-        <div
-            class="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-            aria-hidden="true"
-        >
-            <div
-                class="animate-blob-pulse absolute -top-32 -right-32 h-[28rem] w-[28rem] rounded-full bg-[var(--hot-coral)]/35 blur-3xl"
-            />
-            <div
-                class="animate-blob-pulse absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-[var(--sunny-yellow)]/30 blur-3xl"
-                style="animation-delay: -2s"
-            />
-            <div
-                class="animate-blob-pulse absolute top-1/2 right-1/3 h-72 w-72 rounded-full bg-[var(--electric-mint)]/25 blur-3xl"
-                style="animation-delay: -4s"
-            />
-            <div
-                class="animate-blob-pulse absolute top-1/3 -left-20 h-64 w-64 rounded-full bg-[var(--soft-lavender)]/20 blur-3xl"
-                style="animation-delay: -1s"
-            />
-        </div>
-
-        <!-- Grain overlay -->
-        <div
-            class="welcome-grain pointer-events-none fixed inset-0 z-[1] opacity-[0.03]"
-            aria-hidden="true"
-        />
-
         <FlashMessage />
 
         <!-- Sticky top header -->
         <header
-            class="sticky top-0 z-40 w-full overflow-x-hidden border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur-md dark:bg-[var(--paper)]/90"
+            class="sticky top-0 z-40 w-full overflow-x-hidden border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur-md"
         >
             <div
                 class="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6"
@@ -92,7 +65,7 @@ const canRegister = computed(
                     <template v-if="user">
                         <Link
                             :href="dashboard().url"
-                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)] hover:shadow-lg"
+                            :class="buttonVariants({ variant: 'brand' })"
                         >
                             Dashboard
                         </Link>
@@ -107,7 +80,7 @@ const canRegister = computed(
                         <Link
                             v-if="canRegister"
                             :href="register().url"
-                            class="rounded-xl bg-[var(--brand-red)] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[var(--brand-red-hover)] hover:shadow-lg"
+                            :class="buttonVariants({ variant: 'brand' })"
                         >
                             Get started
                         </Link>
@@ -125,7 +98,7 @@ const canRegister = computed(
 
         <!-- Footer -->
         <footer
-            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8 dark:bg-[var(--paper)]/80"
+            class="relative z-10 border-t border-[var(--border)] bg-[var(--paper)]/80 py-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] lg:pb-8"
         >
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 sm:px-6"
@@ -167,9 +140,3 @@ const canRegister = computed(
         <BottomTabBar />
     </div>
 </template>
-
-<style scoped>
-.welcome-grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-</style>
