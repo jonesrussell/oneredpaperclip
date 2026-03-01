@@ -283,10 +283,7 @@ const clearArticleable = () => {
                             </Label>
                             <Select
                                 :model-value="
-                                    modelValue[field.name] as
-                                        | string
-                                        | number
-                                        | undefined
+                                    String(modelValue[field.name] ?? '')
                                 "
                                 @update:model-value="
                                     updateField(field.name, $event)
@@ -356,10 +353,7 @@ const clearArticleable = () => {
                             </Label>
                             <Select
                                 :model-value="
-                                    modelValue[field.name] as
-                                        | string
-                                        | number
-                                        | undefined
+                                    String(modelValue[field.name] ?? '')
                                 "
                                 @update:model-value="
                                     updateField(field.name, $event)
