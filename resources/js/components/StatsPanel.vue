@@ -59,12 +59,6 @@ function animateValue(
     requestAnimationFrame(update);
 }
 
-const levelBadgeColor = computed(() => {
-    if (props.stats.level >= 10) return 'from-amber-400 to-yellow-500';
-    if (props.stats.level >= 5) return 'from-violet-500 to-purple-600';
-    return 'from-sky-400 to-blue-500';
-});
-
 const streakFlameColor = computed(() => {
     if (props.stats.currentStreak >= 30) return 'text-amber-400';
     if (props.stats.currentStreak >= 7) return 'text-orange-500';
@@ -78,7 +72,7 @@ const streakFlameColor = computed(() => {
         :class="
             compact
                 ? 'flex flex-wrap items-center gap-3'
-                : 'space-y-4 rounded-2xl border border-border bg-card/80 p-4 backdrop-blur-sm dark:shadow-[var(--shadow-card)]'
+                : 'space-y-4 rounded-2xl border border-border bg-card p-4'
         "
     >
         <!-- XP and Level -->
@@ -86,14 +80,13 @@ const streakFlameColor = computed(() => {
             :class="
                 compact
                     ? 'flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-2'
-                    : 'rounded-xl bg-gradient-to-br from-[var(--soft-lavender)]/10 to-[var(--sky-blue)]/10 p-4'
+                    : 'rounded-xl bg-[var(--sky-blue)]/10 p-4'
             "
         >
             <div class="flex items-center gap-3">
                 <!-- Level badge -->
                 <div
-                    class="flex size-10 items-center justify-center rounded-full bg-gradient-to-br font-display text-lg font-bold text-white shadow-lg"
-                    :class="levelBadgeColor"
+                    class="flex size-10 items-center justify-center rounded-full bg-[var(--sky-blue)] font-display text-lg font-bold text-white border-2 border-[hsl(199,89%,40%)]"
                 >
                     {{ stats.level }}
                 </div>
@@ -111,7 +104,7 @@ const streakFlameColor = computed(() => {
                     <!-- XP progress bar -->
                     <div class="mt-2 h-2 overflow-hidden rounded-full bg-muted">
                         <div
-                            class="h-full rounded-full bg-gradient-to-r from-[var(--soft-lavender)] to-[var(--sky-blue)] transition-all duration-1000 ease-out"
+                            class="h-full rounded-full bg-[var(--sky-blue)] transition-all duration-1000 ease-out"
                             :style="{ width: `${stats.levelProgress}%` }"
                         />
                     </div>
@@ -134,7 +127,7 @@ const streakFlameColor = computed(() => {
             :class="
                 compact
                     ? 'flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-2'
-                    : 'flex items-center gap-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 p-4'
+                    : 'flex items-center gap-3 rounded-xl bg-[var(--hot-coral)]/10 p-4'
             "
         >
             <div class="relative">
@@ -182,7 +175,7 @@ const streakFlameColor = computed(() => {
             :class="
                 compact
                     ? 'flex items-center gap-2 rounded-xl bg-muted/50 px-3 py-2'
-                    : 'flex items-center gap-3 rounded-xl bg-gradient-to-br from-[var(--electric-mint)]/10 to-emerald-500/10 p-4'
+                    : 'flex items-center gap-3 rounded-xl bg-[var(--electric-mint)]/10 p-4'
             "
         >
             <div
@@ -209,7 +202,7 @@ const streakFlameColor = computed(() => {
         <!-- Days active (full mode only) -->
         <div
             v-if="!compact"
-            class="flex items-center gap-3 rounded-xl bg-gradient-to-br from-[var(--sunny-yellow)]/10 to-amber-500/10 p-4"
+            class="flex items-center gap-3 rounded-xl bg-[var(--sunny-yellow)]/10 p-4"
         >
             <div
                 class="flex size-10 items-center justify-center rounded-full bg-[var(--sunny-yellow)]/20"
