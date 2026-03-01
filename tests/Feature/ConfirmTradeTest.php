@@ -11,6 +11,8 @@ use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Trade;
 use App\Models\User;
+use App\Notifications\TradeCompletedNotification;
+use App\Notifications\TradePendingConfirmationNotification;
 use Illuminate\Support\Facades\Notification;
 
 uses()->group('trades');
@@ -129,4 +131,30 @@ test('confirm is idempotent for owner', function () {
 
     $response->assertRedirect();
     expect($this->trade->fresh()->confirmed_by_owner_at->eq($firstConfirmedAt))->toBeTrue();
+});
+
+test('offerer confirmation sends TradePendingConfirmationNotification to owner', function () {
+    $this->actingAs($this->offerer)->post(route('trades.confirm', $this->trade));
+
+    Notification::assertSentTo($this->owner, TradePendingConfirmationNotification::class);
+    Notification::assertNotSentTo($this->offerer, TradePendingConfirmationNotification::class);
+});
+
+test('owner auto-complete sends TradeCompletedNotification to both parties', function () {
+    $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
+
+    Notification::assertSentTo($this->owner, TradeCompletedNotification::class);
+    Notification::assertSentTo($this->offerer, TradeCompletedNotification::class);
+    Notification::assertNotSentTo($this->owner, TradePendingConfirmationNotification::class);
+    Notification::assertNotSentTo($this->offerer, TradePendingConfirmationNotification::class);
+});
+
+test('offerer then owner confirm sends TradeCompletedNotification to both', function () {
+    $this->actingAs($this->offerer)->post(route('trades.confirm', $this->trade));
+    Notification::assertSentTo($this->owner, TradePendingConfirmationNotification::class);
+
+    $this->actingAs($this->owner)->post(route('trades.confirm', $this->trade));
+
+    Notification::assertSentTo($this->owner, TradeCompletedNotification::class);
+    Notification::assertSentTo($this->offerer, TradeCompletedNotification::class);
 });
