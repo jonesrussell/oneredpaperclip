@@ -108,7 +108,10 @@ function confirmTrade() {
             </Badge>
 
             <!-- Pending: owner can edit and mark complete -->
-            <div v-else-if="isOwner && canConfirm" class="flex items-center gap-2">
+            <div
+                v-else-if="isOwner && canConfirm"
+                class="flex items-center gap-2"
+            >
                 <Button
                     variant="ghost"
                     size="sm"
@@ -187,7 +190,13 @@ function confirmTrade() {
                     :disabled="processing"
                     @click="confirmTrade"
                 >
-                    {{ processing ? 'Confirming...' : isOwner ? 'Complete' : 'Confirm' }}
+                    {{
+                        processing
+                            ? 'Confirming...'
+                            : isOwner
+                              ? 'Complete'
+                              : 'Confirm'
+                    }}
                 </Button>
             </DialogFooter>
         </DialogContent>

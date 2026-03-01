@@ -3,8 +3,18 @@
 body,
 body *:not(html):not(style):not(br):not(tr):not(code) {
     box-sizing: border-box;
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family:
+        'DM Sans',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif,
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol';
     position: relative;
 }
 
@@ -28,7 +38,7 @@ blockquote {
 }
 
 a {
-    color: #D92828;
+    color: #d92828;
 }
 
 a img {
@@ -81,7 +91,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
-    background-color: #FBF7F4;
+    background-color: #fbf7f4;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -101,11 +111,11 @@ img {
 .header {
     padding: 25px 0;
     text-align: center;
-    background-color: #FBF7F4;
+    background-color: #fbf7f4;
 }
 
 .header a {
-    color: #D92828;
+    color: #d92828;
     font-size: 19px;
     font-weight: bold;
     text-decoration: none;
@@ -127,9 +137,9 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: 100%;
-    background-color: #FBF7F4;
-    border-bottom: 1px solid #FBF7F4;
-    border-top: 1px solid #FBF7F4;
+    background-color: #fbf7f4;
+    border-bottom: 1px solid #fbf7f4;
+    border-top: 1px solid #fbf7f4;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -140,10 +150,12 @@ img {
     -premailer-cellspacing: 0;
     -premailer-width: 570px;
     background-color: #ffffff;
-    border-color: #E8DDD4;
+    border-color: #e8ddd4;
     border-radius: 16px;
     border-width: 1px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.08),
+        0 2px 4px -2px rgba(0, 0, 0, 0.05);
     margin: 0 auto;
     padding: 0;
     width: 570px;
@@ -156,7 +168,7 @@ img {
 /* Subcopy */
 
 .subcopy {
-    border-top: 1px solid #E8DDD4;
+    border-top: 1px solid #e8ddd4;
     margin-top: 25px;
     padding-top: 25px;
 }
@@ -200,7 +212,7 @@ img {
 }
 
 .table th {
-    border-bottom: 1px solid #E8DDD4;
+    border-bottom: 1px solid #e8ddd4;
     margin: 0;
     padding-bottom: 8px;
 }
@@ -243,20 +255,20 @@ img {
 
 .button-blue,
 .button-primary {
-    background-color: #D92828;
-    border-bottom: 10px solid #D92828;
-    border-left: 24px solid #D92828;
-    border-right: 24px solid #D92828;
-    border-top: 10px solid #D92828;
+    background-color: #d92828;
+    border-bottom: 10px solid #d92828;
+    border-left: 24px solid #d92828;
+    border-right: 24px solid #d92828;
+    border-top: 10px solid #d92828;
 }
 
 .button-green,
 .button-success {
-    background-color: #2DB87F;
-    border-bottom: 10px solid #2DB87F;
-    border-left: 24px solid #2DB87F;
-    border-right: 24px solid #2DB87F;
-    border-top: 10px solid #2DB87F;
+    background-color: #2db87f;
+    border-bottom: 10px solid #2db87f;
+    border-left: 24px solid #2db87f;
+    border-right: 24px solid #2db87f;
+    border-top: 10px solid #2db87f;
 }
 
 .button-red,
@@ -271,12 +283,12 @@ img {
 /* Panels */
 
 .panel {
-    border-left: #D92828 solid 4px;
+    border-left: #d92828 solid 4px;
     margin: 21px 0;
 }
 
 .panel-content {
-    background-color: #FBF7F4;
+    background-color: #fbf7f4;
     color: #525252;
     padding: 16px;
     border-radius: 0 8px 8px 0;

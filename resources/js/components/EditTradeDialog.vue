@@ -117,7 +117,10 @@ watch(isOpen, (val) => {
                         placeholder="e.g. A vintage typewriter"
                         required
                     />
-                    <p v-if="form.errors.title" class="text-sm text-destructive">
+                    <p
+                        v-if="form.errors.title"
+                        class="text-sm text-destructive"
+                    >
                         {{ form.errors.title }}
                     </p>
                 </div>
@@ -173,13 +176,20 @@ watch(isOpen, (val) => {
                         class="hidden"
                         @change="onFileChange"
                     />
-                    <p v-if="form.errors.image" class="text-sm text-destructive">
+                    <p
+                        v-if="form.errors.image"
+                        class="text-sm text-destructive"
+                    >
                         {{ form.errors.image }}
                     </p>
                 </div>
 
                 <DialogFooter>
-                    <Button type="button" variant="outline" @click="isOpen = false">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        @click="isOpen = false"
+                    >
                         Cancel
                     </Button>
                     <Button

@@ -3,7 +3,13 @@ import { Head, useForm } from '@inertiajs/vue3';
 
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -68,27 +74,44 @@ function submit() {
                             class="overflow-hidden"
                         >
                             <CardHeader class="pb-2">
-                                <CardTitle class="text-base">{{ type.label }}</CardTitle>
-                                <CardDescription>{{ type.description }}</CardDescription>
+                                <CardTitle class="text-base">{{
+                                    type.label
+                                }}</CardTitle>
+                                <CardDescription>{{
+                                    type.description
+                                }}</CardDescription>
                             </CardHeader>
                             <CardContent class="pt-0">
-                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div
+                                    class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                                >
                                     <div class="flex items-center gap-6">
                                         <div class="flex items-center gap-2">
                                             <Switch
                                                 :id="`${key}-database`"
-                                                v-model:checked="form.preferences[key].database"
+                                                v-model:checked="
+                                                    form.preferences[key]
+                                                        .database
+                                                "
                                             />
-                                            <Label :for="`${key}-database`" class="cursor-pointer text-sm">
+                                            <Label
+                                                :for="`${key}-database`"
+                                                class="cursor-pointer text-sm"
+                                            >
                                                 In-app
                                             </Label>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <Switch
                                                 :id="`${key}-email`"
-                                                v-model:checked="form.preferences[key].email"
+                                                v-model:checked="
+                                                    form.preferences[key].email
+                                                "
                                             />
-                                            <Label :for="`${key}-email`" class="cursor-pointer text-sm">
+                                            <Label
+                                                :for="`${key}-email`"
+                                                class="cursor-pointer text-sm"
+                                            >
                                                 Email
                                             </Label>
                                         </div>
