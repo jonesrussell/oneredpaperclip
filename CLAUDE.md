@@ -39,6 +39,7 @@ User creates Challenge (with start Item + goal Item)
 
 ### Key Models and Relationships
 
+- **Category** — predefined classification for challenges (9 seeded values). Has many challenges.
 - **Challenge** — central entity. Has `status` (ChallengeStatus enum), `visibility` (ChallengeVisibility enum), belongs to User and Category. References `current_item_id` and `goal_item_id` on the items table. Supports soft deletes for admin moderation.
 - **Item** — polymorphic (`itemable_type`/`itemable_id`). Role enum: Start, Goal, Offered. Attached to challenges or offers.
 - **Offer** — links a user's offered Item to a challenge's current Item. Status enum: Pending, Accepted, Declined, Withdrawn, Expired.
@@ -58,6 +59,7 @@ Business logic lives in Action classes, not controllers:
 - `DeclineOffer` — marks offer declined, sends notification
 - `ConfirmTrade` — records confirmation timestamp; owner confirmation completes trade and advances challenge
 - `UpdateTrade` — updates traded item title/description/image while trade is pending confirmation (owner only)
+- `SuggestChallengeText` — AI-powered text suggestions for challenge descriptions (delegates to `Ai/Agents/SuggestChallengeTextAgent`)
 
 Controllers delegate to these actions. Follow this pattern for new business logic.
 
@@ -67,6 +69,7 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
 
 ### Authorization
 
+- `ChallengePolicy` — controls challenge CRUD access
 - `OfferPolicy` — accept/decline: caller must be challenge owner, offer must be Pending
 - `TradePolicy` — confirm: caller must be offerer or challenge owner; update: caller must be challenge owner, trade must be PendingConfirmation
 
@@ -81,6 +84,8 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
   - `AppLayout` (wraps `AppSidebarLayout`) — authenticated pages: sidebar on desktop, bottom tab bar on mobile
   - `AdminLayout` — admin/dashboard pages (NorthCloud articles, users)
   - `AuthLayout` — auth pages: centered card with accent blobs
+    - Variants: `AuthCardLayout`, `AuthSimpleLayout`, `AuthSplitLayout`
+  - `AppHeaderLayout` — alternative header-based layout (no sidebar)
   - Settings has its own `Layout`
 - **Custom components:**
   - `ChallengeCard` — reusable card with category accent strip, progress ring, trade count badge
@@ -89,6 +94,14 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
   - `BottomTabBar` — mobile navigation (Home, Explore, Create[elevated], Activity, Profile)
   - `NotificationDropdown` — bell icon with unread count badge, notification list with mark-as-read
   - `ShareDropdown` — social sharing (X, Facebook, LinkedIn, WhatsApp, copy link)
+  - `TradeCard` — trade review card with confirmation actions
+  - `TradePathMap` — Duolingo-style trade path visualization
+  - `OfferCard` — offer display with accept/decline actions
+  - `CelebrationOverlay` — animated celebration on trade/challenge completion
+  - `StatsPanel` — gamification stats display (XP, streaks, levels)
+  - `PaperclipMascot` — animated mascot character
+  - `CreateOfferDialog` — dialog for submitting offers
+  - `EditTradeDialog` — dialog for editing pending trades
 - **Button variants:** default, brand, destructive, outline, secondary, ghost, link, success (mint), social (sky blue)
 - **Pages:** `resources/js/pages/` — Inertia Vue components
 - **Wayfinder:** TypeScript route helpers generated at `resources/js/actions/` and `resources/js/routes/`. Import routes from `@/actions/` (controllers) or `@/routes/` (named routes).
@@ -125,7 +138,7 @@ Form Requests use **array-style** rules (not pipe-delimited strings). Check `Sto
 
 ## Admin Dashboard
 
-Admin CRUD for challenges is available at `/dashboard/challenges` (protected by `northcloud-admin` middleware). Features:
+Admin CRUD for challenges is available at `/dashboard/admin/challenges` (protected by `northcloud-admin` middleware). Features:
 - Table view with filters (status, visibility, category, search)
 - Quick unpublish (sets status to Draft)
 - Soft delete with trashed view for recovery
@@ -137,12 +150,19 @@ Admin CRUD for challenges is available at `/dashboard/challenges` (protected by 
 
 ## Design Documentation
 
-- `docs/plans/2026-02-20-swap-shop-redesign-design.md` — Swap Shop design system (colors, typography, components, page layouts)
-- `docs/plans/2026-02-20-swap-shop-implementation.md` — implementation plan for the redesign
-- `docs/plans/2026-03-01-duolingo-playful-redesign-design.md` — Duolingo-style playful redesign design document
-- `docs/plans/2026-03-01-duolingo-playful-redesign.md` — Duolingo-style playful redesign implementation plan
 - `docs/plans/2025-02-18-tradeup-design.md` — original TradeUp product architecture and data model
 - `docs/plans/2025-02-18-tradeup-mvp-implementation.md` — original MVP implementation plan
+- `docs/plans/2026-02-20-swap-shop-redesign-design.md` — Swap Shop design system (colors, typography, components, page layouts)
+- `docs/plans/2026-02-20-swap-shop-implementation.md` — implementation plan for the redesign
+- `docs/plans/2026-02-22-offer-acceptance-verification-design.md` — offer acceptance verification design
+- `docs/plans/2026-02-22-offer-acceptance-verification-implementation.md` — offer acceptance verification implementation plan
+- `docs/plans/2026-02-27-campaign-to-challenge-rename-admin-crud-design.md` — campaign-to-challenge rename and admin CRUD design
+- `docs/plans/2026-02-27-campaign-to-challenge-rename-admin-crud-implementation.md` — campaign-to-challenge rename and admin CRUD implementation plan
+- `docs/plans/2026-02-27-offers-trades-flow-design.md` — offers and trades flow design
+- `docs/plans/2026-02-27-offers-trades-flow-implementation.md` — offers and trades flow implementation plan
+- `docs/plans/2026-02-28-pr7-review-fixes.md` — PR #7 review fixes
+- `docs/plans/2026-03-01-duolingo-playful-redesign-design.md` — Duolingo-style playful redesign design document
+- `docs/plans/2026-03-01-duolingo-playful-redesign.md` — Duolingo-style playful redesign implementation plan
 
 ===
 
