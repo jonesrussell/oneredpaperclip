@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppearanceToggle from '@/components/AppearanceToggle.vue';
 import BottomTabBar from '@/components/BottomTabBar.vue';
 import FlashMessage from '@/components/FlashMessage.vue';
+import { buttonVariants } from '@/components/ui/button';
 import { about, dashboard, home, login, register } from '@/routes';
 import challenges from '@/routes/challenges';
 
@@ -64,7 +65,7 @@ const canRegister = computed(
                     <template v-if="user">
                         <Link
                             :href="dashboard().url"
-                            class="rounded-xl bg-[var(--brand-red)] border-2 border-b-4 border-[hsl(0,70%,35%)] px-4 py-2 text-sm font-semibold text-white transition-all active:translate-y-[2px] active:border-b-2 hover:brightness-110"
+                            :class="buttonVariants({ variant: 'brand' })"
                         >
                             Dashboard
                         </Link>
@@ -79,7 +80,7 @@ const canRegister = computed(
                         <Link
                             v-if="canRegister"
                             :href="register().url"
-                            class="rounded-xl bg-[var(--brand-red)] border-2 border-b-4 border-[hsl(0,70%,35%)] px-4 py-2 text-sm font-semibold text-white transition-all active:translate-y-[2px] active:border-b-2 hover:brightness-110"
+                            :class="buttonVariants({ variant: 'brand' })"
                         >
                             Get started
                         </Link>

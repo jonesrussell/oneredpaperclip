@@ -4,27 +4,27 @@ import { cva } from "class-variance-authority"
 export { default as Button } from "./Button.vue"
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive active:translate-y-[2px] active:border-b-2",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground border-2 border-b-4 border-primary/80 hover:brightness-110",
+          "bg-primary text-primary-foreground border-2 border-b-4 border-primary/80 hover:brightness-110 active:translate-y-[2px] active:border-b-2",
         destructive:
-          "bg-destructive text-white border-2 border-b-4 border-red-700 hover:brightness-110 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          "bg-destructive text-white border-2 border-b-4 border-red-700 hover:brightness-110 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 active:translate-y-[2px] active:border-b-2",
         outline:
-          "border-2 border-b-4 border-[var(--border)] bg-background hover:bg-accent hover:text-accent-foreground",
+          "border-2 border-b-4 border-[var(--border)] bg-background hover:bg-accent hover:text-accent-foreground active:translate-y-[2px] active:border-b-2",
         secondary:
-          "bg-secondary text-secondary-foreground border-2 border-b-4 border-secondary-foreground/15 hover:brightness-95",
+          "bg-secondary text-secondary-foreground border-2 border-b-4 border-secondary-foreground/15 hover:brightness-95 active:translate-y-[2px] active:border-b-2",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground border-2 border-transparent active:translate-y-0 active:border-b-2",
-        link: "text-primary underline-offset-4 hover:underline border-0 active:translate-y-0 active:border-b-0",
+          "hover:bg-accent hover:text-accent-foreground border-2 border-transparent",
+        link: "text-primary underline-offset-4 hover:underline border-0",
         success:
-          "bg-[var(--electric-mint)] text-white border-2 border-b-4 border-[hsl(88,62%,30%)] hover:brightness-110",
+          "bg-[var(--electric-mint)] text-white border-2 border-b-4 border-[var(--electric-mint-border)] hover:brightness-110 active:translate-y-[2px] active:border-b-2",
         social:
-          "bg-[var(--sky-blue)] text-white border-2 border-b-4 border-[hsl(199,89%,40%)] hover:brightness-110",
+          "bg-[var(--sky-blue)] text-white border-2 border-b-4 border-[var(--sky-blue-border)] hover:brightness-110 active:translate-y-[2px] active:border-b-2",
         brand:
-          "bg-[var(--brand-red)] text-white border-2 border-b-4 border-[hsl(0,70%,35%)] hover:brightness-110",
+          "bg-[var(--brand-red)] text-white border-2 border-b-4 border-[var(--brand-red-border)] hover:brightness-110 active:translate-y-[2px] active:border-b-2",
       },
       size: {
         "default": "h-9 px-4 py-2 has-[>svg]:px-3",

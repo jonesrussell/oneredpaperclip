@@ -179,9 +179,7 @@ const heroImageUrl = (): string | null =>
                         <ImageIcon class="size-4 opacity-60" />
                     </span>
                 </span>
-                <span
-                    class="min-w-0 truncate font-medium text-foreground"
-                >
+                <span class="min-w-0 truncate font-medium text-foreground">
                     {{ challenge.goal_item?.title ?? 'Goal' }}
                 </span>
             </p>
@@ -204,15 +202,15 @@ const heroImageUrl = (): string | null =>
                     v-if="challenge.user?.name"
                     class="flex items-center gap-2 text-xs text-muted-foreground"
                 >
-                    <Avatar class="h-8 w-8 shrink-0 overflow-hidden rounded-full">
+                    <Avatar
+                        class="h-8 w-8 shrink-0 overflow-hidden rounded-full"
+                    >
                         <AvatarImage
                             v-if="challenge.user.avatar"
                             :src="challenge.user.avatar"
                             :alt="challenge.user.name"
                         />
-                        <AvatarFallback
-                            class="rounded-full text-foreground"
-                        >
+                        <AvatarFallback class="rounded-full text-foreground">
                             {{ getInitials(challenge.user.name) }}
                         </AvatarFallback>
                     </Avatar>

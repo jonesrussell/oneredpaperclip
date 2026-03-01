@@ -331,7 +331,7 @@ function formatDate(dateString: string): string {
                                     </span>
                                     <Badge
                                         v-if="challenge.user?.level"
-                                        class="rounded-full bg-[var(--soft-lavender)] border border-[hsl(275,70%,50%)] px-2 py-0.5 text-[10px] text-white"
+                                        class="rounded-full border border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] px-2 py-0.5 text-[10px] text-white"
                                     >
                                         Lvl {{ challenge.user.level }}
                                     </Badge>
@@ -409,7 +409,8 @@ function formatDate(dateString: string): string {
                                 Have something to trade?
                             </p>
                             <Button
-                                class="w-full bg-[var(--brand-red)] text-white border-2 border-b-4 border-[hsl(0,70%,35%)] transition-all hover:brightness-110"
+                                variant="brand"
+                                class="w-full"
                                 size="lg"
                                 @click="handleMakeOffer"
                             >
@@ -588,7 +589,8 @@ function formatDate(dateString: string): string {
             class="fixed inset-x-0 bottom-16 z-40 border-t border-border bg-background/95 p-3 backdrop-blur-md lg:hidden"
         >
             <Button
-                class="w-full bg-[var(--brand-red)] text-white border-2 border-b-4 border-[hsl(0,70%,35%)] hover:brightness-110"
+                variant="brand"
+                class="w-full"
                 size="lg"
                 @click="handleMakeOffer"
             >

@@ -233,7 +233,7 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                     <!-- Level up badge -->
                     <div v-if="type === 'level-up' && newLevel" class="mt-4">
                         <div
-                            class="mx-auto flex size-20 items-center justify-center rounded-full bg-[var(--soft-lavender)] border-2 border-[hsl(275,70%,50%)] font-display text-3xl font-bold text-white"
+                            class="mx-auto flex size-20 items-center justify-center rounded-full border-2 border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] font-display text-3xl font-bold text-white"
                         >
                             {{ newLevel }}
                         </div>
@@ -241,7 +241,8 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
 
                     <!-- Continue button -->
                     <Button
-                        class="mt-6 w-full bg-[var(--brand-red)] text-white hover:bg-[var(--brand-red-hover)]"
+                        variant="brand"
+                        class="mt-6 w-full"
                         size="lg"
                         @click="handleClose"
                     >
@@ -252,9 +253,11 @@ function getMascotMood(): 'celebrating' | 'excited' | 'happy' {
                 <!-- XP-only toast (auto-closes) -->
                 <div
                     v-else
-                    class="xp-toast pointer-events-none relative z-10 rounded-2xl bg-[var(--sunny-yellow)] border-2 border-[hsl(45,100%,38%)] px-6 py-4 text-center"
+                    class="xp-toast pointer-events-none relative z-10 rounded-2xl border-2 border-[var(--sunny-yellow-border)] bg-[var(--sunny-yellow)] px-6 py-4 text-center"
                 >
-                    <span class="font-display text-2xl font-bold text-white">
+                    <span
+                        class="font-display text-2xl font-bold text-amber-900"
+                    >
                         +{{ xpGained }} XP
                     </span>
                 </div>

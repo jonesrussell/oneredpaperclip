@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 
 import ChallengeCard from '@/components/ChallengeCard.vue';
 import PaperclipIcon from '@/components/PaperclipIcon.vue';
+import { buttonVariants } from '@/components/ui/button';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
 import challenges from '@/routes/challenges';
@@ -87,7 +88,7 @@ function stepNodeColor(color: string): string {
         title="One Red Paperclip — Trade up from one thing to something better"
     />
     <PublicLayout>
-        <!-- Hero: full-bleed background, content centered -->
+        <!-- Hero section -->
         <section class="relative w-full py-16 sm:py-24 md:py-32">
             <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
                 <div class="relative">
@@ -141,14 +142,24 @@ function stepNodeColor(color: string): string {
                                 <Link
                                     v-if="$page.props.auth.user"
                                     :href="challenges.create().url"
-                                    class="inline-flex items-center rounded-xl bg-[var(--brand-red)] border-2 border-b-4 border-[hsl(0,70%,35%)] px-5 py-2.5 font-bold text-white transition-all hover:brightness-110 active:translate-y-[2px] active:border-b-2"
+                                    :class="
+                                        buttonVariants({
+                                            variant: 'brand',
+                                            size: 'lg',
+                                        })
+                                    "
                                 >
                                     Start a challenge
                                 </Link>
                                 <Link
                                     v-else-if="props.canRegister"
                                     :href="register().url"
-                                    class="inline-flex items-center rounded-xl bg-[var(--brand-red)] border-2 border-b-4 border-[hsl(0,70%,35%)] px-5 py-2.5 font-bold text-white transition-all hover:brightness-110 active:translate-y-[2px] active:border-b-2"
+                                    :class="
+                                        buttonVariants({
+                                            variant: 'brand',
+                                            size: 'lg',
+                                        })
+                                    "
                                 >
                                     Create an account
                                 </Link>
@@ -166,9 +177,7 @@ function stepNodeColor(color: string): string {
         </section>
 
         <!-- Social proof stats -->
-        <section
-            class="border-y border-[var(--border)] bg-[var(--muted)] py-8"
-        >
+        <section class="border-y border-[var(--border)] bg-[var(--muted)] py-8">
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-8 px-4 sm:gap-16 sm:px-6"
             >

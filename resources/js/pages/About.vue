@@ -406,7 +406,7 @@ import challenges from '@/routes/challenges';
 
         <!-- CTA strip -->
         <section
-            class="border-t border-white/10 bg-[hsl(24_10%_12%)] py-16 text-center sm:py-20"
+            class="border-t border-white/10 bg-[var(--brand-red)] py-16 text-center sm:py-20"
         >
             <div class="mx-auto max-w-2xl px-4 sm:px-6">
                 <h2
@@ -424,7 +424,7 @@ import challenges from '@/routes/challenges';
                     <Link
                         v-if="!$page.props.auth.user"
                         :href="register().url"
-                        class="inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
+                        class="inline-flex rounded-xl border-2 border-b-4 border-white/40 bg-white px-5 py-2.5 font-bold text-[var(--brand-red)] transition-all hover:brightness-95 active:translate-y-[2px] active:border-b-2"
                     >
                         Create an account
                     </Link>
@@ -432,8 +432,8 @@ import challenges from '@/routes/challenges';
                         :href="challenges.index().url"
                         :class="
                             !$page.props.auth.user
-                                ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'
-                                : 'inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
+                                ? 'inline-flex rounded-xl border-2 border-b-4 border-white/30 px-5 py-2.5 font-bold text-white transition-all hover:bg-white/10 active:translate-y-[2px] active:border-b-2'
+                                : 'inline-flex rounded-xl border-2 border-b-4 border-white/40 bg-white px-5 py-2.5 font-bold text-[var(--brand-red)] transition-all hover:brightness-95 active:translate-y-[2px] active:border-b-2'
                         "
                     >
                         Browse challenges

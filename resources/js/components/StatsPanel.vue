@@ -86,7 +86,7 @@ const streakFlameColor = computed(() => {
             <div class="flex items-center gap-3">
                 <!-- Level badge -->
                 <div
-                    class="flex size-10 items-center justify-center rounded-full bg-[var(--sky-blue)] font-display text-lg font-bold text-white border-2 border-[hsl(199,89%,40%)]"
+                    class="flex size-10 items-center justify-center rounded-full border-2 border-[var(--sky-blue-border)] bg-[var(--sky-blue)] font-display text-lg font-bold text-white"
                 >
                     {{ stats.level }}
                 </div>
