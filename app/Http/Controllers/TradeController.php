@@ -23,8 +23,8 @@ class TradeController extends Controller
     }
 
     /**
-     * Confirm the trade (offerer or challenge owner). When both have confirmed,
-     * trade is completed and challenge current item is advanced.
+     * Confirm the trade (offerer or challenge owner). Owner confirmation
+     * completes the trade and advances the challenge current item.
      */
     public function confirm(Trade $trade, ConfirmTrade $confirmTrade): RedirectResponse
     {

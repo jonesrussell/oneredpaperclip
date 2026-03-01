@@ -45,7 +45,7 @@ class OfferAcceptedNotification extends Notification implements ShouldQueue
             ->subject('Your Offer Was Accepted!')
             ->greeting('Great news, '.$notifiable->name.'!')
             ->line('Your offer on "'.($challenge?->title ?? 'Unknown').'" has been accepted!')
-            ->line('The trade is now pending confirmation from both parties.')
+            ->line('The trade is now pending confirmation. Confirm your side to complete it!')
             ->action('Confirm Trade', url('/challenges/'.$challenge->id.'/trades/'.$this->trade->id))
             ->line('Complete the trade to help advance the challenge!');
     }

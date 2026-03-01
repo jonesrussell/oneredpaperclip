@@ -46,7 +46,7 @@ class TradePendingConfirmationNotification extends Notification implements Shoul
             ->line(($this->confirmedBy->name ?? 'Someone').' has confirmed their side of the trade for "'.($challenge?->title ?? 'Unknown').'".')
             ->line('Now it\'s your turn to confirm and complete the trade!')
             ->action('Confirm Trade', url('/challenges/'.$challenge->id.'/trades/'.$this->trade->id))
-            ->line('The trade will be completed once both parties confirm.');
+            ->line('Confirm to complete the trade!');
     }
 
     /**
