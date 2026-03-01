@@ -7,7 +7,9 @@ use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\Dashboard\ChallengeController as DashboardChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemMediaController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TradeController;
 use App\Models\Challenge;
 use App\Models\Trade;
@@ -54,6 +56,8 @@ Route::get('about', fn () => Inertia::render('About', [
     ],
 ]))->name('about');
 
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+
 Route::get('challenges', [ChallengeController::class, 'index'])->name('challenges.index');
 Route::get('challenges/create', [ChallengeController::class, 'create'])->name('challenges.create')
     ->middleware(['auth', 'verified']);
@@ -72,6 +76,8 @@ Route::post('offers/{offer}/accept', [OfferController::class, 'accept'])->name('
     ->middleware(['auth', 'verified']);
 Route::post('offers/{offer}/decline', [OfferController::class, 'decline'])->name('offers.decline')
     ->middleware(['auth', 'verified']);
+Route::patch('trades/{trade}', [TradeController::class, 'update'])->name('trades.update')
+    ->middleware(['auth', 'verified']);
 Route::post('trades/{trade}/confirm', [TradeController::class, 'confirm'])->name('trades.confirm')
     ->middleware(['auth', 'verified']);
 Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('items.media.store')
@@ -80,6 +86,11 @@ Route::post('items/{item}/media', [ItemMediaController::class, 'store'])->name('
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::get('dashboard/challenges', [ChallengeController::class, 'myChallenges'])->name('dashboard.challenges');
+
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 });
 
 // Admin dashboard routes (protected by northcloud-admin middleware)

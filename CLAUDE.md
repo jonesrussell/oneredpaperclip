@@ -33,7 +33,7 @@ User creates Challenge (with start Item + goal Item)
   → Other users submit Offers (each has an offered Item targeting a challenge Item)
   → Challenge owner accepts/declines Offers (via OfferPolicy)
   → Accepted Offer creates a Trade (status: PendingConfirmation)
-  → Both parties confirm the Trade (dual-confirmation via TradePolicy)
+  → Challenge owner confirms the Trade (owner confirmation completes; offerer can also confirm independently via TradePolicy)
   → Completed Trade advances Challenge.current_item_id to the offered Item
 ```
 
@@ -42,11 +42,11 @@ User creates Challenge (with start Item + goal Item)
 - **Challenge** — central entity. Has `status` (ChallengeStatus enum), `visibility` (ChallengeVisibility enum), belongs to User and Category. References `current_item_id` and `goal_item_id` on the items table. Supports soft deletes for admin moderation.
 - **Item** — polymorphic (`itemable_type`/`itemable_id`). Role enum: Start, Goal, Offered. Attached to challenges or offers.
 - **Offer** — links a user's offered Item to a challenge's current Item. Status enum: Pending, Accepted, Declined, Withdrawn, Expired.
-- **Trade** — created from an accepted Offer. Dual-confirmation design (`confirmed_by_offerer_at`, `confirmed_by_owner_at`). Status enum: PendingConfirmation, Completed, Disputed. Unique constraint on `(challenge_id, position)`.
+- **Trade** — created from an accepted Offer. Owner-completes design (`confirmed_by_offerer_at`, `confirmed_by_owner_at`). Status enum: PendingConfirmation, Completed, Disputed. Unique constraint on `(challenge_id, position)`.
 - **Comment** — polymorphic, supports nested replies via `parent_id`.
 - **Follow** — polymorphic followable.
 - **Media** — custom polymorphic media model (not Spatie).
-- **Notification** — custom model (not Laravel's built-in notification system).
+- **Notification** — uses Laravel's built-in notification system (`Illuminate\Notifications\Notification`). Six notification types stored in the standard `notifications` table (UUID primary keys). User preferences (database/email per type) stored in `users.notification_preferences` JSON column.
 
 ### Action Classes (`app/Actions/`)
 
@@ -56,7 +56,8 @@ Business logic lives in Action classes, not controllers:
 - `CreateOffer` — creates offer with offered item targeting a challenge item
 - `AcceptOffer` — creates Trade, marks offer accepted, sends notification
 - `DeclineOffer` — marks offer declined, sends notification
-- `ConfirmTrade` — records confirmation timestamp; when both confirm, completes trade and advances challenge
+- `ConfirmTrade` — records confirmation timestamp; owner confirmation completes trade and advances challenge
+- `UpdateTrade` — updates traded item title/description/image while trade is pending confirmation (owner only)
 
 Controllers delegate to these actions. Follow this pattern for new business logic.
 
@@ -67,7 +68,7 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
 ### Authorization
 
 - `OfferPolicy` — accept/decline: caller must be challenge owner, offer must be Pending
-- `TradePolicy` — confirm: caller must be offerer or challenge owner
+- `TradePolicy` — confirm: caller must be offerer or challenge owner; update: caller must be challenge owner, trade must be PendingConfirmation
 
 ### Frontend
 
@@ -86,6 +87,8 @@ All status fields use backed string enums: `ChallengeStatus`, `ChallengeVisibili
   - `ProgressRing` — SVG circular progress indicator, color changes by completion (coral/yellow/mint)
   - `MilestoneTimeline` — horizontal trade timeline with completed/current/future nodes
   - `BottomTabBar` — mobile navigation (Home, Explore, Create[elevated], Activity, Profile)
+  - `NotificationDropdown` — bell icon with unread count badge, notification list with mark-as-read
+  - `ShareDropdown` — social sharing (X, Facebook, LinkedIn, WhatsApp, copy link)
 - **Button variants:** default, brand, destructive, outline, secondary, ghost, link, success (mint), social (sky blue)
 - **Pages:** `resources/js/pages/` — Inertia Vue components
 - **Wayfinder:** TypeScript route helpers generated at `resources/js/actions/` and `resources/js/routes/`. Import routes from `@/actions/` (controllers) or `@/routes/` (named routes).
@@ -152,10 +155,12 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.1
-- inertiajs/inertia-laravel (INERTIA) - v2
+- php - 8.4.17
+- inertiajs/inertia-laravel (INERTIA_LARAVEL) - v2
+- laravel/ai (AI) - v0
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v12
+- laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
 - laravel/wayfinder (WAYFINDER) - v0
 - laravel/boost (BOOST) - v2
@@ -164,10 +169,10 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/pint (PINT) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
-- @inertiajs/vue3 (INERTIA) - v2
+- @inertiajs/vue3 (INERTIA_VUE) - v2
 - tailwindcss (TAILWINDCSS) - v4
 - vue (VUE) - v3
-- @laravel/vite-plugin-wayfinder (WAYFINDER) - v0
+- @laravel/vite-plugin-wayfinder (WAYFINDER_VITE) - v0
 - eslint (ESLINT) - v9
 - prettier (PRETTIER) - v3
 
@@ -301,12 +306,10 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - ALWAYS use `search-docs` tool for version-specific Inertia documentation and updated code examples.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
-=== inertia-laravel/v2 rules ===
-
 # Inertia v2
 
 - Use all Inertia features from v1 and v2. Check the documentation before making changes to ensure the correct approach.
-- New features: deferred props, infinite scrolling (merging props + `WhenVisible`), lazy loading on scroll, polling, prefetching.
+- New features: deferred props, infinite scroll, merging props, polling, prefetching, once props, flash data.
 - When using deferred props, add an empty state with a pulsing or animated skeleton.
 
 === laravel/core rules ===
@@ -405,7 +408,7 @@ Wayfinder generates TypeScript functions for Laravel routes. Import from `@/acti
 
 # Laravel Pint Code Formatter
 
-- You must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
+- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
 - Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
 
 === pest/core rules ===

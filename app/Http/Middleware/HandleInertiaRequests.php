@@ -61,6 +61,24 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'sharedMeta' => $this->getSharedMeta($request),
         ];
+    }
+
+    /**
+     * Get shared meta tags based on the current route (e.g. robots noindex for private pages).
+     *
+     * @return array<string, string>
+     */
+    protected function getSharedMeta(Request $request): array
+    {
+        $meta = [];
+
+        $path = $request->path();
+        if (str_starts_with($path, 'dashboard') || str_starts_with($path, 'settings')) {
+            $meta['robots'] = 'noindex, nofollow';
+        }
+
+        return $meta;
     }
 }

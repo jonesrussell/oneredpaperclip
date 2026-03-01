@@ -4,6 +4,7 @@ import { ArrowLeft, Edit } from 'lucide-vue-next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDateFormat } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface UserRecord {
@@ -31,15 +32,7 @@ const breadcrumbs = [
     { title: props.user.name, href: '#' },
 ];
 
-const formatDateTime = (date: string) => {
-    return new Date(date).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const { formatDateTime } = useDateFormat();
 </script>
 
 <template>

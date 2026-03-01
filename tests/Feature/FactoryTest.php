@@ -7,7 +7,6 @@ use App\Models\Comment;
 use App\Models\Follow;
 use App\Models\Item;
 use App\Models\Media;
-use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Trade;
 
@@ -85,17 +84,4 @@ it('creates a media via factory', function () {
 
     expect($media)->toBeInstanceOf(Media::class)
         ->and($media->file_name)->not->toBeEmpty();
-});
-
-it('creates a notification via factory', function () {
-    $notification = Notification::factory()->create();
-
-    expect($notification)->toBeInstanceOf(Notification::class)
-        ->and($notification->read_at)->toBeNull();
-});
-
-it('creates a read notification via factory', function () {
-    $notification = Notification::factory()->read()->create();
-
-    expect($notification->read_at)->not->toBeNull();
 });

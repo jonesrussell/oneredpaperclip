@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Media;
 use App\Models\Offer;
 use App\Models\User;
+use App\Notifications\OfferReceivedNotification;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +27,7 @@ class CreateOffer
             throw new \InvalidArgumentException('Challenge has no current item.');
         }
 
-        return DB::transaction(function () use ($validated, $challenge, $user, $currentItem) {
+        $offer = DB::transaction(function () use ($validated, $challenge, $user, $currentItem) {
             $offeredItem = Item::create([
                 'itemable_type' => User::class,
                 'itemable_id' => $user->id,
@@ -60,5 +61,17 @@ class CreateOffer
                 'status' => OfferStatus::Pending,
             ]);
         });
+
+        $offer->load(['challenge', 'fromUser', 'offeredItem']);
+
+        if ($challenge->user) {
+            try {
+                $challenge->user->notify(new OfferReceivedNotification($offer));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return $offer;
     }
 }

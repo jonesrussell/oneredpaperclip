@@ -8,10 +8,11 @@ use App\Enums\TradeStatus;
 use App\Models\Category;
 use App\Models\Challenge;
 use App\Models\Item;
-use App\Models\Notification;
 use App\Models\Offer;
 use App\Models\Trade;
 use App\Models\User;
+use App\Notifications\OfferAcceptedNotification;
+use Illuminate\Support\Facades\Notification;
 
 uses()->group('offers');
 
@@ -58,6 +59,8 @@ beforeEach(function () {
 });
 
 test('challenge owner can accept offer and trade is created with correct fields and offerer is notified', function () {
+    Notification::fake();
+
     $response = $this->actingAs($this->owner)->post(route('offers.accept', $this->offer));
 
     $response->assertRedirect()
@@ -74,15 +77,12 @@ test('challenge owner can accept offer and trade is created with correct fields 
 
     expect($this->offer->fresh()->status)->toBe(OfferStatus::Accepted);
 
-    $notification = Notification::where('user_id', $this->offerer->id)
-        ->where('type', 'offer_accepted')
-        ->whereNull('read_at')
-        ->first();
-    expect($notification)->not->toBeNull()
-        ->and($notification->data)->toMatchArray([
-            'challenge_id' => $this->challenge->id,
-            'offer_id' => $this->offer->id,
-        ]);
+    Notification::assertSentTo(
+        $this->offerer,
+        OfferAcceptedNotification::class,
+        fn ($notification) => $notification->offer->id === $this->offer->id
+            && $notification->trade->id === $trade->id
+    );
 });
 
 test('non-owner cannot accept offer', function () {

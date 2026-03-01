@@ -2,8 +2,6 @@
 import { Form, Head, router } from '@inertiajs/vue3';
 import { Sparkles } from 'lucide-vue-next';
 import { ref } from 'vue';
-
-import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
 import InputError from '@/components/InputError.vue';
 import RichTextEditor from '@/components/RichTextEditor.vue';
 import { Button } from '@/components/ui/button';
@@ -17,7 +15,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import {
+    useAiSuggest,
+    type AiSuggestContext,
+} from '@/composables/useAiSuggest';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { getCsrfToken } from '@/lib/utils';
 import challenges from '@/routes/challenges';
 import type { BreadcrumbItem } from '@/types';
 
@@ -74,69 +77,24 @@ const categoryId = ref(
 const visibility = ref(props.challenge.visibility ?? 'public');
 const status = ref(props.challenge.status ?? 'active');
 
-const aiSuggestLoading = ref<'start_item' | 'goal_item' | 'story' | null>(null);
-const aiSuggestError = ref<string | null>(null);
+const {
+    loading: aiSuggestLoading,
+    error: aiSuggestError,
+    requestSuggestion,
+} = useAiSuggest();
 const uploadLoading = ref<'start' | 'goal' | null>(null);
 const uploadError = ref<string | null>(null);
 
-function getCsrfToken(): string | null {
-    if (typeof document === 'undefined') return null;
-    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    if (!match) return null;
-    try {
-        return decodeURIComponent(match[1]);
-    } catch {
-        return match[1];
-    }
-}
-
-function htmlToPlainText(html: string): string {
-    if (!html) return '';
-    return html
-        .replace(/<[^>]*>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-}
-
 async function requestAiSuggest(
-    context: 'start_item' | 'goal_item' | 'story',
+    context: AiSuggestContext,
     currentHtml: string,
     titleHint: string,
 ): Promise<void> {
-    aiSuggestError.value = null;
-    aiSuggestLoading.value = context;
-    try {
-        const headers: Record<string, string> = {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        };
-        const csrf = getCsrfToken();
-        if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-        const res = await fetch(aiSuggest.url(), {
-            method: 'POST',
-            credentials: 'include',
-            headers,
-            body: JSON.stringify({
-                context,
-                current_text: htmlToPlainText(currentHtml),
-                title_hint: titleHint || undefined,
-            }),
-        });
-        const data = (await res.json()) as { suggestion?: string };
-        if (!res.ok) {
-            aiSuggestError.value =
-                (data as { message?: string }).message ?? 'Request failed';
-            return;
-        }
-        const suggestion = data.suggestion ?? '';
-        const wrapped = suggestion ? `<p>${suggestion}</p>` : '';
-        if (context === 'start_item') startDescription.value = wrapped;
-        else if (context === 'goal_item') goalDescription.value = wrapped;
-        else challengeStory.value = wrapped;
-    } catch {
-        aiSuggestError.value = 'Something went wrong. Try again.';
-    } finally {
-        aiSuggestLoading.value = null;
+    const result = await requestSuggestion(context, currentHtml, titleHint);
+    if (result !== null) {
+        if (context === 'start_item') startDescription.value = result;
+        else if (context === 'goal_item') goalDescription.value = result;
+        else challengeStory.value = result;
     }
 }
 
@@ -216,7 +174,8 @@ function onItemPhotoChange(
                 {{ uploadError }}
             </p>
             <Form
-                v-bind="challenges.update.form({ challenge: challenge.id })"
+                :action="challenges.update.url({ challenge: challenge.id })"
+                method="put"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"
             >

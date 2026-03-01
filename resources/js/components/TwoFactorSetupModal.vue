@@ -237,7 +237,8 @@ watch(
 
                 <template v-else>
                     <Form
-                        v-bind="confirm.form()"
+                        :action="confirm.url()"
+                        method="post"
                         reset-on-error
                         @finish="code = ''"
                         @success="isOpen = false"
@@ -267,8 +268,7 @@ watch(
                                 </InputOTP>
                                 <InputError
                                     :message="
-                                        errors?.confirmTwoFactorAuthentication
-                                            ?.code
+                                        (errors as Record<string, string>)?.code
                                     "
                                 />
                             </div>

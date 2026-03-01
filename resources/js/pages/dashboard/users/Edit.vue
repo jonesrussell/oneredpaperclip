@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { AlertTriangle, ArrowLeft, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog.vue';
@@ -7,15 +7,9 @@ import UserForm from '@/components/admin/UserForm.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDateFormat } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    [key: string]: unknown;
-}
+import type { FieldDefinition } from '@/types/admin';
 
 interface UserRecord {
     id: number;
@@ -57,24 +51,13 @@ const initFormData = (): Record<string, unknown> => {
     return data;
 };
 
-const form = ref<Record<string, unknown>>(initFormData());
-const errors = ref<Record<string, string>>({});
-const processing = ref(false);
+const form = useForm(initFormData());
 const deleteDialogOpen = ref(false);
 const isDeleting = ref(false);
 
 const handleSubmit = () => {
-    processing.value = true;
-    errors.value = {};
-
-    router.patch(`${routePrefix}/${props.user.id}`, form.value, {
+    form.patch(`${routePrefix}/${props.user.id}`, {
         preserveScroll: true,
-        onError: (err) => {
-            errors.value = err;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
     });
 };
 
@@ -90,15 +73,7 @@ const confirmDelete = () => {
     });
 };
 
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const { formatDateTime } = useDateFormat();
 </script>
 
 <template>
@@ -158,13 +133,13 @@ const formatDate = (date: string) => {
                         <div>
                             <p class="text-muted-foreground">Created</p>
                             <p class="font-medium">
-                                {{ formatDate(user.created_at) }}
+                                {{ formatDateTime(user.created_at) }}
                             </p>
                         </div>
                         <div>
                             <p class="text-muted-foreground">Last Updated</p>
                             <p class="font-medium">
-                                {{ formatDate(user.updated_at) }}
+                                {{ formatDateTime(user.updated_at) }}
                             </p>
                         </div>
                         <div>
@@ -185,8 +160,9 @@ const formatDate = (date: string) => {
             <form @submit.prevent="handleSubmit">
                 <UserForm
                     :fields="fields"
-                    v-model="form"
-                    :errors="errors"
+                    :model-value="form.data()"
+                    @update:model-value="Object.assign(form, $event)"
+                    :errors="form.errors"
                     :is-edit="true"
                     :is-self="isSelf"
                 />
@@ -197,12 +173,12 @@ const formatDate = (date: string) => {
                         variant="outline"
                         as="a"
                         :href="routePrefix"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
                         Cancel
                     </Button>
-                    <Button type="submit" :disabled="processing">
-                        {{ processing ? 'Saving...' : 'Save Changes' }}
+                    <Button type="submit" :disabled="form.processing">
+                        {{ form.processing ? 'Saving...' : 'Save Changes' }}
                     </Button>
                 </div>
             </form>

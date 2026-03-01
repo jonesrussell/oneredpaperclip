@@ -3,15 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    rules?: string[];
-    placeholder?: string;
-}
+import type { FieldDefinition } from '@/types/admin';
 
 interface Props {
     fields: FieldDefinition[];

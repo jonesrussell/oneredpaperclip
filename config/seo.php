@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'description' => env('SEO_DESCRIPTION', 'Trade up from one thing to something better. Start a campaign, get offers, and see how far you can go.'),
+    'description' => env('SEO_DESCRIPTION', 'Trade up from one thing to something better. Start a challenge, get offers, and see how far you can go.'),
 
     /*
     |--------------------------------------------------------------------------
@@ -24,5 +24,19 @@ return [
     */
 
     'og_image' => env('OG_IMAGE_URL'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Twitter handles
+    |--------------------------------------------------------------------------
+    |
+    | Twitter @username for the site and content creator. Used in Twitter Card
+    | meta tags (twitter:site and twitter:creator).
+    |
+    */
+
+    'twitter_site' => env('TWITTER_SITE'),
+
+    'twitter_creator' => env('TWITTER_CREATOR'),
 
 ];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { ArrowLeft, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import ArticleForm from '@/components/admin/ArticleForm.vue';
@@ -7,15 +7,9 @@ import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDateFormat } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    [key: string]: unknown;
-}
+import type { FieldDefinition } from '@/types/admin';
 
 interface Article {
     id: number;
@@ -51,7 +45,6 @@ const breadcrumbs = [
     { title: 'Edit', href: `${routePrefix}/${props.article.id}/edit` },
 ];
 
-// Initialize form from article data
 const initFormData = (): Record<string, unknown> => {
     const data: Record<string, unknown> = {};
     for (const field of props.fields) {
@@ -71,58 +64,37 @@ const initFormData = (): Record<string, unknown> => {
     return data;
 };
 
-const form = ref<Record<string, unknown>>(initFormData());
-const errors = ref<Record<string, string>>({});
-const processing = ref(false);
+const form = useForm(initFormData());
 const deleteDialogOpen = ref(false);
 const isDeleting = ref(false);
 
 const isPublished = computed(
-    () => form.value.published_at !== null && form.value.published_at !== '',
+    () => form.published_at !== null && form.published_at !== '',
 );
 
 const handleSubmit = (publish: boolean = false) => {
-    processing.value = true;
-    errors.value = {};
-
-    const data = {
-        ...form.value,
+    form.transform((data) => ({
+        ...data,
         published_at: publish
-            ? form.value.published_at || new Date().toISOString()
+            ? data.published_at || new Date().toISOString()
             : isPublished.value
-              ? form.value.published_at
+              ? data.published_at
               : null,
-    };
-
-    router.patch(`${routePrefix}/${props.article.id}`, data, {
+    })).patch(`${routePrefix}/${props.article.id}`, {
         preserveScroll: true,
-        onError: (err) => {
-            errors.value = err;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
     });
 };
 
 const handleUnpublish = () => {
-    processing.value = true;
-    errors.value = {};
-
-    router.patch(
-        `${routePrefix}/${props.article.id}`,
-        { ...form.value, published_at: null },
-        {
-            preserveScroll: true,
-            onError: (err) => {
-                errors.value = err;
-            },
-            onFinish: () => {
-                processing.value = false;
-                form.value.published_at = null;
-            },
+    form.transform((data) => ({
+        ...data,
+        published_at: null,
+    })).patch(`${routePrefix}/${props.article.id}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.published_at = null;
         },
-    );
+    });
 };
 
 const confirmDelete = () => {
@@ -137,15 +109,7 @@ const confirmDelete = () => {
     });
 };
 
-const formatDate = (date: string) => {
-    return new Date(date).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const { formatDateTime } = useDateFormat();
 </script>
 
 <template>
@@ -191,13 +155,13 @@ const formatDate = (date: string) => {
                         <div>
                             <p class="text-muted-foreground">Created</p>
                             <p class="font-medium">
-                                {{ formatDate(article.created_at) }}
+                                {{ formatDateTime(article.created_at) }}
                             </p>
                         </div>
                         <div>
                             <p class="text-muted-foreground">Last Updated</p>
                             <p class="font-medium">
-                                {{ formatDate(article.updated_at) }}
+                                {{ formatDateTime(article.updated_at) }}
                             </p>
                         </div>
                         <div>
@@ -222,8 +186,9 @@ const formatDate = (date: string) => {
             <form @submit.prevent="handleSubmit(false)">
                 <ArticleForm
                     :fields="fields"
-                    v-model="form"
-                    :errors="errors"
+                    :model-value="form.data()"
+                    @update:model-value="Object.assign(form, $event)"
+                    :errors="form.errors"
                     :relation-options="relationOptions"
                 />
 
@@ -233,7 +198,7 @@ const formatDate = (date: string) => {
                         variant="outline"
                         as="a"
                         :href="routePrefix"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
                         Cancel
                     </Button>
@@ -242,24 +207,24 @@ const formatDate = (date: string) => {
                         type="button"
                         variant="outline"
                         @click="handleUnpublish"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
-                        {{ processing ? 'Unpublishing...' : 'Unpublish' }}
+                        {{ form.processing ? 'Unpublishing...' : 'Unpublish' }}
                     </Button>
                     <Button
                         type="submit"
                         variant="outline"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
-                        {{ processing ? 'Saving...' : 'Save Changes' }}
+                        {{ form.processing ? 'Saving...' : 'Save Changes' }}
                     </Button>
                     <Button
                         v-if="!isPublished"
                         type="button"
                         @click="handleSubmit(true)"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
-                        {{ processing ? 'Publishing...' : 'Publish' }}
+                        {{ form.processing ? 'Publishing...' : 'Publish' }}
                     </Button>
                 </div>
             </form>

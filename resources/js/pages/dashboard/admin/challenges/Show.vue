@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ArrowLeft, Package, Target, Trash2, XCircle } from 'lucide-vue-next';
-
 import ChallengeStatusBadge from '@/components/admin/ChallengeStatusBadge.vue';
 import ChallengeVisibilityBadge from '@/components/admin/ChallengeVisibilityBadge.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDateFormat } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface ItemMedia {
@@ -44,15 +44,7 @@ const breadcrumbs = [
     { title: props.challenge.title, href: '#' },
 ];
 
-const formatDateTime = (date: string) => {
-    return new Date(date).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const { formatDateTime } = useDateFormat();
 
 const getItemImage = (item: Item | null | undefined): string | null => {
     if (!item?.media?.length) {

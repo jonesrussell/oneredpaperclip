@@ -8,6 +8,7 @@ import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog.vue';
 import FiltersBar from '@/components/admin/FiltersBar.vue';
 import StatCard from '@/components/admin/StatCard.vue';
 import { Button } from '@/components/ui/button';
+import { usePagination } from '@/composables/usePagination';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Article {
@@ -169,43 +170,16 @@ const handleSort = (column: string, direction: string) => {
     );
 };
 
-const goToPage = (url: string | null) => {
-    if (url) router.get(url);
-};
-
-const getPageNumbers = () => {
-    if (!props.articles?.last_page) return [];
-    const current = props.articles.current_page;
-    const last = props.articles.last_page;
-    const pages: (number | string)[] = [];
-    if (last <= 7) {
-        for (let i = 1; i <= last; i++) pages.push(i);
-    } else if (current <= 3) {
-        for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('...', last);
-    } else if (current >= last - 2) {
-        pages.push(1, '...');
-        for (let i = last - 4; i <= last; i++) pages.push(i);
-    } else {
-        pages.push(1, '...');
-        for (let i = current - 1; i <= current + 1; i++) pages.push(i);
-        pages.push('...', last);
-    }
-    return pages;
-};
-
-const goToPageNumber = (page: number | string) => {
-    if (typeof page === 'string' || page === props.articles?.current_page)
-        return;
-    router.get(
-        routePrefix,
-        { ...props.filters, page },
-        { preserveState: true, preserveScroll: true },
-    );
-};
-
-const hasSelected = computed(() => selectedIds.value.length > 0);
-const showPagination = computed(() => (props.articles?.last_page ?? 0) > 1);
+const {
+    getPageNumbers,
+    goToPage,
+    goToPageNumber,
+    showPagination,
+    hasSelected,
+} = usePagination(() => props.articles, selectedIds, {
+    routeUrl: routePrefix,
+    filters: () => props.filters,
+});
 
 const bulkDeleteDescription = computed(() => {
     const count = selectedIds.value.length;
@@ -311,7 +285,7 @@ watch(
                         variant="outline"
                         size="sm"
                         :disabled="!articles?.prev_page_url"
-                        @click="goToPage(articles.prev_page_url)"
+                        @click="goToPage('prev')"
                     >
                         Previous
                     </Button>
@@ -335,7 +309,7 @@ watch(
                         variant="outline"
                         size="sm"
                         :disabled="!articles?.next_page_url"
-                        @click="goToPage(articles.next_page_url)"
+                        @click="goToPage('next')"
                     >
                         Next
                     </Button>

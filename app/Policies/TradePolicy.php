@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\TradeStatus;
 use App\Models\Trade;
 use App\Models\User;
 
@@ -33,10 +34,14 @@ class TradePolicy
 
     /**
      * Determine whether the user can update the model.
+     * Only the challenge owner can update a pending trade.
      */
     public function update(User $user, Trade $trade): bool
     {
-        return false;
+        $trade->loadMissing('challenge');
+
+        return $trade->challenge->user_id === $user->id
+            && $trade->status === TradeStatus::PendingConfirmation;
     }
 
     /**

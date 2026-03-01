@@ -43,6 +43,10 @@ class ChallengeController extends Controller
         return Inertia::render('challenges/Index', [
             'challenges' => $challenges,
             'categories' => $categories,
+            'meta' => [
+                'title' => 'Explore Challenges — '.config('app.name'),
+                'description' => 'Browse active trade-up challenges. Find something to trade and help others reach their goals.',
+            ],
         ]);
     }
 
@@ -126,7 +130,7 @@ class ChallengeController extends Controller
 
         $challenge->load([
             'items',
-            'trades' => fn ($q) => $q->with(['offeredItem', 'offer.fromUser'])->orderBy('position'),
+            'trades' => fn ($q) => $q->with(['offeredItem.media', 'offer.fromUser'])->orderBy('position'),
             'offers' => fn ($q) => $q->with(['offeredItem.media', 'fromUser'])->where('status', OfferStatus::Pending),
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',
@@ -162,12 +166,34 @@ class ChallengeController extends Controller
                 $challenge->goalItem?->title ?? 'Goal'
             );
 
+        $challengeTitle = $challenge->title ?? 'Challenge';
+        $ogImage = $challenge->currentItem?->image_url ?? config('seo.og_image');
+
         return Inertia::render('challenges/Show', [
             'challenge' => $challenge,
             'isFollowing' => $isFollowing,
             'meta' => [
-                'title' => ($challenge->title ?? 'Challenge').' — '.config('app.name'),
+                'title' => $challengeTitle.' — '.config('app.name'),
                 'description' => $description,
+                'og_type' => 'article',
+                'image' => $ogImage,
+                'schema' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Article',
+                    'headline' => $challengeTitle,
+                    'description' => $description,
+                    'author' => [
+                        '@type' => 'Person',
+                        'name' => $challenge->user?->name ?? 'Anonymous',
+                    ],
+                    'datePublished' => $challenge->created_at?->toIso8601String(),
+                    'dateModified' => $challenge->updated_at?->toIso8601String(),
+                    'publisher' => [
+                        '@type' => 'Organization',
+                        'name' => config('app.name'),
+                        'url' => config('app.url'),
+                    ],
+                ],
             ],
         ]);
     }

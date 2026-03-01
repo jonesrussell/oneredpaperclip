@@ -22,6 +22,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useDateFormat } from '@/composables/useDateFormat';
+import { usePagination } from '@/composables/usePagination';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Article {
@@ -196,48 +198,22 @@ const confirmForceDelete = () => {
     }
 };
 
-const goToPage = (url: string | null) => {
-    if (url) router.get(url);
-};
+const {
+    getPageNumbers,
+    goToPage,
+    goToPageNumber,
+    showPagination,
+    hasSelected,
+} = usePagination(() => props.articles, selectedIds, {
+    routeUrl: trashedUrl,
+    filters: () => props.filters,
+});
 
-const getPageNumbers = () => {
-    if (!props.articles?.last_page) return [];
-    const current = props.articles.current_page;
-    const last = props.articles.last_page;
-    const pages: (number | string)[] = [];
-    if (last <= 7) {
-        for (let i = 1; i <= last; i++) pages.push(i);
-    } else if (current <= 3) {
-        for (let i = 1; i <= 5; i++) pages.push(i);
-        pages.push('...', last);
-    } else if (current >= last - 2) {
-        pages.push(1, '...');
-        for (let i = last - 4; i <= last; i++) pages.push(i);
-    } else {
-        pages.push(1, '...');
-        for (let i = current - 1; i <= current + 1; i++) pages.push(i);
-        pages.push('...', last);
-    }
-    return pages;
-};
-
-const goToPageNumber = (page: number | string) => {
-    if (typeof page === 'string' || page === props.articles?.current_page)
-        return;
-    router.get(
-        trashedUrl,
-        { ...props.filters, page },
-        { preserveState: true, preserveScroll: true },
-    );
-};
-
-const hasSelected = computed(() => selectedIds.value.length > 0);
 const allSelected = computed(
     () =>
         props.articles.data.length > 0 &&
         selectedIds.value.length === props.articles.data.length,
 );
-const showPagination = computed(() => (props.articles?.last_page ?? 0) > 1);
 
 const deleteDescription = computed(() => {
     if (isBulkAction.value) {
@@ -251,16 +227,7 @@ const deleteDescription = computed(() => {
         : '';
 });
 
-const formatDate = (date: string | null | undefined): string => {
-    if (!date) return '-';
-    return new Date(date).toLocaleDateString('en-CA', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const { formatDateTime: formatDate } = useDateFormat();
 
 watch(
     () => props.articles?.data?.map((a) => a.id).join(','),
@@ -492,7 +459,7 @@ watch(
                         variant="outline"
                         size="sm"
                         :disabled="!articles?.prev_page_url"
-                        @click="goToPage(articles.prev_page_url)"
+                        @click="goToPage('prev')"
                     >
                         Previous
                     </Button>
@@ -516,7 +483,7 @@ watch(
                         variant="outline"
                         size="sm"
                         :disabled="!articles?.next_page_url"
-                        @click="goToPage(articles.next_page_url)"
+                        @click="goToPage('next')"
                     >
                         Next
                     </Button>

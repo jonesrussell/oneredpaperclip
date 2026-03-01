@@ -12,18 +12,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import type { FieldDefinition } from '@/types/admin';
 import TagMultiSelect from './TagMultiSelect.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    rules?: string[];
-    relationship?: string;
-    display_field?: string;
-    placeholder?: string;
-}
 
 interface Props {
     fields: FieldDefinition[];
@@ -292,7 +282,9 @@ const clearArticleable = () => {
                                 >
                             </Label>
                             <Select
-                                :model-value="modelValue[field.name]"
+                                :model-value="
+                                    String(modelValue[field.name] ?? '')
+                                "
                                 @update:model-value="
                                     updateField(field.name, $event)
                                 "
@@ -360,7 +352,9 @@ const clearArticleable = () => {
                                 >
                             </Label>
                             <Select
-                                :model-value="modelValue[field.name]"
+                                :model-value="
+                                    String(modelValue[field.name] ?? '')
+                                "
                                 @update:model-value="
                                     updateField(field.name, $event)
                                 "

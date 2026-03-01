@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
-import { ref } from 'vue';
 import UserForm from '@/components/admin/UserForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    [key: string]: unknown;
-}
+import type { FieldDefinition } from '@/types/admin';
 
 interface Props {
     fields: FieldDefinition[];
@@ -37,22 +29,11 @@ const initFormData = (): Record<string, unknown> => {
     return data;
 };
 
-const form = ref<Record<string, unknown>>(initFormData());
-const errors = ref<Record<string, string>>({});
-const processing = ref(false);
+const form = useForm(initFormData());
 
 const handleSubmit = () => {
-    processing.value = true;
-    errors.value = {};
-
-    router.post(routePrefix, form.value, {
+    form.post(routePrefix, {
         preserveScroll: true,
-        onError: (err) => {
-            errors.value = err;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
     });
 };
 </script>
@@ -90,8 +71,9 @@ const handleSubmit = () => {
             <form @submit.prevent="handleSubmit">
                 <UserForm
                     :fields="fields"
-                    v-model="form"
-                    :errors="errors"
+                    :model-value="form.data()"
+                    @update:model-value="Object.assign(form, $event)"
+                    :errors="form.errors"
                     :is-edit="false"
                 />
 
@@ -102,12 +84,12 @@ const handleSubmit = () => {
                         variant="outline"
                         as="a"
                         :href="routePrefix"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
                         Cancel
                     </Button>
-                    <Button type="submit" :disabled="processing">
-                        {{ processing ? 'Creating...' : 'Create User' }}
+                    <Button type="submit" :disabled="form.processing">
+                        {{ form.processing ? 'Creating...' : 'Create User' }}
                     </Button>
                 </div>
             </form>

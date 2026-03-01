@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Heart, Pencil, Share2 } from 'lucide-vue-next';
+import { Heart, Pencil } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 import CelebrationOverlay from '@/components/CelebrationOverlay.vue';
 import CreateOfferDialog from '@/components/CreateOfferDialog.vue';
 import OfferCard from '@/components/OfferCard.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
+import ShareDropdown from '@/components/ShareDropdown.vue';
 import StatsPanel from '@/components/StatsPanel.vue';
 import TradeCard from '@/components/TradeCard.vue';
 import TradePathMap from '@/components/TradePathMap.vue';
@@ -65,6 +66,11 @@ const isOwner = computed(() => {
 
 const currentUser = computed(() => page.props.auth?.user);
 const showOfferDialog = ref(false);
+
+const shareUrl = computed(() => {
+    if (typeof window === 'undefined') return '';
+    return `${window.location.origin}/challenges/${props.challenge.id}`;
+});
 
 function handleMakeOffer(): void {
     if (!currentUser.value) {
@@ -251,7 +257,7 @@ function formatDate(dateString: string): string {
     />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="min-h-full bg-background">
+        <div class="bg-background">
             <div class="mx-auto w-full max-w-6xl p-4 sm:p-6">
                 <!-- Header -->
                 <div class="relative mb-6">
@@ -341,13 +347,13 @@ function formatDate(dateString: string): string {
                             >
                                 <Heart class="size-4" />
                             </Button>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                class="rounded-full"
-                            >
-                                <Share2 class="size-4" />
-                            </Button>
+                            <ShareDropdown
+                                :url="shareUrl"
+                                :title="
+                                    challenge.title ??
+                                    'Check out this challenge!'
+                                "
+                            />
                             <Link
                                 v-if="isOwner"
                                 :href="
