@@ -82,21 +82,25 @@ class ConfirmTrade
         $isNowCompleted = $trade->status === TradeStatus::Completed;
         $nowConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
 
-        if ($isNowCompleted && ! $wasAlreadyCompleted) {
-            if ($offerer) {
-                $offerer->notify(new TradeCompletedNotification($trade));
-            }
-            if ($owner) {
-                $owner->notify(new TradeCompletedNotification($trade));
-            }
+        try {
+            if ($isNowCompleted && ! $wasAlreadyCompleted) {
+                if ($offerer) {
+                    $offerer->notify(new TradeCompletedNotification($trade));
+                }
+                if ($owner) {
+                    $owner->notify(new TradeCompletedNotification($trade));
+                }
 
-            if ($trade->challenge->status === ChallengeStatus::Completed) {
-                $this->notifyChallengeCompleted($trade);
+                if ($trade->challenge->status === ChallengeStatus::Completed) {
+                    $this->notifyChallengeCompleted($trade);
+                }
+            } elseif (! $isNowCompleted) {
+                if ($nowConfirmedByOfferer && ! $previouslyConfirmedByOfferer && $owner) {
+                    $owner->notify(new TradePendingConfirmationNotification($trade, $offerer));
+                }
             }
-        } elseif (! $isNowCompleted) {
-            if ($nowConfirmedByOfferer && ! $previouslyConfirmedByOfferer && $owner) {
-                $owner->notify(new TradePendingConfirmationNotification($trade, $offerer));
-            }
+        } catch (\Throwable $e) {
+            report($e);
         }
 
         return $trade;

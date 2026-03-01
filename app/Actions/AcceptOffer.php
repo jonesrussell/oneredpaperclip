@@ -46,7 +46,11 @@ class AcceptOffer
         $trade->load(['challenge', 'offeredItem']);
 
         if ($offer->fromUser) {
-            $offer->fromUser->notify(new OfferAcceptedNotification($offer, $trade));
+            try {
+                $offer->fromUser->notify(new OfferAcceptedNotification($offer, $trade));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return $trade;

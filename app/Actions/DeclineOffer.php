@@ -18,7 +18,11 @@ class DeclineOffer
         $offer->load(['fromUser', 'challenge']);
 
         if ($offer->fromUser) {
-            $offer->fromUser->notify(new OfferDeclinedNotification($offer));
+            try {
+                $offer->fromUser->notify(new OfferDeclinedNotification($offer));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return $offer->fresh();

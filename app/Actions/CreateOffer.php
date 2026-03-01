@@ -65,7 +65,11 @@ class CreateOffer
         $offer->load(['challenge', 'fromUser', 'offeredItem']);
 
         if ($challenge->user) {
-            $challenge->user->notify(new OfferReceivedNotification($offer));
+            try {
+                $challenge->user->notify(new OfferReceivedNotification($offer));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return $offer;
