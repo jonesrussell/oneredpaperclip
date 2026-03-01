@@ -43,9 +43,9 @@ class TradeCompletedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Trade Completed!')
             ->greeting('Congratulations, '.$notifiable->name.'!')
-            ->line('The trade for "'.$challenge->title.'" is now complete!')
-            ->line('The challenge has advanced to: **'.$offeredItem->title.'**')
-            ->action('View Challenge Progress', url('/challenges/'.$challenge->id))
+            ->line('The trade for "'.($challenge?->title ?? 'Unknown').'" is now complete!')
+            ->line('The challenge has advanced to: **'.($offeredItem?->title ?? 'Unknown').'**')
+            ->action('View Challenge Progress', url('/challenges/'.($challenge?->id ?? '')))
             ->line('Thanks for being part of this trade-up journey!');
     }
 
@@ -57,8 +57,8 @@ class TradeCompletedNotification extends Notification implements ShouldQueue
         return [
             'trade_id' => $this->trade->id,
             'challenge_id' => $this->trade->challenge_id,
-            'challenge_title' => $this->trade->challenge->title,
-            'new_item_title' => $this->trade->offeredItem->title,
+            'challenge_title' => $this->trade->challenge?->title ?? 'Unknown',
+            'new_item_title' => $this->trade->offeredItem?->title ?? 'Unknown',
         ];
     }
 

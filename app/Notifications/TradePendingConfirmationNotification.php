@@ -43,7 +43,7 @@ class TradePendingConfirmationNotification extends Notification implements Shoul
         return (new MailMessage)
             ->subject('Trade Awaiting Your Confirmation')
             ->greeting('Hi '.$notifiable->name.'!')
-            ->line($this->confirmedBy->name.' has confirmed their side of the trade for "'.$challenge->title.'".')
+            ->line(($this->confirmedBy->name ?? 'Someone').' has confirmed their side of the trade for "'.($challenge?->title ?? 'Unknown').'".')
             ->line('Now it\'s your turn to confirm and complete the trade!')
             ->action('Confirm Trade', url('/challenges/'.$challenge->id.'/trades/'.$this->trade->id))
             ->line('The trade will be completed once both parties confirm.');
@@ -57,7 +57,7 @@ class TradePendingConfirmationNotification extends Notification implements Shoul
         return [
             'trade_id' => $this->trade->id,
             'challenge_id' => $this->trade->challenge_id,
-            'challenge_title' => $this->trade->challenge->title,
+            'challenge_title' => $this->trade->challenge?->title ?? 'Unknown',
             'confirmed_by_user_id' => $this->confirmedBy->id,
             'confirmed_by_user_name' => $this->confirmedBy->name,
         ];

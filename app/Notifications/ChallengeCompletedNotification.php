@@ -44,8 +44,8 @@ class ChallengeCompletedNotification extends Notification implements ShouldQueue
                 ->subject('You Did It! Challenge Completed!')
                 ->greeting('Amazing, '.$notifiable->name.'!')
                 ->line('You\'ve completed your challenge "'.$this->challenge->title.'"!')
-                ->line('You successfully traded up to: **'.$this->challenge->goalItem->title.'**')
-                ->line('Total trades: '.$this->challenge->trades_count)
+                ->line('You successfully traded up to: **'.($this->challenge->goalItem?->title ?? 'Unknown').'**')
+                ->line('Total trades: '.($this->challenge->trades_count ?? 0))
                 ->action('View Your Achievement', url('/challenges/'.$this->challenge->id))
                 ->line('Congratulations on this incredible journey!');
         }
@@ -54,8 +54,8 @@ class ChallengeCompletedNotification extends Notification implements ShouldQueue
             ->subject('Challenge Completed: '.$this->challenge->title)
             ->greeting('Hi '.$notifiable->name.'!')
             ->line('A challenge you\'ve been following has been completed!')
-            ->line('"'.$this->challenge->title.'" by '.$this->challenge->user->name.' reached its goal!')
-            ->line('Final item: **'.$this->challenge->goalItem->title.'**')
+            ->line('"'.$this->challenge->title.'" by '.($this->challenge->user?->name ?? 'Someone').' reached its goal!')
+            ->line('Final item: **'.($this->challenge->goalItem?->title ?? 'Unknown').'**')
             ->action('See the Journey', url('/challenges/'.$this->challenge->id))
             ->line('What an inspiring trade-up story!');
     }
@@ -68,8 +68,8 @@ class ChallengeCompletedNotification extends Notification implements ShouldQueue
         return [
             'challenge_id' => $this->challenge->id,
             'challenge_title' => $this->challenge->title,
-            'owner_name' => $this->challenge->user->name,
-            'goal_item_title' => $this->challenge->goalItem->title,
+            'owner_name' => $this->challenge->user?->name ?? 'Unknown',
+            'goal_item_title' => $this->challenge->goalItem?->title ?? 'Unknown',
             'trades_count' => $this->challenge->trades_count,
         ];
     }

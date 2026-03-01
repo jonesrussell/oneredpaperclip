@@ -44,7 +44,7 @@ class OfferAcceptedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Your Offer Was Accepted!')
             ->greeting('Great news, '.$notifiable->name.'!')
-            ->line('Your offer on "'.$challenge->title.'" has been accepted!')
+            ->line('Your offer on "'.($challenge?->title ?? 'Unknown').'" has been accepted!')
             ->line('The trade is now pending confirmation from both parties.')
             ->action('Confirm Trade', url('/challenges/'.$challenge->id.'/trades/'.$this->trade->id))
             ->line('Complete the trade to help advance the challenge!');
@@ -59,7 +59,7 @@ class OfferAcceptedNotification extends Notification implements ShouldQueue
             'offer_id' => $this->offer->id,
             'trade_id' => $this->trade->id,
             'challenge_id' => $this->offer->challenge_id,
-            'challenge_title' => $this->offer->challenge->title,
+            'challenge_title' => $this->offer->challenge?->title ?? 'Unknown',
         ];
     }
 

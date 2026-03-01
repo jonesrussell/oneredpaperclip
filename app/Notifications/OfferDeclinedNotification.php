@@ -42,7 +42,7 @@ class OfferDeclinedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Update on Your Offer')
             ->greeting('Hi '.$notifiable->name)
-            ->line('Your offer on "'.$challenge->title.'" wasn\'t accepted this time.')
+            ->line('Your offer on "'.($challenge?->title ?? 'a challenge').'" wasn\'t accepted this time.')
             ->line('Don\'t give up - there are plenty of other challenges waiting for your offers!')
             ->action('Explore Challenges', url('/challenges'))
             ->line('Keep trading!');
@@ -56,7 +56,7 @@ class OfferDeclinedNotification extends Notification implements ShouldQueue
         return [
             'offer_id' => $this->offer->id,
             'challenge_id' => $this->offer->challenge_id,
-            'challenge_title' => $this->offer->challenge->title,
+            'challenge_title' => $this->offer->challenge?->title ?? 'Unknown',
         ];
     }
 

@@ -42,10 +42,10 @@ class OfferReceivedNotification extends Notification implements ShouldQueue
         $offeredItem = $this->offer->offeredItem;
 
         return (new MailMessage)
-            ->subject('New Offer on Your Challenge: '.$challenge->title)
+            ->subject('New Offer on Your Challenge: '.($challenge?->title ?? 'Unknown'))
             ->greeting('Hey '.$notifiable->name.'!')
-            ->line($offerer->name.' has made an offer on your challenge "'.$challenge->title.'".')
-            ->line('They\'re offering: **'.$offeredItem->title.'**')
+            ->line(($offerer?->name ?? 'Someone').' has made an offer on your challenge "'.($challenge?->title ?? 'Unknown').'".')
+            ->line('They\'re offering: **'.($offeredItem?->title ?? 'Unknown').'**')
             ->action('View Offer', url('/challenges/'.$challenge->id))
             ->line('Don\'t keep them waiting - check it out!');
     }
@@ -59,9 +59,9 @@ class OfferReceivedNotification extends Notification implements ShouldQueue
             'offer_id' => $this->offer->id,
             'challenge_id' => $this->offer->challenge_id,
             'from_user_id' => $this->offer->from_user_id,
-            'from_user_name' => $this->offer->fromUser->name,
-            'offered_item_title' => $this->offer->offeredItem->title,
-            'challenge_title' => $this->offer->challenge->title,
+            'from_user_name' => $this->offer->fromUser?->name ?? 'Unknown',
+            'offered_item_title' => $this->offer->offeredItem?->title ?? 'Unknown',
+            'challenge_title' => $this->offer->challenge?->title ?? 'Unknown',
         ];
     }
 
