@@ -18,7 +18,7 @@ describe('notification preferences', function () {
     it('returns default preferences for new users', function () {
         $user = User::factory()->create();
 
-        $prefs = $user->notification_preferences;
+        $prefs = $user->getMergedNotificationPreferences();
 
         expect($prefs)->toHaveKeys([
             'offer_received',
@@ -52,6 +52,26 @@ describe('notification preferences', function () {
 
         expect($user->wantsNotification('offer_accepted', 'database'))->toBeTrue();
         expect($user->wantsNotification('offer_accepted', 'email'))->toBeFalse();
+    });
+
+    it('persists and reads back custom preferences correctly', function () {
+        $user = User::factory()->create();
+
+        $user->update([
+            'notification_preferences' => [
+                'offer_received' => ['database' => false, 'email' => false],
+                'offer_accepted' => ['database' => true, 'email' => true],
+                'offer_declined' => ['database' => true, 'email' => false],
+                'trade_pending_confirmation' => ['database' => true, 'email' => true],
+                'trade_completed' => ['database' => true, 'email' => true],
+                'challenge_completed' => ['database' => true, 'email' => true],
+            ],
+        ]);
+
+        $user->refresh();
+
+        expect($user->wantsNotification('offer_received', 'database'))->toBeFalse();
+        expect($user->wantsNotification('offer_received', 'email'))->toBeFalse();
     });
 
     it('falls back to defaults for missing preference types', function () {

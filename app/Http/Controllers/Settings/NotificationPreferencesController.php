@@ -17,7 +17,7 @@ class NotificationPreferencesController extends Controller
     public function edit(Request $request): Response
     {
         return Inertia::render('settings/Notifications', [
-            'preferences' => $request->user()->notification_preferences,
+            'preferences' => $request->user()->getMergedNotificationPreferences(),
             'availableTypes' => $this->getAvailableNotificationTypes(),
         ]);
     }

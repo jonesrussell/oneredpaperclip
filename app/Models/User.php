@@ -95,25 +95,26 @@ class User extends Authenticatable
     }
 
     /**
+     * Get notification preferences merged with defaults for any missing types.
+     *
+     * @return array<string, array{database: bool, email: bool}>
+     */
+    public function getMergedNotificationPreferences(): array
+    {
+        return array_merge(
+            self::defaultNotificationPreferences(),
+            $this->notification_preferences ?? []
+        );
+    }
+
+    /**
      * Check if user wants a specific notification type via a specific channel.
      */
     public function wantsNotification(string $type, string $channel): bool
     {
-        $preferences = $this->notification_preferences ?? self::defaultNotificationPreferences();
+        $preferences = $this->getMergedNotificationPreferences();
 
         return $preferences[$type][$channel] ?? true;
-    }
-
-    /**
-     * Get merged notification preferences (user prefs + defaults for any missing).
-     *
-     * @return array<string, array{database: bool, email: bool}>
-     */
-    public function getNotificationPreferencesAttribute(?string $value): array
-    {
-        $userPrefs = $value ? json_decode($value, true) : [];
-
-        return array_merge(self::defaultNotificationPreferences(), $userPrefs);
     }
 
     /**
