@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import { getCsrfToken } from '@/lib/utils';
 import { aiSuggest } from '@/actions/App/Http/Controllers/ChallengeController';
+import { getCsrfToken } from '@/lib/utils';
 
 export type AiSuggestContext = 'start_item' | 'goal_item' | 'story';
 

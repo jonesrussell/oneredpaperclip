@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { ImagePlus, X } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 
+import { update } from '@/actions/App/Http/Controllers/TradeController';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -15,7 +16,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { TradeSummary } from '@/types/models';
-import { update } from '@/actions/App/Http/Controllers/TradeController';
 
 const props = defineProps<{
     trade: TradeSummary;

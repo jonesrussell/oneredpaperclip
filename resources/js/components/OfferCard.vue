@@ -3,6 +3,10 @@ import { router } from '@inertiajs/vue3';
 import { Check, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 
+import {
+    accept,
+    decline,
+} from '@/actions/App/Http/Controllers/OfferController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,10 +18,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import type { OfferSummary } from '@/types/models';
-import {
-    accept,
-    decline,
-} from '@/actions/App/Http/Controllers/OfferController';
 
 const props = defineProps<{
     offer: OfferSummary;

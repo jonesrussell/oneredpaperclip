@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 
+import NotificationPreferencesController from '@/actions/App/Http/Controllers/Settings/NotificationPreferencesController';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,7 +17,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { edit } from '@/routes/notifications';
 import { type BreadcrumbItem } from '@/types';
-import NotificationPreferencesController from '@/actions/App/Http/Controllers/Settings/NotificationPreferencesController';
 
 type NotificationPreference = {
     database: boolean;

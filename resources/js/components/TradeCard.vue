@@ -3,6 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { Pencil } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
+import { confirm } from '@/actions/App/Http/Controllers/TradeController';
 import EditTradeDialog from '@/components/EditTradeDialog.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import type { TradeSummary } from '@/types/models';
-import { confirm } from '@/actions/App/Http/Controllers/TradeController';
 
 const props = defineProps<{
     trade: TradeSummary;
