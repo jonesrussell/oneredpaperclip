@@ -11,6 +11,7 @@ import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useDateFormat } from '@/composables/useDateFormat';
 
 interface ColumnDefinition {
     name: string;
@@ -120,14 +121,10 @@ const getSortIcon = (column: string) => {
     return props.filters?.direction === 'asc' ? ArrowUp : ArrowDown;
 };
 
-const formatDate = (date: string | null) => {
-    if (!date) return 'Never';
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
+const { formatShortDate } = useDateFormat();
+
+const formatDate = (date: string | null) =>
+    formatShortDate(date, { fallback: 'Never' });
 
 const isSelf = (user: User) => {
     return user.id === props.currentUserId;

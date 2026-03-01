@@ -1,22 +1,8 @@
+import { getCsrfToken } from '@/lib/utils';
 import type { ModelContextTool } from '@/types/webmcp';
 import * as ChallengeApi from '@/actions/App/Http/Controllers/Api/ChallengeApiController';
 import * as OfferApi from '@/actions/App/Http/Controllers/Api/OfferApiController';
 import * as TradeApi from '@/actions/App/Http/Controllers/Api/TradeApiController';
-
-function getCsrfToken(): string | null {
-    if (typeof document === 'undefined') {
-        return null;
-    }
-    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-    if (!match) {
-        return null;
-    }
-    try {
-        return decodeURIComponent(match[1]);
-    } catch {
-        return match[1];
-    }
-}
 
 type RouteDef = { url: string; method: string };
 

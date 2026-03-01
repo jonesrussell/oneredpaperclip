@@ -12,18 +12,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import type { FieldDefinition } from '@/types/admin';
 import TagMultiSelect from './TagMultiSelect.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    rules?: string[];
-    relationship?: string;
-    display_field?: string;
-    placeholder?: string;
-}
 
 interface Props {
     fields: FieldDefinition[];

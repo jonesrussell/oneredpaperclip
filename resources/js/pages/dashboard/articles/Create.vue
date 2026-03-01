@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
-import { ref } from 'vue';
 import ArticleForm from '@/components/admin/ArticleForm.vue';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
-
-interface FieldDefinition {
-    name: string;
-    type: string;
-    label: string;
-    required?: boolean;
-    [key: string]: unknown;
-}
+import type { FieldDefinition } from '@/types/admin';
 
 interface Props {
     fields: FieldDefinition[];
@@ -28,14 +20,12 @@ const breadcrumbs = [
     { title: 'Create', href: `${routePrefix}/create` },
 ];
 
-// Initialize form data from field definitions
 const initFormData = (): Record<string, unknown> => {
     const data: Record<string, unknown> = {};
     for (const field of props.fields) {
         if (field.type === 'checkbox') data[field.name] = false;
         else if (field.type === 'belongs-to-many') data[field.name] = [];
         else if (field.type === 'belongs-to') {
-            // Default to first available option
             const options =
                 props.relationOptions.news_sources ??
                 props.relationOptions[field.name] ??
@@ -46,27 +36,14 @@ const initFormData = (): Record<string, unknown> => {
     return data;
 };
 
-const form = ref<Record<string, unknown>>(initFormData());
-const errors = ref<Record<string, string>>({});
-const processing = ref(false);
+const form = useForm(initFormData());
 
 const handleSubmit = (publish: boolean = false) => {
-    processing.value = true;
-    errors.value = {};
-
-    const data = {
-        ...form.value,
+    form.transform((data) => ({
+        ...data,
         published_at: publish ? new Date().toISOString() : null,
-    };
-
-    router.post(routePrefix, data, {
+    })).post(routePrefix, {
         preserveScroll: true,
-        onError: (err) => {
-            errors.value = err;
-        },
-        onFinish: () => {
-            processing.value = false;
-        },
     });
 };
 </script>
@@ -104,8 +81,9 @@ const handleSubmit = (publish: boolean = false) => {
             <form @submit.prevent="handleSubmit(false)">
                 <ArticleForm
                     :fields="fields"
-                    v-model="form"
-                    :errors="errors"
+                    :model-value="form.data()"
+                    @update:model-value="Object.assign(form, $event)"
+                    :errors="form.errors"
                     :relation-options="relationOptions"
                 />
 
@@ -116,23 +94,23 @@ const handleSubmit = (publish: boolean = false) => {
                         variant="outline"
                         as="a"
                         :href="routePrefix"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
                         Cancel
                     </Button>
                     <Button
                         type="submit"
                         variant="outline"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
-                        {{ processing ? 'Saving...' : 'Save as Draft' }}
+                        {{ form.processing ? 'Saving...' : 'Save as Draft' }}
                     </Button>
                     <Button
                         type="button"
                         @click="handleSubmit(true)"
-                        :disabled="processing"
+                        :disabled="form.processing"
                     >
-                        {{ processing ? 'Publishing...' : 'Publish' }}
+                        {{ form.processing ? 'Publishing...' : 'Publish' }}
                     </Button>
                 </div>
             </form>

@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useDateFormat } from '@/composables/useDateFormat';
 import ChallengeStatusBadge from './ChallengeStatusBadge.vue';
 import ChallengeVisibilityBadge from './ChallengeVisibilityBadge.vue';
 
@@ -126,14 +127,10 @@ const isActive = (challenge: Challenge) => {
     return challenge.status === 'active';
 };
 
-const formatDate = (date: string | null) => {
-    if (!date) return 'Never';
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
+const { formatShortDate } = useDateFormat();
+
+const formatDate = (date: string | null) =>
+    formatShortDate(date, { fallback: 'Never' });
 
 const getCellValue = (challenge: Challenge, column: ColumnDefinition) => {
     const value = challenge[column.name];

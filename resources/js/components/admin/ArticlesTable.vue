@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useDateFormat } from '@/composables/useDateFormat';
 import ArticleStatusBadge from './ArticleStatusBadge.vue';
 
 interface ColumnDefinition {
@@ -120,14 +121,10 @@ const isPublished = (article: Article) => {
     return article.published_at !== null;
 };
 
-const formatDate = (date: string | null) => {
-    if (!date) return 'Never';
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-};
+const { formatShortDate } = useDateFormat();
+
+const formatDate = (date: string | null) =>
+    formatShortDate(date, { fallback: 'Never' });
 
 const getCellValue = (article: Article, column: ColumnDefinition) => {
     switch (column.name) {

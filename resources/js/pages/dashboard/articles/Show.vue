@@ -5,6 +5,7 @@ import ArticleStatusBadge from '@/components/admin/ArticleStatusBadge.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useDateFormat } from '@/composables/useDateFormat';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Article {
@@ -38,23 +39,11 @@ const breadcrumbs = [
     { title: props.article.title, href: '#' },
 ];
 
-const formattedDate = props.article.published_at
-    ? new Date(props.article.published_at).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-      })
-    : 'Not published';
+const { formatDate, formatDateTime } = useDateFormat();
 
-const formatDateTime = (date: string) => {
-    return new Date(date).toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-};
+const formattedDate = formatDate(props.article.published_at, {
+    fallback: 'Not published',
+});
 </script>
 
 <template>
