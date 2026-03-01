@@ -21,18 +21,17 @@ class ConfirmTrade
     ) {}
 
     /**
-     * Record confirmation from offerer or challenge owner. When both have confirmed,
-     * mark trade completed and advance challenge current_item_id to the offered item.
+     * Record confirmation from offerer or challenge owner. Owner confirmation
+     * completes the trade immediately and advances challenge current_item_id.
      */
     public function __invoke(Trade $trade, User $user): Trade
     {
-        $wasAlreadyCompleted = $trade->status === TradeStatus::Completed;
-        $previouslyConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
-        $previouslyConfirmedByOwner = $trade->confirmed_by_owner_at !== null;
-
-        $trade = DB::transaction(function () use ($trade, $user) {
+        [$trade, $wasAlreadyCompleted, $previouslyConfirmedByOfferer] = DB::transaction(function () use ($trade, $user) {
             $trade = Trade::lockForUpdate()->findOrFail($trade->id);
             $trade->load(['offer', 'challenge']);
+
+            $wasAlreadyCompleted = $trade->status === TradeStatus::Completed;
+            $previouslyConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
 
             $isOfferer = $trade->offer->from_user_id === $user->id;
             $isOwner = $trade->challenge->user_id === $user->id;
@@ -73,7 +72,7 @@ class ConfirmTrade
                 }
             }
 
-            return $trade->fresh();
+            return [$trade->fresh(), $wasAlreadyCompleted, $previouslyConfirmedByOfferer];
         });
 
         $trade->load(['offer.fromUser', 'challenge.user', 'challenge.goalItem', 'offeredItem']);
@@ -82,7 +81,6 @@ class ConfirmTrade
         $owner = $trade->challenge->user;
         $isNowCompleted = $trade->status === TradeStatus::Completed;
         $nowConfirmedByOfferer = $trade->confirmed_by_offerer_at !== null;
-        $nowConfirmedByOwner = $trade->confirmed_by_owner_at !== null;
 
         if ($isNowCompleted && ! $wasAlreadyCompleted) {
             if ($offerer) {
@@ -98,10 +96,6 @@ class ConfirmTrade
         } elseif (! $isNowCompleted) {
             if ($nowConfirmedByOfferer && ! $previouslyConfirmedByOfferer && $owner) {
                 $owner->notify(new TradePendingConfirmationNotification($trade, $offerer));
-            }
-
-            if ($nowConfirmedByOwner && ! $previouslyConfirmedByOwner && $offerer) {
-                $offerer->notify(new TradePendingConfirmationNotification($trade, $owner));
             }
         }
 
