@@ -115,3 +115,45 @@ test('show page provides SEO meta with og_type, description, and JSON-LD schema'
         ->has('meta.schema.publisher')
     );
 });
+
+test('show page includes start_item distinct from current_item after trade', function () {
+    $offeredItem = Item::create([
+        'itemable_type' => User::class,
+        'itemable_id' => $this->offerer->id,
+        'role' => ItemRole::Offered,
+        'title' => 'A fancy pen',
+    ]);
+    $offer = Offer::create([
+        'challenge_id' => $this->challenge->id,
+        'from_user_id' => $this->offerer->id,
+        'offered_item_id' => $offeredItem->id,
+        'for_challenge_item_id' => $this->challenge->current_item_id,
+        'status' => OfferStatus::Accepted,
+    ]);
+    Trade::create([
+        'challenge_id' => $this->challenge->id,
+        'offer_id' => $offer->id,
+        'position' => 1,
+        'offered_item_id' => $offeredItem->id,
+        'received_item_id' => $this->challenge->current_item_id,
+        'status' => TradeStatus::Completed,
+        'confirmed_by_owner_at' => now(),
+        'confirmed_by_offerer_at' => now(),
+    ]);
+    $this->challenge->update(['current_item_id' => $offeredItem->id]);
+
+    $response = $this->actingAs($this->owner)->get(
+        route('challenges.show', $this->challenge)
+    );
+
+    $response->assertInertia(fn ($page) => $page
+        ->has('challenge.start_item')
+        ->has('challenge.current_item')
+        ->where('challenge.start_item.title', 'Paperclip')
+        ->where('challenge.current_item.title', 'A fancy pen')
+    );
+
+    $data = $response->viewData('page')['props'];
+    expect($data['challenge']['start_item']['id'])
+        ->not->toBe($data['challenge']['current_item']['id']);
+});

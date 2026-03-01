@@ -135,6 +135,7 @@ class ChallengeController extends Controller
             'comments' => fn ($q) => $q->with('user')->latest()->limit(20),
             'user',
             'category',
+            'startItem.media',
             'currentItem.media',
             'goalItem.media',
         ]);

@@ -43,6 +43,7 @@ type Challenge = {
         longest_streak?: number;
     } | null;
     category?: { id: number; name: string } | null;
+    start_item?: ItemSummary | null;
     current_item?: ItemSummary | null;
     goal_item?: ItemSummary | null;
     trades?: TradeSummary[];
@@ -156,8 +157,8 @@ const pathNodes = computed<PathNode[]>(() => {
         id: 'start',
         type: 'start',
         status: 'completed',
-        title: props.challenge.current_item?.title ?? 'Start Item',
-        imageUrl: props.challenge.current_item?.image_url,
+        title: props.challenge.start_item?.title ?? 'Start Item',
+        imageUrl: props.challenge.start_item?.image_url,
     });
 
     completedTrades.forEach((trade, i) => {
