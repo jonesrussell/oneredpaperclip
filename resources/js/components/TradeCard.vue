@@ -32,7 +32,8 @@ const isOfferer = computed(
 );
 
 const canConfirm = computed(() => {
-    if (props.isOwner) return !props.trade.owner_confirmed;
+    if (props.trade.status !== 'pending_confirmation') return false;
+    if (props.isOwner) return true;
     if (isOfferer.value) return !props.trade.offerer_confirmed;
     return false;
 });

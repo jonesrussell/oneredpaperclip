@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { Folder, LayoutGrid, ListChecks } from 'lucide-vue-next';
-import NavFooter from '@/components/NavFooter.vue';
+import { LayoutGrid, ListChecks } from 'lucide-vue-next';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -33,14 +32,6 @@ const mainNavItems: NavItem[] = [
 ];
 
 const { items: northcloudItems } = useNorthcloudNav();
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'GitHub',
-        href: 'https://github.com/jonesrussell/oneredpaperclip',
-        icon: Folder,
-    },
-];
 </script>
 
 <template>
@@ -67,7 +58,6 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>
