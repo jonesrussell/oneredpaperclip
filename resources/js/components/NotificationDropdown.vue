@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, Check, CheckCheck, Gift, HandshakeIcon, Trophy, XCircle } from 'lucide-vue-next';
+import {
+    Bell,
+    Check,
+    CheckCheck,
+    Gift,
+    HandshakeIcon,
+    Trophy,
+    XCircle,
+} from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
@@ -36,6 +44,9 @@ async function fetchNotifications() {
     loading.value = true;
     try {
         const response = await fetch(NotificationController.index.url());
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
         const data = await response.json();
         notifications.value = data.notifications;
         unreadCount.value = data.unread_count;
@@ -48,13 +59,21 @@ async function fetchNotifications() {
 
 async function markAsRead(id: string) {
     try {
-        await fetch(NotificationController.markAsRead.url({ id }), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN':
-                    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        const response = await fetch(
+            NotificationController.markAsRead.url({ id }),
+            {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
+                },
             },
-        });
+        );
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
         const notification = notifications.value.find((n) => n.id === id);
         if (notification) {
             notification.read_at = new Date().toISOString();
@@ -67,13 +86,21 @@ async function markAsRead(id: string) {
 
 async function markAllAsRead() {
     try {
-        await fetch(NotificationController.markAllAsRead.url(), {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN':
-                    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        const response = await fetch(
+            NotificationController.markAllAsRead.url(),
+            {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN':
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute('content') || '',
+                },
             },
-        });
+        );
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
         notifications.value.forEach((n) => {
             if (!n.read_at) {
                 n.read_at = new Date().toISOString();
@@ -160,7 +187,7 @@ onMounted(() => {
                 <Bell class="size-5" />
                 <span
                     v-if="unreadCount > 0"
-                    class="bg-brand-red absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-medium text-white"
+                    class="bg-brand-red absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-medium text-white"
                 >
                     {{ unreadCount > 9 ? '9+' : unreadCount }}
                 </span>
@@ -182,7 +209,10 @@ onMounted(() => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            <div v-if="loading" class="p-4 text-center text-sm text-muted-foreground">
+            <div
+                v-if="loading"
+                class="p-4 text-center text-sm text-muted-foreground"
+            >
                 Loading...
             </div>
 
@@ -210,7 +240,8 @@ onMounted(() => {
                                 notification.type === 'challenge_completed',
                             'bg-blue-100 text-blue-600 dark:bg-blue-900/30':
                                 notification.type === 'offer_received' ||
-                                notification.type === 'trade_pending_confirmation',
+                                notification.type ===
+                                    'trade_pending_confirmation',
                             'bg-gray-100 text-gray-600 dark:bg-gray-800':
                                 notification.type === 'offer_declined',
                         }"
@@ -221,7 +252,7 @@ onMounted(() => {
                         />
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-sm font-medium leading-tight">
+                        <p class="text-sm leading-tight font-medium">
                             {{ getNotificationTitle(notification) }}
                         </p>
                         <p
@@ -236,7 +267,7 @@ onMounted(() => {
                     </div>
                     <div
                         v-if="!notification.read_at"
-                        class="mt-1 size-2 shrink-0 rounded-full bg-brand-red"
+                        class="bg-brand-red mt-1 size-2 shrink-0 rounded-full"
                     />
                 </DropdownMenuItem>
             </div>
