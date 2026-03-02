@@ -8,16 +8,15 @@ import CreateOfferDialog from '@/components/CreateOfferDialog.vue';
 import OfferCard from '@/components/OfferCard.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
 import ShareDropdown from '@/components/ShareDropdown.vue';
-import StatsPanel from '@/components/StatsPanel.vue';
 import TradeCard from '@/components/TradeCard.vue';
 import TradePathMap from '@/components/TradePathMap.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/composables/useInitials';
-import AppLayout from '@/layouts/AppLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import { login } from '@/routes';
 import challenges from '@/routes/challenges';
-import type { BreadcrumbItem } from '@/types';
 import type {
     ChallengeStatus,
     CommentSummary,
@@ -80,14 +79,6 @@ function handleMakeOffer(): void {
     }
     showOfferDialog.value = true;
 }
-
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Challenges', href: '/challenges' },
-    {
-        title: props.challenge.title ?? 'Challenge',
-        href: `/challenges/${props.challenge.id}`,
-    },
-];
 
 const activeTab = ref<'story' | 'offers' | 'trades' | 'comments'>('story');
 
@@ -257,19 +248,24 @@ function formatDate(dateString: string): string {
         :title="`${challenge.title ?? 'Challenge'} — ${page.props.name ?? 'One Red Paperclip'}`"
     />
 
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <PublicLayout>
         <div class="bg-background">
             <div class="mx-auto w-full max-w-6xl p-4 sm:p-6">
-                <!-- Header -->
-                <div class="relative mb-6">
+                <!-- Hero Section -->
+                <div
+                    class="overflow-hidden rounded-2xl border border-border bg-muted/50"
+                >
+                    <!-- Category accent strip -->
                     <div
-                        class="pointer-events-none absolute -top-4 -right-8 -left-8 h-40 rounded-b-3xl bg-[var(--muted)]"
-                        aria-hidden="true"
+                        class="h-1.5"
+                        :style="{
+                            backgroundColor: 'var(--soft-lavender)',
+                        }"
                     />
-                    <div
-                        class="relative flex items-start justify-between gap-4"
-                    >
-                        <div class="flex-1">
+
+                    <div class="p-4 sm:p-6">
+                        <!-- Top row: badges + actions -->
+                        <div class="flex items-start justify-between gap-4">
                             <div class="flex flex-wrap items-center gap-2">
                                 <Badge
                                     v-if="challenge.category?.name"
@@ -290,140 +286,204 @@ function formatDate(dateString: string): string {
                                     {{ challenge.status }}
                                 </Badge>
                             </div>
-                            <h1
-                                class="mt-3 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
-                            >
-                                {{ challenge.title ?? 'Untitled challenge' }}
-                            </h1>
-                            <div
-                                class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
-                            >
-                                <Link
-                                    href="#"
-                                    class="flex items-center gap-2 transition-colors hover:text-foreground"
+                            <div class="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    class="rounded-full"
                                 >
-                                    <Avatar
-                                        class="size-8 shrink-0 overflow-hidden rounded-full ring-2 ring-[var(--electric-mint)]/30"
+                                    <Heart class="size-4" />
+                                </Button>
+                                <ShareDropdown
+                                    :url="shareUrl"
+                                    :title="
+                                        challenge.title ??
+                                        'Check out this challenge!'
+                                    "
+                                />
+                                <Link
+                                    v-if="isOwner"
+                                    :href="
+                                        challenges.edit.url({
+                                            challenge: challenge.id,
+                                        })
+                                    "
+                                >
+                                    <Button
+                                        variant="outline"
+                                        class="rounded-full"
                                     >
-                                        <AvatarImage
-                                            v-if="challenge.user?.avatar"
-                                            :src="challenge.user.avatar"
-                                            :alt="
-                                                challenge.user?.name ??
-                                                'Challenge owner'
-                                            "
-                                        />
-                                        <AvatarFallback
-                                            class="rounded-full bg-[var(--sky-blue)]/20 text-[var(--sky-blue)]"
-                                        >
-                                            {{
-                                                getInitials(
-                                                    challenge.user?.name ??
-                                                        'Anonymous',
-                                                )
-                                            }}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <span class="font-medium">
-                                        {{
-                                            challenge.user?.name ?? 'Anonymous'
-                                        }}
-                                    </span>
-                                    <Badge
-                                        v-if="challenge.user?.level"
-                                        class="rounded-full border border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] px-2 py-0.5 text-[10px] text-white"
-                                    >
-                                        Lvl {{ challenge.user.level }}
-                                    </Badge>
+                                        <Pencil class="mr-2 size-4" />
+                                        Edit
+                                    </Button>
                                 </Link>
                             </div>
                         </div>
 
-                        <!-- Action buttons -->
-                        <div class="flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                class="rounded-full"
-                            >
-                                <Heart class="size-4" />
-                            </Button>
-                            <ShareDropdown
-                                :url="shareUrl"
-                                :title="
-                                    challenge.title ??
-                                    'Check out this challenge!'
-                                "
-                            />
+                        <!-- Title + owner -->
+                        <h1
+                            class="mt-4 font-display text-3xl font-bold tracking-tight text-foreground lg:text-4xl"
+                        >
+                            {{ challenge.title ?? 'Untitled challenge' }}
+                        </h1>
+                        <div
+                            class="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
+                        >
                             <Link
-                                v-if="isOwner"
-                                :href="
-                                    challenges.edit.url({
-                                        challenge: challenge.id,
-                                    })
-                                "
+                                href="#"
+                                class="flex items-center gap-2 transition-colors hover:text-foreground"
                             >
-                                <Button variant="outline" class="rounded-full">
-                                    <Pencil class="mr-2 size-4" />
-                                    Edit
-                                </Button>
+                                <Avatar
+                                    class="size-8 shrink-0 overflow-hidden rounded-full ring-2 ring-[var(--electric-mint)]/30"
+                                >
+                                    <AvatarImage
+                                        v-if="challenge.user?.avatar"
+                                        :src="challenge.user.avatar"
+                                        :alt="
+                                            challenge.user?.name ??
+                                            'Challenge owner'
+                                        "
+                                    />
+                                    <AvatarFallback
+                                        class="rounded-full bg-[var(--sky-blue)]/20 text-[var(--sky-blue)]"
+                                    >
+                                        {{
+                                            getInitials(
+                                                challenge.user?.name ??
+                                                    'Anonymous',
+                                            )
+                                        }}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span class="font-medium">
+                                    {{ challenge.user?.name ?? 'Anonymous' }}
+                                </span>
+                                <Badge
+                                    v-if="challenge.user?.level"
+                                    class="rounded-full border border-[var(--soft-lavender-border)] bg-[hsl(275_70%_50%)] px-2 py-0.5 text-[10px] text-white"
+                                >
+                                    Lvl {{ challenge.user.level }}
+                                </Badge>
                             </Link>
+                        </div>
+
+                        <!-- Bottom row: stats pills + CTA -->
+                        <div
+                            class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <!-- Stats pills -->
+                            <div
+                                class="grid grid-cols-2 gap-2 sm:flex sm:gap-3"
+                            >
+                                <div
+                                    class="flex items-center gap-2 rounded-xl bg-card p-3"
+                                >
+                                    <span class="text-lg">🏆</span>
+                                    <div>
+                                        <div
+                                            class="font-mono text-sm font-bold text-foreground"
+                                        >
+                                            {{ ownerStats.level }}
+                                        </div>
+                                        <div
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Level
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 rounded-xl bg-card p-3"
+                                >
+                                    <span class="text-lg">🔥</span>
+                                    <div>
+                                        <div
+                                            class="font-mono text-sm font-bold text-[var(--hot-coral)]"
+                                        >
+                                            {{ ownerStats.currentStreak }}
+                                        </div>
+                                        <div
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Streak
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 rounded-xl bg-card p-3"
+                                >
+                                    <span class="text-lg">🔄</span>
+                                    <div>
+                                        <div
+                                            class="font-mono text-sm font-bold text-[var(--electric-mint)]"
+                                        >
+                                            {{ ownerStats.tradesCompleted }}
+                                        </div>
+                                        <div
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Trades
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 rounded-xl bg-card p-3"
+                                >
+                                    <span class="text-lg">📅</span>
+                                    <div>
+                                        <div
+                                            class="font-mono text-sm font-bold text-[var(--sky-blue)]"
+                                        >
+                                            {{ ownerStats.daysActive }}
+                                        </div>
+                                        <div
+                                            class="text-xs text-muted-foreground"
+                                        >
+                                            Days
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CTA -->
+                            <div v-if="!isOwner" class="sm:shrink-0">
+                                <Button
+                                    v-if="currentUser"
+                                    variant="brand"
+                                    size="lg"
+                                    class="w-full sm:w-auto"
+                                    @click="handleMakeOffer"
+                                >
+                                    Make an Offer
+                                </Button>
+                                <Link v-else :href="login().url" class="block">
+                                    <Button
+                                        variant="outline"
+                                        size="lg"
+                                        class="w-full sm:w-auto"
+                                    >
+                                        Sign in to make an offer
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Main content: Path Map + Stats sidebar -->
-                <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <!-- Trade Path Map (main area) -->
-                    <div
-                        class="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm lg:col-span-2"
-                    >
-                        <div class="mb-4 flex items-center justify-between">
-                            <h2
-                                class="font-display text-lg font-semibold text-foreground"
-                            >
-                                Trade Journey
-                            </h2>
-                            <PaperclipMascot
-                                :mood="mascotMood"
-                                :size="48"
-                                class="hidden sm:block"
-                            />
-                        </div>
-
-                        <TradePathMap :nodes="pathNodes" />
+                <!-- Trade Journey -->
+                <div class="mt-6">
+                    <div class="mb-4 flex items-center justify-between">
+                        <h2
+                            class="font-display text-lg font-semibold text-foreground"
+                        >
+                            Trade Journey
+                        </h2>
+                        <PaperclipMascot :mood="mascotMood" :size="48" />
                     </div>
-
-                    <!-- Stats Panel (sidebar) -->
-                    <div class="space-y-4">
-                        <StatsPanel :stats="ownerStats" />
-
-                        <!-- Make an Offer CTA -->
-                        <div
-                            v-if="!isOwner"
-                            class="rounded-2xl border border-[var(--brand-red)]/20 bg-[var(--brand-red)]/5 p-4"
-                        >
-                            <p
-                                class="mb-3 text-center text-sm text-muted-foreground"
-                            >
-                                Have something to trade?
-                            </p>
-                            <Button
-                                variant="brand"
-                                class="w-full"
-                                size="lg"
-                                @click="handleMakeOffer"
-                            >
-                                Make an Offer
-                            </Button>
-                        </div>
-
-                        <!-- Compact mascot for mobile -->
-                        <div
-                            class="flex justify-center rounded-2xl border border-border bg-card/50 p-4 sm:hidden"
-                        >
-                            <PaperclipMascot :mood="mascotMood" :size="64" />
-                        </div>
+                    <div
+                        class="rounded-3xl border border-border bg-card/50 p-6 backdrop-blur-sm"
+                    >
+                        <TradePathMap :nodes="pathNodes" />
                     </div>
                 </div>
 
@@ -612,5 +672,5 @@ function formatDate(dateString: string): string {
             :xp-gained="celebrationXp"
             @close="showCelebration = false"
         />
-    </AppLayout>
+    </PublicLayout>
 </template>

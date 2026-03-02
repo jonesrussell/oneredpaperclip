@@ -116,6 +116,18 @@ test('show page provides SEO meta with og_type, description, and JSON-LD schema'
     );
 });
 
+test('show page renders for guest users without authentication', function () {
+    $response = $this->get("/challenges/{$this->challenge->id}");
+
+    $response->assertOk();
+    $response->assertInertia(
+        fn ($page) => $page
+            ->component('challenges/Show')
+            ->has('challenge')
+            ->where('challenge.id', $this->challenge->id)
+    );
+});
+
 test('show page includes start_item distinct from current_item after trade', function () {
     $offeredItem = Item::create([
         'itemable_type' => User::class,
