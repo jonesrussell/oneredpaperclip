@@ -18,6 +18,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 import type { OfferSummary } from '@/types/models';
 
 const props = defineProps<{
@@ -28,15 +29,13 @@ const props = defineProps<{
 const showAcceptDialog = ref(false);
 const showDeclineDialog = ref(false);
 const processing = ref(false);
-const lightboxOpen = ref(false);
-const lightboxImageUrl = ref<string | null>(null);
-const lightboxTitle = ref('');
-
-function openLightbox(url: string, title: string): void {
-    lightboxImageUrl.value = url;
-    lightboxTitle.value = title;
-    lightboxOpen.value = true;
-}
+const {
+    open: lightboxOpen,
+    imageUrl: lightboxImageUrl,
+    title: lightboxTitle,
+    openLightbox,
+    onOpenChange,
+} = useImageLightbox();
 
 function acceptOffer() {
     processing.value = true;
@@ -85,7 +84,7 @@ function declineOffer() {
                         type="button"
                         class="size-12 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-xl"
                         aria-label="View full size"
-                        @click="openLightbox(offer.offered_item!.image_url!, offer.offered_item?.title ?? 'Offered item')"
+                        @click="openLightbox(offer.offered_item?.image_url ?? null, offer.offered_item?.title ?? 'Offered item')"
                     >
                         <img
                             :src="offer.offered_item.image_url"
@@ -204,6 +203,6 @@ function declineOffer() {
         :open="lightboxOpen"
         :image-url="lightboxImageUrl"
         :title="lightboxTitle"
-        @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+        @update:open="onOpenChange"
     />
 </template>

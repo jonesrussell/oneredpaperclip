@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ImageIcon, Lock, Star, Trophy } from 'lucide-vue-next';
-import { ref } from 'vue';
 
 import ImageLightbox from '@/components/ImageLightbox.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 
 type PathNode = {
     id: string | number;
@@ -61,15 +61,10 @@ const getConnectorStyle = (fromNode: PathNode): string => {
     return 'stroke-border';
 };
 
-const lightboxOpen = ref(false);
-const lightboxImageUrl = ref<string | null>(null);
-const lightboxTitle = ref('');
+const { open: lightboxOpen, imageUrl: lightboxImageUrl, title: lightboxTitle, openLightbox, onOpenChange } = useImageLightbox();
 
-function openLightbox(node: PathNode): void {
-    if (!node.imageUrl) return;
-    lightboxImageUrl.value = node.imageUrl;
-    lightboxTitle.value = node.title;
-    lightboxOpen.value = true;
+function openNodeLightbox(node: PathNode): void {
+    if (node.imageUrl) openLightbox(node.imageUrl, node.title);
 }
 </script>
 
@@ -140,7 +135,7 @@ function openLightbox(node: PathNode): void {
                                 type="button"
                                 class="size-14 cursor-pointer overflow-hidden rounded-full transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-offset-2 focus:ring-offset-background"
                                 aria-label="View full size"
-                                @click="openLightbox(node)"
+                                @click="openNodeLightbox(node)"
                             >
                                 <img
                                     :src="node.imageUrl"
@@ -277,7 +272,7 @@ function openLightbox(node: PathNode): void {
             :open="lightboxOpen"
             :image-url="lightboxImageUrl"
             :title="lightboxTitle"
-            @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+            @update:open="onOpenChange"
         />
     </div>
 </template>

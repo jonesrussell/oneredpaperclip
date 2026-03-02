@@ -16,6 +16,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 import type { TradeSummary } from '@/types/models';
 
 const props = defineProps<{
@@ -27,15 +28,13 @@ const props = defineProps<{
 const showConfirmDialog = ref(false);
 const showEditDialog = ref(false);
 const processing = ref(false);
-const lightboxOpen = ref(false);
-const lightboxImageUrl = ref<string | null>(null);
-const lightboxTitle = ref('');
-
-function openLightbox(url: string, title: string): void {
-    lightboxImageUrl.value = url;
-    lightboxTitle.value = title;
-    lightboxOpen.value = true;
-}
+const {
+    open: lightboxOpen,
+    imageUrl: lightboxImageUrl,
+    title: lightboxTitle,
+    openLightbox,
+    onOpenChange,
+} = useImageLightbox();
 
 const isOfferer = computed(
     () => props.trade.offerer?.id === props.currentUserId,
@@ -88,7 +87,7 @@ function confirmTrade() {
                         type="button"
                         class="size-12 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-xl"
                         aria-label="View full size"
-                        @click="openLightbox(trade.offered_item!.image_url!, trade.offered_item?.title ?? 'Trade item')"
+                        @click="openLightbox(trade.offered_item?.image_url ?? null, trade.offered_item?.title ?? 'Trade item')"
                     >
                         <img
                             :src="trade.offered_item.image_url"
@@ -233,6 +232,6 @@ function confirmTrade() {
         :open="lightboxOpen"
         :image-url="lightboxImageUrl"
         :title="lightboxTitle"
-        @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+        @update:open="onOpenChange"
     />
 </template>

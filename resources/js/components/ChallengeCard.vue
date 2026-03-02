@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ImageIcon } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed } from 'vue';
 
 import ImageLightbox from '@/components/ImageLightbox.vue';
 import ProgressRing from '@/components/ProgressRing.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 import { useInitials } from '@/composables/useInitials';
 import challenges from '@/routes/challenges';
 
@@ -71,20 +72,20 @@ function statusStyles(status: string): string {
     }
 }
 
-const heroImageUrl = (): string | null =>
-    props.challenge.current_item?.image_url ??
-    props.challenge.goal_item?.image_url ??
-    null;
+const heroImageUrl = computed(
+    () =>
+        props.challenge.current_item?.image_url ??
+        props.challenge.goal_item?.image_url ??
+        null,
+);
 
-const lightboxOpen = ref(false);
-const lightboxImageUrl = ref<string | null>(null);
-const lightboxTitle = ref('');
-
-function openLightbox(url: string, title: string): void {
-    lightboxImageUrl.value = url;
-    lightboxTitle.value = title;
-    lightboxOpen.value = true;
-}
+const {
+    open: lightboxOpen,
+    imageUrl: lightboxImageUrl,
+    title: lightboxTitle,
+    openLightbox,
+    onOpenChange,
+} = useImageLightbox();
 </script>
 
 <template>
@@ -109,14 +110,14 @@ function openLightbox(url: string, title: string): void {
             class="relative h-36 w-full shrink-0 overflow-hidden bg-gradient-to-br from-[var(--ink)]/8 to-[var(--ink)]/4 transition-transform duration-200 group-hover:scale-[1.02]"
         >
             <button
-                v-if="heroImageUrl()"
+                v-if="heroImageUrl"
                 type="button"
                 class="size-full cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset"
                 aria-label="View full size"
-                @click.stop.prevent="openLightbox(heroImageUrl()!, challenge.title ?? 'Challenge')"
+                @click.stop.prevent="openLightbox(heroImageUrl, challenge.title ?? 'Challenge')"
             >
                 <img
-                    :src="heroImageUrl()!"
+                    :src="heroImageUrl"
                     alt=""
                     class="size-full object-cover"
                 />
@@ -164,7 +165,7 @@ function openLightbox(url: string, title: string): void {
                         type="button"
                         class="size-8 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-md"
                         aria-label="View full size"
-                        @click.stop.prevent="openLightbox(challenge.current_item!.image_url!, challenge.current_item?.title ?? 'Current item')"
+                        @click.stop.prevent="openLightbox(challenge.current_item.image_url, challenge.current_item?.title ?? 'Current item')"
                     >
                         <img
                             :src="challenge.current_item.image_url"
@@ -198,7 +199,7 @@ function openLightbox(url: string, title: string): void {
                         type="button"
                         class="size-8 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-md"
                         aria-label="View full size"
-                        @click.stop.prevent="openLightbox(challenge.goal_item!.image_url!, challenge.goal_item?.title ?? 'Goal item')"
+                        @click.stop.prevent="openLightbox(challenge.goal_item.image_url, challenge.goal_item?.title ?? 'Goal item')"
                     >
                         <img
                             :src="challenge.goal_item.image_url"
@@ -269,7 +270,7 @@ function openLightbox(url: string, title: string): void {
             :open="lightboxOpen"
             :image-url="lightboxImageUrl"
             :title="lightboxTitle"
-            @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+            @update:open="onOpenChange"
         />
     </div>
 </template>

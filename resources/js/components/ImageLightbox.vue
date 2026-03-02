@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 import {
     Dialog,
@@ -26,6 +26,8 @@ const isOpen = computed({
     set: (value) => emit('update:open', value),
 });
 
+const displayTitle = computed(() => props.title || 'Enlarged image');
+
 const scale = ref(1);
 const translateX = ref(0);
 const translateY = ref(0);
@@ -48,6 +50,7 @@ let lastPinchScale = 1;
 let lastPanPoint = { x: 0, y: 0 };
 let isPanning = false;
 let lastTapTime = 0;
+const doubleTapWindowMs = 350;
 
 function getTouchDistance(touches: TouchList): number {
     if (touches.length < 2) return 0;
@@ -82,7 +85,16 @@ function onTouchMove(e: TouchEvent): void {
     }
 }
 
-function onTouchEnd(): void {
+function onTouchEnd(e: TouchEvent): void {
+    if (e.touches.length === 0) {
+        const now = Date.now();
+        if (now - lastTapTime < doubleTapWindowMs) {
+            resetTransform();
+            lastTapTime = 0;
+        } else {
+            lastTapTime = now;
+        }
+    }
     lastPinchDistance = 0;
     isPanning = false;
 }
@@ -96,16 +108,10 @@ function onWheel(e: WheelEvent): void {
 
 function onDoubleTap(): void {
     const now = Date.now();
-    if (now - lastTapTime < 350) {
+    if (now - lastTapTime < doubleTapWindowMs) {
         resetTransform();
     }
     lastTapTime = now;
-}
-
-function onMouseDown(e: MouseEvent): void {
-    if (e.button !== 0) return;
-    isPanning = true;
-    lastPanPoint = { x: e.clientX, y: e.clientY };
 }
 
 function onMouseMove(e: MouseEvent): void {
@@ -117,9 +123,24 @@ function onMouseMove(e: MouseEvent): void {
     lastPanPoint = { x: e.clientX, y: e.clientY };
 }
 
-function onMouseUp(): void {
+function onDocumentMouseUp(): void {
     isPanning = false;
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onDocumentMouseUp);
 }
+
+function onMouseDown(e: MouseEvent): void {
+    if (e.button !== 0) return;
+    isPanning = true;
+    lastPanPoint = { x: e.clientX, y: e.clientY };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onDocumentMouseUp);
+}
+
+onBeforeUnmount(() => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onDocumentMouseUp);
+});
 
 const imageStyle = computed(() => ({
     transform: `translate(${translateX.value}px, ${translateY.value}px) scale(${scale.value})`,
@@ -130,7 +151,7 @@ const imageStyle = computed(() => ({
     <Dialog v-model:open="isOpen">
         <DialogContent class="sm:max-w-4xl border-0 bg-transparent p-2 shadow-none">
             <DialogTitle class="sr-only">
-                {{ title || 'Enlarged image' }}
+                {{ displayTitle }}
             </DialogTitle>
             <div class="flex flex-col items-center gap-2">
                 <div
@@ -143,13 +164,10 @@ const imageStyle = computed(() => ({
                     @wheel.prevent="onWheel"
                     @dblclick="onDoubleTap"
                     @mousedown="onMouseDown"
-                    @mousemove="onMouseMove"
-                    @mouseup="onMouseUp"
-                    @mouseleave="onMouseUp"
                 >
                     <img
                         :src="imageUrl"
-                        :alt="title || 'Enlarged image'"
+                        :alt="displayTitle"
                         class="max-h-[85vh] w-auto select-none object-contain rounded-lg"
                         :style="imageStyle"
                         draggable="false"
