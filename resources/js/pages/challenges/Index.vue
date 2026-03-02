@@ -4,6 +4,10 @@ import { ref } from 'vue';
 
 import ChallengeCard from '@/components/ChallengeCard.vue';
 import PublicLayout from '@/layouts/PublicLayout.vue';
+import {
+    create as createRoute,
+    index as indexRoute,
+} from '@/routes/challenges';
 
 type ChallengeItem = {
     id: number;
@@ -33,7 +37,7 @@ const activeCategory = ref<number | null>(null);
 function filterByCategory(categoryId: number | null): void {
     activeCategory.value = categoryId;
     router.get(
-        '/challenges',
+        indexRoute.url(),
         categoryId != null ? { category_id: categoryId } : {},
         { preserveState: true },
     );
@@ -46,7 +50,7 @@ function filterByCategory(categoryId: number | null): void {
     <PublicLayout>
         <div class="bg-background">
             <div class="mx-auto w-full max-w-6xl p-4 sm:p-6">
-                <!-- Hero Section -->
+                <!-- Page header -->
                 <div
                     class="overflow-hidden rounded-2xl border border-border bg-muted/50"
                 >
@@ -107,7 +111,7 @@ function filterByCategory(categoryId: number | null): void {
                     No challenges yet. Be the first to start a trade-up.
                     <br />
                     <Link
-                        href="/challenges/create"
+                        :href="createRoute.url()"
                         class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
                     >
                         Create a challenge
