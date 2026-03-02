@@ -173,6 +173,23 @@ test('dashboard challenges page shows only current user challenges', function ()
     );
 });
 
+test('guest can get challenges index page', function () {
+    $category = Category::factory()->create();
+    $challenge = Challenge::factory()
+        ->for($this->user)
+        ->for($category)
+        ->create();
+
+    $response = $this->get(route('challenges.index'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('challenges/Index')
+        ->has('challenges.data', 1)
+        ->has('categories')
+    );
+});
+
 test('challenges index does not include draft challenges', function () {
     $category = Category::create(['name' => 'Electronics', 'slug' => 'electronics']);
     $activeChallenge = Challenge::create([
