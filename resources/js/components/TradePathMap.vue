@@ -19,10 +19,21 @@ const props = defineProps<{
 
 const isVisible = ref(false);
 onMounted(() => {
-    requestAnimationFrame(() => {
+    const show = () => {
         isVisible.value = true;
-    });
+    };
+    if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(show);
+    } else {
+        show();
+    }
 });
+
+// Track broken images so we can fall back to icons
+const brokenImages = ref(new Set<string | number>());
+function onImageError(nodeId: string | number): void {
+    brokenImages.value.add(nodeId);
+}
 
 // Layout constants
 const NODE_R = 36;
@@ -46,7 +57,8 @@ function r(node: PathNode): number {
     return node.type === 'goal' ? GOAL_R : NODE_R;
 }
 
-function side(i: number): 'left' | 'right' {
+// Returns the side the LABEL appears on (opposite the node's horizontal position)
+function labelSide(i: number): 'left' | 'right' {
     return xPct(i) < 50 ? 'right' : 'left';
 }
 
@@ -56,8 +68,9 @@ const mapHeight = computed(() => {
     return yPx(last) + r(props.nodes[last]) + PAD_Y;
 });
 
-// SVG viewBox uses x: 0–100 (percentage), y: pixels
-// With preserveAspectRatio="none", x maps to container width and y maps 1:1 to pixels
+// SVG viewBox uses x: 0–100 (percentage-like), y: pixel values.
+// preserveAspectRatio="none" stretches both axes to fill the container.
+// y maps 1:1 to pixels only because the container height matches mapHeight exactly.
 const svgViewBox = computed(() => `0 0 100 ${mapHeight.value}`);
 
 // Connector curves between adjacent nodes
@@ -88,19 +101,62 @@ function nodeStatusClass(node: PathNode): string {
 
 function labelColor(node: PathNode): string {
     if (node.status === 'completed') return 'text-[var(--electric-mint)]';
-    if (node.status === 'current') return 'text-[var(--hot-coral)]';
-    if (node.type === 'goal') return 'text-[var(--hot-coral)]';
+    if (node.status === 'current' || node.type === 'goal')
+        return 'text-[var(--hot-coral)]';
     return 'text-muted-foreground/50';
 }
+
+function nodeLabel(node: PathNode, index: number): string {
+    if (node.type === 'start') return 'Start';
+    if (node.type === 'goal') return 'Goal';
+    return `Trade ${index}`;
+}
+
+type ConnectorStyle = {
+    stroke: string;
+    strokeWidth: number;
+    dashArray: string;
+};
+
+function connectorStyle(c: {
+    completed: boolean;
+    active: boolean;
+}): ConnectorStyle {
+    if (c.completed) {
+        return {
+            stroke: 'var(--electric-mint)',
+            strokeWidth: 3.5,
+            dashArray: 'none',
+        };
+    }
+    if (c.active) {
+        return {
+            stroke: 'var(--hot-coral)',
+            strokeWidth: 3,
+            dashArray: '10 8',
+        };
+    }
+    return { stroke: 'var(--border)', strokeWidth: 2, dashArray: '6 10' };
+}
+
+const lastNode = computed(() =>
+    props.nodes.length > 0 ? props.nodes[props.nodes.length - 1] : null,
+);
+const isChallengeComplete = computed(
+    () => lastNode.value?.status === 'completed',
+);
 </script>
 
 <template>
     <div
+        role="img"
+        :aria-label="`Trade journey path with ${nodes.length} steps`"
         class="trade-path-map relative mx-auto w-full max-w-md overflow-hidden"
         :style="{ height: `${mapHeight}px` }"
     >
         <!-- Subtle dot grid for depth -->
         <div
+            aria-hidden="true"
             class="pointer-events-none absolute inset-0 opacity-[0.035]"
             style="
                 background-image: radial-gradient(
@@ -114,6 +170,7 @@ function labelColor(node: PathNode): string {
 
         <!-- SVG connector layer -->
         <svg
+            aria-hidden="true"
             class="pointer-events-none absolute inset-0 size-full"
             :viewBox="svgViewBox"
             preserveAspectRatio="none"
@@ -137,18 +194,10 @@ function labelColor(node: PathNode): string {
                 <!-- Main connector path -->
                 <path
                     :d="c.d"
-                    :stroke="
-                        c.completed
-                            ? 'var(--electric-mint)'
-                            : c.active
-                              ? 'var(--hot-coral)'
-                              : 'var(--border)'
-                    "
-                    :stroke-width="c.completed ? 3.5 : c.active ? 3 : 2"
+                    :stroke="connectorStyle(c).stroke"
+                    :stroke-width="connectorStyle(c).strokeWidth"
                     stroke-linecap="round"
-                    :stroke-dasharray="
-                        c.completed ? 'none' : c.active ? '10 8' : '6 10'
-                    "
+                    :stroke-dasharray="connectorStyle(c).dashArray"
                     vector-effect="non-scaling-stroke"
                     :class="{ 'tpm-dash-animate': c.active }"
                     :opacity="
@@ -177,7 +226,7 @@ function labelColor(node: PathNode): string {
                 <div
                     class="flex items-center gap-3 transition-all duration-500 ease-out"
                     :class="[
-                        side(index) === 'left'
+                        labelSide(index) === 'left'
                             ? 'flex-row-reverse'
                             : 'flex-row',
                         isVisible
@@ -218,9 +267,10 @@ function labelColor(node: PathNode): string {
                                 height: `${r(node) * 2}px`,
                             }"
                         >
-                            <!-- Image -->
                             <div
-                                v-if="node.imageUrl"
+                                v-if="
+                                    node.imageUrl && !brokenImages.has(node.id)
+                                "
                                 class="overflow-hidden rounded-full ring-2 ring-white/20"
                                 :style="{
                                     width: `${r(node) * 2 - 10}px`,
@@ -231,6 +281,7 @@ function labelColor(node: PathNode): string {
                                     :src="node.imageUrl"
                                     :alt="node.title"
                                     class="size-full object-cover"
+                                    @error="onImageError(node.id)"
                                 />
                             </div>
                             <!-- Start icon -->
@@ -284,20 +335,16 @@ function labelColor(node: PathNode): string {
                     <div
                         class="max-w-[140px]"
                         :class="
-                            side(index) === 'left' ? 'text-right' : 'text-left'
+                            labelSide(index) === 'left'
+                                ? 'text-right'
+                                : 'text-left'
                         "
                     >
                         <p
                             class="font-mono text-[10px] font-semibold tracking-[0.15em] uppercase"
                             :class="labelColor(node)"
                         >
-                            {{
-                                node.type === 'start'
-                                    ? 'Start'
-                                    : node.type === 'goal'
-                                      ? 'Goal'
-                                      : `Trade ${index}`
-                            }}
+                            {{ nodeLabel(node, index) }}
                         </p>
                         <p
                             class="mt-0.5 line-clamp-2 font-display text-sm leading-tight font-bold"
@@ -322,13 +369,10 @@ function labelColor(node: PathNode): string {
 
         <!-- Celebration mascot when challenge is complete -->
         <div
-            v-if="
-                nodes.length > 0 &&
-                nodes[nodes.length - 1].status === 'completed'
-            "
+            v-if="isChallengeComplete && lastNode"
             class="absolute left-1/2 -translate-x-1/2"
             :style="{
-                top: `${yPx(nodes.length - 1) + r(nodes[nodes.length - 1]) + 24}px`,
+                top: `${yPx(nodes.length - 1) + r(lastNode) + 24}px`,
             }"
         >
             <PaperclipMascot mood="celebrating" :size="80" />
@@ -419,5 +463,22 @@ function labelColor(node: PathNode): string {
 
 .tpm-dash-animate {
     animation: tpm-dash 1.2s linear infinite;
+}
+
+/* ── Accessibility ── */
+
+@media (prefers-reduced-motion: reduce) {
+    .tpm-node--current {
+        animation: none;
+    }
+
+    .tpm-ping {
+        animation: none;
+        display: none;
+    }
+
+    .tpm-dash-animate {
+        animation: none;
+    }
 }
 </style>
