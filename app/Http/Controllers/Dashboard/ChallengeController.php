@@ -106,9 +106,9 @@ class ChallengeController extends Controller
         return back()->with('success', count($request->ids).' challenges deleted.');
     }
 
-    public function restore(int $id): RedirectResponse
+    public function restore(string $slug): RedirectResponse
     {
-        $challenge = Challenge::onlyTrashed()->findOrFail($id);
+        $challenge = Challenge::onlyTrashed()->where('slug', $slug)->firstOrFail();
         $challenge->restore();
 
         return back()->with('success', 'Challenge restored.');
@@ -123,9 +123,9 @@ class ChallengeController extends Controller
         return back()->with('success', count($request->ids).' challenges restored.');
     }
 
-    public function forceDelete(int $id): RedirectResponse
+    public function forceDelete(string $slug): RedirectResponse
     {
-        $challenge = Challenge::onlyTrashed()->findOrFail($id);
+        $challenge = Challenge::onlyTrashed()->where('slug', $slug)->firstOrFail();
         $challenge->forceDelete();
 
         return back()->with('success', 'Challenge permanently deleted.');

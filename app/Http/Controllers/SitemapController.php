@@ -15,7 +15,7 @@ class SitemapController extends Controller
         $challenges = Challenge::query()
             ->publicVisibility()
             ->active()
-            ->select(['id', 'updated_at'])
+            ->select(['id', 'slug', 'updated_at'])
             ->get();
 
         return response()
