@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { Heart, Pencil } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
@@ -73,10 +73,6 @@ const shareUrl = computed(() => {
 });
 
 function handleMakeOffer(): void {
-    if (!currentUser.value) {
-        router.visit('/login');
-        return;
-    }
     showOfferDialog.value = true;
 }
 
@@ -117,12 +113,8 @@ const daysActive = computed(() => {
 });
 
 const ownerStats = computed(() => ({
-    xp: props.challenge.user?.xp ?? 0,
     level: props.challenge.user?.level ?? 1,
-    levelProgress: 35,
-    xpForNextLevel: 500,
     currentStreak: props.challenge.user?.current_streak ?? 0,
-    longestStreak: props.challenge.user?.longest_streak ?? 0,
     tradesCompleted: tradesCompleted.value,
     daysActive: daysActive.value,
 }));
@@ -649,6 +641,7 @@ function formatDate(dateString: string): string {
             class="fixed inset-x-0 bottom-16 z-40 border-t border-border bg-background/95 p-3 backdrop-blur-md lg:hidden"
         >
             <Button
+                v-if="currentUser"
                 variant="brand"
                 class="w-full"
                 size="lg"
@@ -656,6 +649,11 @@ function formatDate(dateString: string): string {
             >
                 Make an Offer
             </Button>
+            <Link v-else :href="login().url" class="block">
+                <Button variant="outline" class="w-full" size="lg">
+                    Sign in to make an offer
+                </Button>
+            </Link>
         </div>
 
         <!-- Create offer dialog -->

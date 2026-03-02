@@ -117,7 +117,7 @@ test('show page provides SEO meta with og_type, description, and JSON-LD schema'
 });
 
 test('show page renders for guest users without authentication', function () {
-    $response = $this->get("/challenges/{$this->challenge->id}");
+    $response = $this->get(route('challenges.show', $this->challenge));
 
     $response->assertOk();
     $response->assertInertia(
@@ -125,6 +125,7 @@ test('show page renders for guest users without authentication', function () {
             ->component('challenges/Show')
             ->has('challenge')
             ->where('challenge.id', $this->challenge->id)
+            ->where('isFollowing', false)
     );
 });
 
