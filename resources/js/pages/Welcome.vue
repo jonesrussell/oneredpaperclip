@@ -3,12 +3,14 @@ import { Head, Link } from '@inertiajs/vue3';
 
 import ChallengeCard from '@/components/ChallengeCard.vue';
 import PaperclipIcon from '@/components/PaperclipIcon.vue';
+import { buttonVariants } from '@/components/ui/button';
 import PublicLayout from '@/layouts/PublicLayout.vue';
 import { about, register } from '@/routes';
 import challenges from '@/routes/challenges';
 
 type FeaturedChallenge = {
     id: number;
+    slug: string;
     title: string | null;
     status: string;
     trades_count?: number;
@@ -87,13 +89,8 @@ function stepNodeColor(color: string): string {
         title="One Red Paperclip — Trade up from one thing to something better"
     />
     <PublicLayout>
-        <!-- Hero: full-bleed background, content centered -->
+        <!-- Hero section -->
         <section class="relative w-full py-16 sm:py-24 md:py-32">
-            <!-- Full-bleed hero gradient (edge to edge, no rounded corners) -->
-            <div
-                class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--hot-coral)]/12 via-transparent to-[var(--sunny-yellow)]/10"
-                aria-hidden="true"
-            />
             <div class="relative mx-auto max-w-6xl px-4 sm:px-6">
                 <div class="relative">
                     <div
@@ -119,13 +116,9 @@ function stepNodeColor(color: string): string {
                             class="relative order-4 flex h-full animate-in justify-center [animation-duration:0.8s] [animation-fill-mode:both] fade-in slide-in-from-bottom-6 md:order-none md:col-start-2 md:row-span-2 md:row-start-1 md:h-full md:items-center md:justify-end"
                             style="animation-delay: 120ms"
                         >
-                            <div
-                                class="absolute -inset-4 rounded-full bg-gradient-to-br from-[var(--brand-red)]/20 to-transparent blur-2xl"
-                                aria-hidden="true"
-                            />
                             <!-- House-shaped container: one red paperclip → house -->
                             <div
-                                class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center bg-[var(--paper)] shadow-lg dark:bg-[var(--paper)] dark:shadow-[var(--shadow-card)]"
+                                class="hero-house relative flex h-48 w-48 shrink-0 items-center justify-center border-2 border-[var(--border)] bg-[var(--paper)]"
                             >
                                 <PaperclipIcon
                                     class="hero-house-paperclip h-16 w-16 !text-[var(--brand-red)]"
@@ -150,20 +143,30 @@ function stepNodeColor(color: string): string {
                                 <Link
                                     v-if="$page.props.auth.user"
                                     :href="challenges.create().url"
-                                    class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
+                                    :class="
+                                        buttonVariants({
+                                            variant: 'brand',
+                                            size: 'lg',
+                                        })
+                                    "
                                 >
                                     Start a challenge
                                 </Link>
                                 <Link
                                     v-else-if="props.canRegister"
                                     :href="register().url"
-                                    class="inline-flex items-center rounded-md bg-[var(--brand-red)] px-5 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-[var(--brand-red-hover)]"
+                                    :class="
+                                        buttonVariants({
+                                            variant: 'brand',
+                                            size: 'lg',
+                                        })
+                                    "
                                 >
                                     Create an account
                                 </Link>
                                 <Link
                                     :href="challenges.index().url"
-                                    class="inline-flex items-center rounded-md border border-[var(--ink)]/25 px-5 py-2.5 font-medium text-[var(--ink)] transition-colors hover:border-[var(--ink)]/40 hover:bg-[var(--ink)]/5"
+                                    class="inline-flex items-center rounded-xl border-2 border-b-4 border-[var(--border)] px-5 py-2.5 font-bold text-[var(--ink)] transition-all hover:bg-[var(--accent)] active:translate-y-[2px] active:border-b-2"
                                 >
                                     Browse challenges
                                 </Link>
@@ -175,9 +178,7 @@ function stepNodeColor(color: string): string {
         </section>
 
         <!-- Social proof stats -->
-        <section
-            class="border-y border-[var(--border)] bg-[var(--card)]/80 py-8 dark:bg-white/5"
-        >
+        <section class="border-y border-[var(--border)] bg-[var(--muted)] py-8">
             <div
                 class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-8 px-4 sm:gap-16 sm:px-6"
             >
@@ -234,7 +235,7 @@ function stepNodeColor(color: string): string {
                 <div class="relative mt-14 sm:mt-16">
                     <!-- Vertical track (line through the middle) -->
                     <div
-                        class="absolute top-0 bottom-0 left-1/2 w-1 -translate-x-1/2 rounded-full bg-gradient-to-b from-[var(--hot-coral)] via-[var(--sunny-yellow)] to-[var(--brand-red)] opacity-40 sm:w-1.5"
+                        class="absolute top-0 bottom-0 left-1/2 w-1 -translate-x-1/2 rounded-full bg-[var(--brand-red)] opacity-25 sm:w-1.5"
                         aria-hidden="true"
                     />
 
@@ -258,7 +259,7 @@ function stepNodeColor(color: string): string {
                                 ]"
                             >
                                 <div
-                                    class="rounded-2xl border border-[var(--ink)]/10 bg-[var(--paper)] p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6"
+                                    class="rounded-2xl border-2 border-[var(--border)] bg-[var(--paper)] p-5 transition-colors hover:border-[var(--brand-red)]/30 sm:p-6"
                                 >
                                     <h3
                                         class="font-display text-lg font-semibold text-[var(--ink)] sm:text-xl"
@@ -362,7 +363,7 @@ function stepNodeColor(color: string): string {
 
         <!-- CTA strip -->
         <section
-            class="border-t border-white/10 bg-[hsl(0_0%_11%)] py-16 text-center sm:py-20 dark:bg-background"
+            class="border-t border-white/10 bg-[var(--brand-red)] py-16 text-center sm:py-20"
         >
             <div class="mx-auto max-w-2xl px-4 sm:px-6">
                 <h2
@@ -380,7 +381,7 @@ function stepNodeColor(color: string): string {
                     <Link
                         v-if="!$page.props.auth.user && props.canRegister"
                         :href="register().url"
-                        class="surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90"
+                        class="inline-flex rounded-xl border-2 border-b-4 border-white/40 bg-white px-5 py-2.5 font-bold text-[var(--brand-red)] transition-all hover:brightness-95 active:translate-y-[2px] active:border-b-2"
                     >
                         Create an account
                     </Link>
@@ -388,8 +389,8 @@ function stepNodeColor(color: string): string {
                         :href="challenges.index().url"
                         :class="
                             !$page.props.auth.user && props.canRegister
-                                ? 'inline-flex rounded-md border border-white/40 px-5 py-2.5 font-medium text-white transition-colors hover:border-white/70 hover:bg-white/10'
-                                : 'surface-light inline-flex rounded-md bg-white px-5 py-2.5 font-medium text-[var(--ink)] transition-opacity hover:opacity-90'
+                                ? 'inline-flex rounded-xl border-2 border-b-4 border-white/30 px-5 py-2.5 font-bold text-white transition-all hover:bg-white/10 active:translate-y-[2px] active:border-b-2'
+                                : 'inline-flex rounded-xl border-2 border-b-4 border-white/40 bg-white px-5 py-2.5 font-bold text-[var(--brand-red)] transition-all hover:brightness-95 active:translate-y-[2px] active:border-b-2'
                         "
                     >
                         Browse challenges

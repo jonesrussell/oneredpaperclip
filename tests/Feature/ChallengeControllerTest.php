@@ -11,6 +11,26 @@ beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
+test('challenge slug is auto-generated from title', function () {
+    $challenge = Challenge::factory()->for($this->user)->create(['title' => 'Red Paperclip to House', 'slug' => null]);
+
+    expect($challenge->slug)->toBe('red-paperclip-to-house');
+});
+
+test('challenge slug handles duplicates with suffix', function () {
+    Challenge::factory()->for($this->user)->create(['title' => 'My Challenge', 'slug' => null]);
+    $second = Challenge::factory()->for($this->user)->create(['title' => 'My Challenge', 'slug' => null]);
+
+    expect($second->slug)->toBe('my-challenge-2');
+});
+
+test('challenge slug is generated when title is null', function () {
+    $challenge = Challenge::factory()->for($this->user)->create(['title' => null, 'slug' => null]);
+
+    expect($challenge->slug)->not->toBeNull();
+    expect($challenge->slug)->not->toBeEmpty();
+});
+
 test('get challenge create page requires auth', function () {
     $response = $this->get(route('challenges.create'));
     $response->assertRedirect(route('login'));
@@ -170,6 +190,23 @@ test('dashboard challenges page shows only current user challenges', function ()
         ->component('dashboard/challenges/Index')
         ->has('challenges.data', 1)
         ->where('challenges.data.0.id', $myChallenge->id)
+    );
+});
+
+test('guest can get challenges index page', function () {
+    $category = Category::factory()->create();
+    $challenge = Challenge::factory()
+        ->for($this->user)
+        ->for($category)
+        ->create();
+
+    $response = $this->get(route('challenges.index'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('challenges/Index')
+        ->has('challenges.data', 1)
+        ->has('categories')
     );
 });
 

@@ -70,7 +70,7 @@ function confirmTrade() {
 
 <template>
     <div
-        class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md dark:shadow-[var(--shadow-card)]"
+        class="rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md"
     >
         <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">

@@ -1,57 +1,90 @@
-<script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+# Challenges Index PublicLayout Implementation Plan
 
-import ChallengeCard from '@/components/ChallengeCard.vue';
-import PublicLayout from '@/layouts/PublicLayout.vue';
-import {
-    create as createRoute,
-    index as indexRoute,
-} from '@/routes/challenges';
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-type ChallengeItem = {
-    id: number;
-    slug: string;
-    title: string | null;
-    status: string;
-    trades_count?: number;
-    user?: { id: number; name: string } | null;
-    current_item?: { id: number; title: string } | null;
-    goal_item?: { id: number; title: string } | null;
-    category?: { id: number; name: string } | null;
-};
+**Goal:** Switch the challenges index page from AppLayout to PublicLayout with a hero section, matching the pattern established in PR #9 for the challenge show page.
 
-const props = defineProps<{
-    challenges: {
-        data: ChallengeItem[];
-        current_page: number;
-        last_page: number;
-        links: { url: string | null; label: string; active: boolean }[];
-    };
-    categories: { id: number; name: string; slug: string }[];
-}>();
+**Architecture:** Pure frontend change — swap layout component in `resources/js/pages/challenges/Index.vue`, add hero section, adjust container classes. No backend changes needed.
 
-const challengeList = ref(props.challenges.data);
-const categoryList = ref(props.categories);
-const activeCategory = ref<number | null>(null);
+**Tech Stack:** Vue 3, Inertia.js v2, Tailwind CSS v4, PublicLayout
 
-function filterByCategory(categoryId: number | null): void {
-    activeCategory.value = categoryId;
-    router.get(
-        indexRoute.url(),
-        categoryId != null ? { category_id: categoryId } : {},
-        { preserveState: true },
+---
+
+### Task 1: Add guest-accessible index test
+
+**Files:**
+- Modify: `tests/Feature/ChallengeControllerTest.php`
+
+**Step 1: Write the test**
+
+Add a new test that verifies a guest (unauthenticated user) can access the challenges index page and receives the correct Inertia component with challenge and category data:
+
+```php
+test('guest can get challenges index page', function () {
+    $category = Category::factory()->create();
+    $challenge = Challenge::factory()
+        ->for($this->user)
+        ->for($category)
+        ->active()
+        ->create();
+
+    $response = $this->get(route('challenges.index'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('challenges/Index')
+        ->has('challenges.data', 1)
+        ->has('categories')
     );
-}
-</script>
+});
+```
 
+Check `database/factories/ChallengeFactory.php` and `database/factories/CategoryFactory.php` for available factory states before writing. The test above uses factories — adjust if an `active()` state doesn't exist (use `->state(['status' => 'active'])` instead).
+
+**Step 2: Run test to verify it passes**
+
+Run: `php artisan test --compact --filter="guest can get challenges index page"`
+Expected: PASS (this tests existing behavior, not the layout change)
+
+**Step 3: Commit**
+
+```
+git add tests/Feature/ChallengeControllerTest.php
+git commit -m "test: add guest challenges index test"
+```
+
+---
+
+### Task 2: Switch Index.vue to PublicLayout with hero section
+
+**Files:**
+- Modify: `resources/js/pages/challenges/Index.vue`
+
+**Reference files:**
+- `resources/js/pages/challenges/Show.vue` — example of PublicLayout usage and hero styling
+- `resources/js/layouts/PublicLayout.vue` — the target layout
+
+**Step 1: Update the script section**
+
+Replace the `AppLayout` import and remove the breadcrumbs:
+
+- Remove: `import AppLayout from '@/layouts/AppLayout.vue';`
+- Remove: `import type { BreadcrumbItem } from '@/types';`
+- Add: `import PublicLayout from '@/layouts/PublicLayout.vue';`
+- Remove: the `breadcrumbs` const
+
+**Step 2: Replace the template**
+
+Replace `<AppLayout :breadcrumbs="breadcrumbs">` with `<PublicLayout>` and restructure the content:
+
+```vue
 <template>
     <Head title="Explore Challenges" />
 
     <PublicLayout>
         <div class="bg-background">
             <div class="mx-auto w-full max-w-6xl p-4 sm:p-6">
-                <!-- Page header -->
+                <!-- Hero Section -->
                 <div
                     class="overflow-hidden rounded-2xl border border-border bg-muted/50"
                 >
@@ -112,7 +145,7 @@ function filterByCategory(categoryId: number | null): void {
                     No challenges yet. Be the first to start a trade-up.
                     <br />
                     <Link
-                        :href="createRoute.url()"
+                        href="/challenges/create"
                         class="mt-2 inline-block font-semibold text-[var(--brand-red)] hover:underline"
                     >
                         Create a challenge
@@ -163,3 +196,42 @@ function filterByCategory(categoryId: number | null): void {
         </div>
     </PublicLayout>
 </template>
+```
+
+**Step 3: Run linters**
+
+Run: `npm run lint && npm run format`
+
+**Step 4: Run tests**
+
+Run: `php artisan test --compact --filter=ChallengeControllerTest`
+Expected: All tests PASS
+
+**Step 5: Commit**
+
+```
+git add resources/js/pages/challenges/Index.vue
+git commit -m "refactor: switch challenges index to PublicLayout with hero section"
+```
+
+---
+
+### Task 3: Visual verification and final cleanup
+
+**Step 1: Build frontend assets**
+
+Run: `npm run build`
+
+**Step 2: Run full test suite**
+
+Run: `php artisan test --compact`
+Expected: All tests PASS
+
+**Step 3: Run Pint**
+
+Run: `vendor/bin/pint --dirty --format agent`
+Expected: No PHP files changed (only Vue was modified)
+
+**Step 4: Commit if any cleanup needed**
+
+Only commit if linters made changes.

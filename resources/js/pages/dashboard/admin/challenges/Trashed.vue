@@ -21,6 +21,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 
 interface Challenge {
     id: number;
+    slug: string;
     title: string;
     deleted_at: string | null;
     user?: { id: number; name: string } | null;
@@ -99,7 +100,7 @@ const handleSelectOne = (id: number, checked: boolean) => {
 const handleRestore = (challenge: Challenge) => {
     isRestoring.value = true;
     router.post(
-        `${routePrefix}/${challenge.id}/restore`,
+        `${routePrefix}/${challenge.slug}/restore`,
         {},
         {
             preserveScroll: true,
@@ -160,7 +161,7 @@ const confirmForceDelete = () => {
         );
     } else if (challengeToDelete.value) {
         isForceDeleting.value = true;
-        router.delete(`${routePrefix}/${challengeToDelete.value.id}/force`, {
+        router.delete(`${routePrefix}/${challengeToDelete.value.slug}/force`, {
             preserveScroll: true,
             onSuccess: () => {
                 deleteDialogOpen.value = false;

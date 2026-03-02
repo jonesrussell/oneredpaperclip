@@ -13,6 +13,7 @@ import challenges from '@/routes/challenges';
 const props = defineProps<{
     challenge: {
         id: number;
+        slug: string;
         title: string | null;
         status: string;
         trades_count?: number;
@@ -91,14 +92,13 @@ const {
 <template>
     <div class="relative">
     <Link
-        :href="challenges.show({ challenge: challenge.id }).url"
-        class="surface-light group relative block min-w-0 overflow-hidden rounded-xl border border-[var(--ink)]/10 bg-[var(--paper)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(28,18,8,0.12)]"
-        style="box-shadow: 0 2px 12px rgba(28, 18, 8, 0.06)"
+        :href="challenges.show({ challenge: challenge.slug }).url"
+        class="group relative block min-w-0 overflow-hidden rounded-xl border-2 border-[var(--border)] bg-[var(--paper)] transition-colors duration-200 hover:border-[var(--brand-red)]/30"
         prefetch
     >
         <!-- Left-edge category accent -->
         <div
-            class="absolute top-0 bottom-0 left-0 w-1 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
+            class="absolute top-0 bottom-0 left-0 w-1.5 rounded-l-xl transition-transform duration-200 group-hover:scale-y-105"
             :style="{
                 backgroundColor: getCategoryColor(challenge.category?.name),
             }"
@@ -107,7 +107,7 @@ const {
 
         <!-- Hero image area -->
         <div
-            class="relative h-36 w-full shrink-0 overflow-hidden bg-gradient-to-br from-[var(--ink)]/8 to-[var(--ink)]/4 transition-transform duration-200 group-hover:scale-[1.02]"
+            class="relative h-36 w-full shrink-0 overflow-hidden bg-[var(--muted)] transition-transform duration-200 group-hover:scale-[1.02]"
         >
             <button
                 v-if="heroImageUrl"
@@ -144,7 +144,7 @@ const {
 
             <!-- Title -->
             <h3
-                class="line-clamp-2 pr-12 font-display text-xl leading-snug font-semibold text-[hsl(28,18%,26%)] transition-colors group-hover:text-[var(--brand-red)] dark:text-[hsl(38,15%,88%)]"
+                class="line-clamp-2 pr-12 font-display text-xl leading-snug font-semibold text-foreground transition-colors group-hover:text-[var(--brand-red)]"
             >
                 {{ challenge.title ?? 'Untitled challenge' }}
             </h3>
@@ -154,7 +154,7 @@ const {
                 v-if="
                     challenge.current_item?.title || challenge.goal_item?.title
                 "
-                class="mt-2.5 flex min-w-0 items-center gap-1.5 text-sm text-[hsl(28,12%,42%)] dark:text-[hsl(38,8%,68%)]"
+                class="mt-2.5 flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground"
             >
                 <!-- Current item thumbnail -->
                 <span
@@ -215,9 +215,7 @@ const {
                         <ImageIcon class="size-4 opacity-60" />
                     </span>
                 </span>
-                <span
-                    class="min-w-0 truncate font-medium text-[hsl(28,15%,32%)] dark:text-[hsl(38,12%,82%)]"
-                >
+                <span class="min-w-0 truncate font-medium text-foreground">
                     {{ challenge.goal_item?.title ?? 'Goal' }}
                 </span>
             </p>
@@ -231,24 +229,24 @@ const {
                         challenge.trades_count != null &&
                         challenge.trades_count > 0
                     "
-                    class="font-mono text-xs font-semibold text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
+                    class="font-mono text-xs font-semibold text-muted-foreground"
                 >
                     {{ challenge.trades_count }}
                     {{ challenge.trades_count === 1 ? 'trade' : 'trades' }}
                 </span>
                 <span
                     v-if="challenge.user?.name"
-                    class="flex items-center gap-2 text-xs text-[hsl(28,10%,48%)] dark:text-[hsl(38,8%,62%)]"
+                    class="flex items-center gap-2 text-xs text-muted-foreground"
                 >
-                    <Avatar class="h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                    <Avatar
+                        class="h-8 w-8 shrink-0 overflow-hidden rounded-full"
+                    >
                         <AvatarImage
                             v-if="challenge.user.avatar"
                             :src="challenge.user.avatar"
                             :alt="challenge.user.name"
                         />
-                        <AvatarFallback
-                            class="rounded-lg text-black dark:text-white"
-                        >
+                        <AvatarFallback class="rounded-full text-foreground">
                             {{ getInitials(challenge.user.name) }}
                         </AvatarFallback>
                     </Avatar>

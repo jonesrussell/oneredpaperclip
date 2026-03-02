@@ -28,6 +28,7 @@ type ChallengeVisibility = 'public' | 'unlisted';
 
 interface Challenge {
     id: number;
+    slug: string;
     title: string;
     status: ChallengeStatus;
     visibility: ChallengeVisibility;
@@ -154,7 +155,7 @@ const handleBulkUnpublish = () => {
 
 const handleUnpublish = (challenge: Challenge) => {
     router.post(
-        `${routePrefix}/${challenge.id}/unpublish`,
+        `${routePrefix}/${challenge.slug}/unpublish`,
         {},
         { preserveScroll: true },
     );
@@ -366,7 +367,7 @@ watch(
                 :columns="columns"
                 :filters="filters"
                 :selected-ids="selectedIds"
-                :show-url="(id: number) => `${routePrefix}/${id}`"
+                :show-url="(slug: string) => `${routePrefix}/${slug}`"
                 :index-url="routePrefix"
                 @delete="handleDeleteClick"
                 @update:selected="(ids: number[]) => (selectedIds = ids)"
