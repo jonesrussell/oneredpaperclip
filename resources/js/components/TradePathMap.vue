@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ImageIcon, Lock, Star, Trophy } from 'lucide-vue-next';
+import { Check, Lock, Star, Trophy } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
 
@@ -12,119 +13,219 @@ type PathNode = {
     imageUrl?: string | null;
 };
 
-defineProps<{
+const props = defineProps<{
     nodes: PathNode[];
 }>();
 
-const getNodePosition = (index: number): 'left' | 'center' | 'right' => {
-    const positions: ('left' | 'center' | 'right')[] = [
-        'center',
-        'right',
-        'center',
-        'left',
-    ];
-    return positions[index % 4];
-};
+const isVisible = ref(false);
+onMounted(() => {
+    requestAnimationFrame(() => {
+        isVisible.value = true;
+    });
+});
 
-const getNodeClasses = (
-    node: PathNode,
-): { ring: string; bg: string; glow: string } => {
-    switch (node.status) {
-        case 'completed':
-            return {
-                ring: 'ring-4 ring-[var(--electric-mint)] ring-offset-2 ring-offset-background',
-                bg: 'bg-[var(--electric-mint)]',
-                glow: 'shadow-[0_0_20px_rgba(52,211,153,0.5)]',
-            };
-        case 'current':
-            return {
-                ring: 'ring-4 ring-[var(--hot-coral)] ring-offset-2 ring-offset-background animate-glow-pulse-coral',
-                bg: 'bg-[var(--hot-coral)]',
-                glow: 'shadow-[0_0_30px_rgba(251,146,60,0.6)]',
-            };
-        case 'locked':
-        default:
-            return {
-                ring: 'ring-2 ring-border ring-offset-2 ring-offset-background',
-                bg: 'bg-muted',
-                glow: '',
-            };
-    }
-};
+// Layout constants
+const NODE_R = 36;
+const GOAL_R = 40;
+const V_GAP = 140;
+const PAD_Y = 52;
 
-const getConnectorStyle = (fromNode: PathNode): string => {
-    if (fromNode.status === 'completed') {
-        return 'stroke-[var(--electric-mint)]';
-    }
-    return 'stroke-border';
-};
+// Clean zigzag: left ↔ right
+const X_LEFT = 35;
+const X_RIGHT = 65;
+
+function xPct(i: number): number {
+    return i % 2 === 0 ? X_LEFT : X_RIGHT;
+}
+
+function yPx(i: number): number {
+    return PAD_Y + i * V_GAP;
+}
+
+function r(node: PathNode): number {
+    return node.type === 'goal' ? GOAL_R : NODE_R;
+}
+
+function side(i: number): 'left' | 'right' {
+    return xPct(i) < 50 ? 'right' : 'left';
+}
+
+const mapHeight = computed(() => {
+    if (!props.nodes.length) return 200;
+    const last = props.nodes.length - 1;
+    return yPx(last) + r(props.nodes[last]) + PAD_Y;
+});
+
+// SVG viewBox uses x: 0–100 (percentage), y: pixels
+// With preserveAspectRatio="none", x maps to container width and y maps 1:1 to pixels
+const svgViewBox = computed(() => `0 0 100 ${mapHeight.value}`);
+
+// Connector curves between adjacent nodes
+const connectors = computed(() => {
+    return props.nodes.slice(0, -1).map((node, i) => {
+        const next = props.nodes[i + 1];
+        const x1 = xPct(i);
+        const y1 = yPx(i) + r(node) + 2;
+        const x2 = xPct(i + 1);
+        const y2 = yPx(i + 1) - r(next) - 2;
+        const midY = (y1 + y2) / 2;
+
+        return {
+            d: `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`,
+            completed:
+                node.status === 'completed' && next.status === 'completed',
+            active: node.status === 'completed' && next.status === 'current',
+        };
+    });
+});
+
+function nodeStatusClass(node: PathNode): string {
+    if (node.status === 'completed') return 'tpm-node--completed';
+    if (node.status === 'current') return 'tpm-node--current';
+    if (node.type === 'goal') return 'tpm-node--goal';
+    return 'tpm-node--locked';
+}
+
+function labelColor(node: PathNode): string {
+    if (node.status === 'completed') return 'text-[var(--electric-mint)]';
+    if (node.status === 'current') return 'text-[var(--hot-coral)]';
+    if (node.type === 'goal') return 'text-[var(--hot-coral)]';
+    return 'text-muted-foreground/50';
+}
 </script>
 
 <template>
-    <div class="trade-path-map relative w-full py-6">
-        <div class="relative mx-auto max-w-md">
-            <template v-for="(node, index) in nodes" :key="node.id">
-                <!-- Connector line to next node -->
-                <svg
-                    v-if="index < nodes.length - 1"
-                    class="connector-svg absolute left-1/2 z-0 h-20 w-40 -translate-x-1/2"
-                    :style="{ top: `${index * 140 + 80}px` }"
-                    viewBox="0 0 160 80"
-                    fill="none"
-                    preserveAspectRatio="none"
-                >
-                    <path
-                        :d="
-                            getNodePosition(index) === 'left'
-                                ? 'M40 0 Q40 40 80 40 Q120 40 120 80'
-                                : getNodePosition(index) === 'right'
-                                  ? 'M120 0 Q120 40 80 40 Q40 40 40 80'
-                                  : getNodePosition(index + 1) === 'right'
-                                    ? 'M80 0 Q80 40 120 80'
-                                    : 'M80 0 Q80 40 40 80'
-                        "
-                        :class="getConnectorStyle(node)"
-                        stroke-width="3"
-                        stroke-dasharray="8 6"
-                        fill="none"
-                        stroke-linecap="round"
-                    />
-                </svg>
+    <div
+        class="trade-path-map relative mx-auto w-full max-w-md overflow-hidden"
+        :style="{ height: `${mapHeight}px` }"
+    >
+        <!-- Subtle dot grid for depth -->
+        <div
+            class="pointer-events-none absolute inset-0 opacity-[0.035]"
+            style="
+                background-image: radial-gradient(
+                    circle,
+                    currentColor 1px,
+                    transparent 1px
+                );
+                background-size: 20px 20px;
+            "
+        />
 
-                <!-- Node -->
-                <div
-                    class="node-container relative z-10 flex items-center gap-4"
-                    :class="{
-                        'justify-start pl-4': getNodePosition(index) === 'left',
-                        'justify-center': getNodePosition(index) === 'center',
-                        'justify-end pr-4': getNodePosition(index) === 'right',
-                    }"
+        <!-- SVG connector layer -->
+        <svg
+            class="pointer-events-none absolute inset-0 size-full"
+            :viewBox="svgViewBox"
+            preserveAspectRatio="none"
+            fill="none"
+        >
+            <template v-for="(c, i) in connectors" :key="`conn-${i}`">
+                <!-- Glow behind completed connectors -->
+                <path
+                    v-if="c.completed"
+                    :d="c.d"
+                    stroke="var(--electric-mint)"
+                    stroke-width="8"
+                    stroke-linecap="round"
+                    vector-effect="non-scaling-stroke"
+                    :opacity="isVisible ? 0.15 : 0"
                     :style="{
-                        marginTop: index === 0 ? '0' : '60px',
+                        transition: `opacity 0.8s ease ${i * 0.15 + 0.2}s`,
+                    }"
+                />
+
+                <!-- Main connector path -->
+                <path
+                    :d="c.d"
+                    :stroke="
+                        c.completed
+                            ? 'var(--electric-mint)'
+                            : c.active
+                              ? 'var(--hot-coral)'
+                              : 'var(--border)'
+                    "
+                    :stroke-width="c.completed ? 3.5 : c.active ? 3 : 2"
+                    stroke-linecap="round"
+                    :stroke-dasharray="
+                        c.completed ? 'none' : c.active ? '10 8' : '6 10'
+                    "
+                    vector-effect="non-scaling-stroke"
+                    :class="{ 'tpm-dash-animate': c.active }"
+                    :opacity="
+                        isVisible ? (c.completed || c.active ? 1 : 0.35) : 0
+                    "
+                    :style="{
+                        transition: `opacity 0.6s ease ${i * 0.15 + 0.1}s`,
+                    }"
+                />
+            </template>
+        </svg>
+
+        <!-- Nodes -->
+        <template v-for="(node, index) in nodes" :key="node.id">
+            <!-- Position wrapper (centered on calculated point) -->
+            <div
+                class="absolute"
+                :style="{
+                    left: `${xPct(index)}%`,
+                    top: `${yPx(index)}px`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: node.status === 'current' ? 20 : 10,
+                }"
+            >
+                <!-- Entrance animation wrapper -->
+                <div
+                    class="flex items-center gap-3 transition-all duration-500 ease-out"
+                    :class="[
+                        side(index) === 'left'
+                            ? 'flex-row-reverse'
+                            : 'flex-row',
+                        isVisible
+                            ? 'scale-100 opacity-100'
+                            : 'scale-75 opacity-0',
+                    ]"
+                    :style="{
+                        transitionDelay: `${index * 0.12 + 0.05}s`,
                     }"
                 >
-                    <!-- Node circle -->
-                    <div class="relative">
-                        <!-- Mascot for current node -->
+                    <!-- Node circle group -->
+                    <div class="relative shrink-0">
+                        <!-- Mascot above current node -->
                         <div
                             v-if="node.status === 'current'"
                             class="absolute -top-12 left-1/2 z-20 -translate-x-1/2"
                         >
-                            <PaperclipMascot mood="encouraging" :size="48" />
+                            <PaperclipMascot mood="encouraging" :size="40" />
                         </div>
 
+                        <!-- Expanding ping ring for current -->
                         <div
-                            class="node-circle flex size-16 items-center justify-center rounded-full transition-all duration-300"
-                            :class="[
-                                getNodeClasses(node).ring,
-                                getNodeClasses(node).bg,
-                                getNodeClasses(node).glow,
-                            ]"
+                            v-if="node.status === 'current'"
+                            class="tpm-ping absolute top-1/2 left-1/2 rounded-full border-2 border-[var(--hot-coral)]"
+                            :style="{
+                                width: `${r(node) * 2 + 16}px`,
+                                height: `${r(node) * 2 + 16}px`,
+                                transform: 'translate(-50%, -50%)',
+                            }"
+                        />
+
+                        <!-- Main circle -->
+                        <div
+                            class="relative flex items-center justify-center rounded-full"
+                            :class="nodeStatusClass(node)"
+                            :style="{
+                                width: `${r(node) * 2}px`,
+                                height: `${r(node) * 2}px`,
+                            }"
                         >
-                            <!-- Icon or image -->
+                            <!-- Image -->
                             <div
                                 v-if="node.imageUrl"
-                                class="size-14 overflow-hidden rounded-full"
+                                class="overflow-hidden rounded-full ring-2 ring-white/20"
+                                :style="{
+                                    width: `${r(node) * 2 - 10}px`,
+                                    height: `${r(node) * 2 - 10}px`,
+                                }"
                             >
                                 <img
                                     :src="node.imageUrl"
@@ -132,89 +233,63 @@ const getConnectorStyle = (fromNode: PathNode): string => {
                                     class="size-full object-cover"
                                 />
                             </div>
-                            <div
+                            <!-- Start icon -->
+                            <Star
                                 v-else-if="node.type === 'start'"
-                                class="flex size-full items-center justify-center"
-                            >
-                                <Star
-                                    class="size-7"
-                                    :class="
-                                        node.status === 'completed'
-                                            ? 'text-white'
-                                            : 'text-muted-foreground'
-                                    "
-                                />
-                            </div>
-                            <div
+                                class="size-7 text-white drop-shadow-sm"
+                            />
+                            <!-- Goal icon -->
+                            <Trophy
                                 v-else-if="node.type === 'goal'"
-                                class="flex size-full items-center justify-center"
-                            >
-                                <Trophy
-                                    class="size-7"
-                                    :class="
-                                        node.status === 'completed'
-                                            ? 'text-white'
-                                            : node.status === 'current'
-                                              ? 'text-white'
-                                              : 'text-muted-foreground'
-                                    "
-                                />
-                            </div>
-                            <div
+                                class="size-8 drop-shadow-sm"
+                                :class="
+                                    node.status === 'locked'
+                                        ? 'text-white/90'
+                                        : 'text-white'
+                                "
+                            />
+                            <!-- Locked icon -->
+                            <Lock
                                 v-else-if="node.status === 'locked'"
-                                class="flex size-full items-center justify-center"
-                            >
-                                <Lock class="size-6 text-muted-foreground" />
-                            </div>
-                            <div
+                                class="size-5 text-muted-foreground/40"
+                            />
+                            <!-- Completed check -->
+                            <Check
                                 v-else-if="node.status === 'completed'"
-                                class="flex size-full items-center justify-center text-2xl font-bold text-white"
-                            >
-                                ✓
-                            </div>
-                            <div
+                                class="size-7 stroke-[3] text-white drop-shadow-sm"
+                            />
+                            <!-- Fallback (current trade without image) -->
+                            <span
                                 v-else
-                                class="flex size-full items-center justify-center"
+                                class="font-display text-lg font-bold text-white"
                             >
-                                <ImageIcon
-                                    class="size-6 text-muted-foreground"
-                                />
-                            </div>
+                                ?
+                            </span>
                         </div>
 
                         <!-- Completion badge -->
                         <div
                             v-if="node.status === 'completed'"
-                            class="absolute -right-1 -bottom-1 flex size-6 items-center justify-center rounded-full bg-[var(--electric-mint)] text-xs font-bold text-white shadow-lg"
+                            class="absolute -right-0.5 -bottom-0.5 flex size-6 items-center justify-center rounded-full bg-background shadow-md ring-2 ring-background"
                         >
-                            ✓
+                            <div
+                                class="flex size-5 items-center justify-center rounded-full bg-[var(--electric-mint)]"
+                            >
+                                <Check class="size-3 stroke-[3] text-white" />
+                            </div>
                         </div>
-
-                        <!-- Current indicator pulse -->
-                        <div
-                            v-if="node.status === 'current'"
-                            class="absolute inset-0 animate-ping rounded-full bg-[var(--hot-coral)] opacity-30"
-                        />
                     </div>
 
                     <!-- Label -->
                     <div
-                        class="node-label max-w-32"
-                        :class="{
-                            'text-left': getNodePosition(index) !== 'right',
-                            'order-first text-right':
-                                getNodePosition(index) === 'right',
-                        }"
+                        class="max-w-[140px]"
+                        :class="
+                            side(index) === 'left' ? 'text-right' : 'text-left'
+                        "
                     >
                         <p
-                            class="text-xs font-medium tracking-wide uppercase"
-                            :class="
-                                node.status === 'current'
-                                    ? 'text-[var(--hot-coral)]'
-                                    : node.status === 'completed'
-                                      ? 'text-[var(--electric-mint)]'
-                                      : 'text-muted-foreground'
-                            "
+                            class="font-mono text-[10px] font-semibold tracking-[0.15em] uppercase"
+                            :class="labelColor(node)"
                         >
                             {{
                                 node.type === 'start'
@@ -225,10 +300,10 @@ const getConnectorStyle = (fromNode: PathNode): string => {
                             }}
                         </p>
                         <p
-                            class="line-clamp-2 font-display text-sm font-semibold"
+                            class="mt-0.5 line-clamp-2 font-display text-sm leading-tight font-bold"
                             :class="
-                                node.status === 'locked'
-                                    ? 'text-muted-foreground'
+                                node.status === 'locked' && node.type !== 'goal'
+                                    ? 'text-muted-foreground/40'
                                     : 'text-foreground'
                             "
                         >
@@ -236,22 +311,25 @@ const getConnectorStyle = (fromNode: PathNode): string => {
                         </p>
                         <p
                             v-if="node.subtitle"
-                            class="mt-0.5 line-clamp-1 text-xs text-muted-foreground"
+                            class="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground"
                         >
                             {{ node.subtitle }}
                         </p>
                     </div>
                 </div>
-            </template>
-        </div>
+            </div>
+        </template>
 
-        <!-- Celebration mascot at the end when completed -->
+        <!-- Celebration mascot when challenge is complete -->
         <div
             v-if="
                 nodes.length > 0 &&
                 nodes[nodes.length - 1].status === 'completed'
             "
-            class="mt-8 flex justify-center"
+            class="absolute left-1/2 -translate-x-1/2"
+            :style="{
+                top: `${yPx(nodes.length - 1) + r(nodes[nodes.length - 1]) + 24}px`,
+            }"
         >
             <PaperclipMascot mood="celebrating" :size="80" />
         </div>
@@ -259,21 +337,87 @@ const getConnectorStyle = (fromNode: PathNode): string => {
 </template>
 
 <style scoped>
-.animate-glow-pulse-coral {
-    animation: glow-pulse-coral 2s ease-in-out infinite;
+/* ── Node status styles ── */
+
+.tpm-node--completed {
+    background: linear-gradient(145deg, var(--electric-mint), hsl(88 62% 32%));
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.12),
+        0 0 20px rgba(76, 175, 80, 0.25),
+        0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
-@keyframes glow-pulse-coral {
+.tpm-node--current {
+    background: linear-gradient(145deg, var(--hot-coral), hsl(0 100% 55%));
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 0 28px rgba(255, 100, 100, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: tpm-breathe 2.5s ease-in-out infinite;
+}
+
+.tpm-node--goal {
+    background: linear-gradient(145deg, var(--hot-coral), hsl(0 80% 50%));
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+        0 0 16px rgba(255, 100, 100, 0.2),
+        0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.tpm-node--locked {
+    background: var(--muted);
+    box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.05),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.08);
+    border: 2px dashed var(--border);
+}
+
+/* ── Animations ── */
+
+@keyframes tpm-breathe {
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(251, 146, 60, 0.4);
+        box-shadow:
+            inset 0 2px 4px rgba(255, 255, 255, 0.3),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+            0 0 20px rgba(255, 100, 100, 0.25),
+            0 4px 8px rgba(0, 0, 0, 0.1);
     }
     50% {
-        box-shadow: 0 0 40px rgba(251, 146, 60, 0.7);
+        box-shadow:
+            inset 0 2px 4px rgba(255, 255, 255, 0.3),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+            0 0 40px rgba(255, 100, 100, 0.45),
+            0 6px 12px rgba(0, 0, 0, 0.12);
     }
 }
 
-.connector-svg {
-    pointer-events: none;
+@keyframes tpm-ping {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+    }
+    75%,
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+.tpm-ping {
+    animation: tpm-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes tpm-dash {
+    to {
+        stroke-dashoffset: -36;
+    }
+}
+
+.tpm-dash-animate {
+    animation: tpm-dash 1.2s linear infinite;
 }
 </style>
