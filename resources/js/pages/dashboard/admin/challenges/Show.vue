@@ -21,6 +21,7 @@ interface Item {
 interface Props {
     challenge: {
         id: number;
+        slug: string;
         title: string;
         description?: string;
         status: 'draft' | 'active' | 'completed' | 'paused';
@@ -54,12 +55,12 @@ const getItemImage = (item: Item | null | undefined): string | null => {
 };
 
 const handleUnpublish = () => {
-    router.post(`${routePrefix}/${props.challenge.id}/unpublish`);
+    router.post(`${routePrefix}/${props.challenge.slug}/unpublish`);
 };
 
 const handleDelete = () => {
     if (confirm('Are you sure you want to delete this challenge?')) {
-        router.delete(`${routePrefix}/${props.challenge.id}`);
+        router.delete(`${routePrefix}/${props.challenge.slug}`);
     }
 };
 </script>

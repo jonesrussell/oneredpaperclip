@@ -33,6 +33,7 @@ type ItemEdit = {
 
 type ChallengeEdit = {
     id: number;
+    slug?: string;
     title?: string | null;
     story?: string | null;
     category_id?: number | null;
@@ -58,9 +59,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Challenges', href: '/challenges' },
     {
         title: props.challenge.title ?? 'Challenge',
-        href: `/challenges/${props.challenge.id}`,
+        href: `/challenges/${props.challenge.slug}`,
     },
-    { title: 'Edit', href: `/challenges/${props.challenge.id}/edit` },
+    { title: 'Edit', href: `/challenges/${props.challenge.slug}/edit` },
 ];
 
 const startTitle = ref(startItem()?.title ?? '');
@@ -99,7 +100,7 @@ async function requestAiSuggest(
 }
 
 function cancel(): void {
-    router.visit(challenges.show.url({ challenge: props.challenge.id }));
+    router.visit(challenges.show.url({ challenge: props.challenge.slug! }));
 }
 
 async function uploadItemPhoto(
@@ -174,7 +175,7 @@ function onItemPhotoChange(
                 {{ uploadError }}
             </p>
             <Form
-                :action="challenges.update.url({ challenge: challenge.id })"
+                :action="challenges.update.url({ challenge: challenge.slug! })"
                 method="put"
                 v-slot="{ errors, processing }"
                 class="flex flex-col gap-6"

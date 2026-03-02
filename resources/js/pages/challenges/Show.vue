@@ -27,6 +27,7 @@ import type {
 
 type Challenge = {
     id: number;
+    slug?: string;
     title?: string | null;
     story?: string | null;
     story_safe?: string;
@@ -69,7 +70,7 @@ const showOfferDialog = ref(false);
 
 const shareUrl = computed(() => {
     if (typeof window === 'undefined') return '';
-    return `${window.location.origin}/challenges/${props.challenge.id}`;
+    return `${window.location.origin}/challenges/${props.challenge.slug}`;
 });
 
 function handleMakeOffer(): void {
@@ -297,7 +298,7 @@ function formatDate(dateString: string): string {
                                     v-if="isOwner"
                                     :href="
                                         challenges.edit.url({
-                                            challenge: challenge.id,
+                                            challenge: challenge.slug!,
                                         })
                                     "
                                 >

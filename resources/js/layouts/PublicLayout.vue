@@ -113,7 +113,10 @@ const canRegister = computed(
                     class="flex flex-wrap items-center gap-6 text-sm font-medium text-[var(--ink-muted)]"
                     aria-label="Footer navigation"
                 >
-                    <a :href="`${home().url}#how-it-works`" class="hover:text-[var(--ink)]">
+                    <a
+                        :href="`${home().url}#how-it-works`"
+                        class="hover:text-[var(--ink)]"
+                    >
                         How it works
                     </a>
                     <Link :href="about().url" class="hover:text-[var(--ink)]">

@@ -19,6 +19,7 @@ interface ColumnDefinition {
 
 interface Challenge {
     id: number;
+    slug: string;
     title: string;
     status: ChallengeStatus;
     visibility: ChallengeVisibility;
@@ -45,7 +46,7 @@ interface Props {
         [key: string]: unknown;
     };
     selectedIds?: number[];
-    showUrl: (challengeId: number) => string;
+    showUrl: (slug: string) => string;
     indexUrl: string;
 }
 
@@ -209,7 +210,7 @@ const getCellValue = (challenge: Challenge, column: ColumnDefinition) => {
                                 class="max-w-md"
                             >
                                 <a
-                                    :href="showUrl(challenge.id)"
+                                    :href="showUrl(challenge.slug)"
                                     class="line-clamp-2 text-sm font-medium transition-colors hover:text-primary"
                                 >
                                     {{ challenge.title }}
@@ -299,7 +300,7 @@ const getCellValue = (challenge: Challenge, column: ColumnDefinition) => {
                                     variant="ghost"
                                     size="sm"
                                     as="a"
-                                    :href="showUrl(challenge.id)"
+                                    :href="showUrl(challenge.slug)"
                                     title="View"
                                 >
                                     <Eye class="h-4 w-4" />

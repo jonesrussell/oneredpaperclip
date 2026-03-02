@@ -10,6 +10,7 @@ import challenges from '@/routes/challenges';
 const props = defineProps<{
     challenge: {
         id: number;
+        slug: string;
         title: string | null;
         status: string;
         trades_count?: number;
@@ -77,7 +78,7 @@ const heroImageUrl = (): string | null =>
 
 <template>
     <Link
-        :href="challenges.show({ challenge: challenge.id }).url"
+        :href="challenges.show({ challenge: challenge.slug }).url"
         class="group relative block min-w-0 overflow-hidden rounded-xl border-2 border-[var(--border)] bg-[var(--paper)] transition-colors duration-200 hover:border-[var(--brand-red)]/30"
         prefetch
     >

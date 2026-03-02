@@ -10,6 +10,7 @@ import challenges from '@/routes/challenges';
 
 type FeaturedChallenge = {
     id: number;
+    slug: string;
     title: string | null;
     status: string;
     trades_count?: number;

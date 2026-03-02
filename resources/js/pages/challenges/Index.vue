@@ -11,6 +11,7 @@ import {
 
 type ChallengeItem = {
     id: number;
+    slug: string;
     title: string | null;
     status: string;
     trades_count?: number;
