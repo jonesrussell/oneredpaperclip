@@ -71,6 +71,10 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+    html {
+        font-size: 18px;
+    }
+
     html,
     body {
         overflow-x: hidden;
