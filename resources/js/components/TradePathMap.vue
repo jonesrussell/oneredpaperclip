@@ -2,7 +2,9 @@
 import { Check, Lock, Star, Trophy } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
+import ImageLightbox from '@/components/ImageLightbox.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 
 type PathNode = {
     id: string | number;
@@ -145,6 +147,18 @@ const lastNode = computed(() =>
 const isChallengeComplete = computed(
     () => lastNode.value?.status === 'completed',
 );
+
+const {
+    open: lightboxOpen,
+    imageUrl: lightboxImageUrl,
+    title: lightboxTitle,
+    openLightbox,
+    onOpenChange,
+} = useImageLightbox();
+
+function openNodeLightbox(node: PathNode): void {
+    if (node.imageUrl) openLightbox(node.imageUrl, node.title);
+}
 </script>
 
 <template>
@@ -267,15 +281,18 @@ const isChallengeComplete = computed(
                                 height: `${r(node) * 2}px`,
                             }"
                         >
-                            <div
+                            <button
                                 v-if="
                                     node.imageUrl && !brokenImages.has(node.id)
                                 "
-                                class="overflow-hidden rounded-full ring-2 ring-white/20"
+                                type="button"
+                                class="overflow-hidden rounded-full ring-2 ring-white/20 cursor-pointer transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-offset-2 focus:ring-offset-background"
                                 :style="{
                                     width: `${r(node) * 2 - 10}px`,
                                     height: `${r(node) * 2 - 10}px`,
                                 }"
+                                aria-label="View full size"
+                                @click="openNodeLightbox(node)"
                             >
                                 <img
                                     :src="node.imageUrl"
@@ -283,7 +300,7 @@ const isChallengeComplete = computed(
                                     class="size-full object-cover"
                                     @error="onImageError(node.id)"
                                 />
-                            </div>
+                            </button>
                             <!-- Start icon -->
                             <Star
                                 v-else-if="node.type === 'start'"
@@ -377,6 +394,14 @@ const isChallengeComplete = computed(
         >
             <PaperclipMascot mood="celebrating" :size="80" />
         </div>
+
+        <ImageLightbox
+            v-if="lightboxImageUrl"
+            :open="lightboxOpen"
+            :image-url="lightboxImageUrl"
+            :title="lightboxTitle"
+            @update:open="onOpenChange"
+        />
     </div>
 </template>
 

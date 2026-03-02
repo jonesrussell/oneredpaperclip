@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { ImageIcon } from 'lucide-vue-next';
+import { computed } from 'vue';
 
+import ImageLightbox from '@/components/ImageLightbox.vue';
 import ProgressRing from '@/components/ProgressRing.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useImageLightbox } from '@/composables/useImageLightbox';
 import { useInitials } from '@/composables/useInitials';
 import challenges from '@/routes/challenges';
 
@@ -70,13 +73,24 @@ function statusStyles(status: string): string {
     }
 }
 
-const heroImageUrl = (): string | null =>
-    props.challenge.current_item?.image_url ??
-    props.challenge.goal_item?.image_url ??
-    null;
+const heroImageUrl = computed(
+    () =>
+        props.challenge.current_item?.image_url ??
+        props.challenge.goal_item?.image_url ??
+        null,
+);
+
+const {
+    open: lightboxOpen,
+    imageUrl: lightboxImageUrl,
+    title: lightboxTitle,
+    openLightbox,
+    onOpenChange,
+} = useImageLightbox();
 </script>
 
 <template>
+    <div class="relative">
     <Link
         :href="challenges.show({ challenge: challenge.slug }).url"
         class="group relative block min-w-0 overflow-hidden rounded-xl border-2 border-[var(--border)] bg-[var(--paper)] transition-colors duration-200 hover:border-[var(--brand-red)]/30"
@@ -95,12 +109,19 @@ const heroImageUrl = (): string | null =>
         <div
             class="relative h-36 w-full shrink-0 overflow-hidden bg-[var(--muted)] transition-transform duration-200 group-hover:scale-[1.02]"
         >
-            <img
-                v-if="heroImageUrl()"
-                :src="heroImageUrl()!"
-                alt=""
-                class="size-full object-cover"
-            />
+            <button
+                v-if="heroImageUrl"
+                type="button"
+                class="size-full cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset"
+                aria-label="View full size"
+                @click.stop.prevent="openLightbox(heroImageUrl, challenge.title ?? 'Challenge')"
+            >
+                <img
+                    :src="heroImageUrl"
+                    alt=""
+                    class="size-full object-cover"
+                />
+            </button>
             <div
                 v-else
                 class="flex size-full flex-col items-center justify-center gap-1.5 text-[var(--ink-muted)]"
@@ -139,12 +160,19 @@ const heroImageUrl = (): string | null =>
                 <span
                     class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
                 >
-                    <img
+                    <button
                         v-if="challenge.current_item?.image_url"
-                        :src="challenge.current_item.image_url"
-                        :alt="challenge.current_item?.title ?? 'Current item'"
-                        class="size-8 object-cover"
-                    />
+                        type="button"
+                        class="size-8 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-md"
+                        aria-label="View full size"
+                        @click.stop.prevent="openLightbox(challenge.current_item.image_url, challenge.current_item?.title ?? 'Current item')"
+                    >
+                        <img
+                            :src="challenge.current_item.image_url"
+                            :alt="challenge.current_item?.title ?? 'Current item'"
+                            class="size-8 object-cover"
+                        />
+                    </button>
                     <span
                         v-else
                         class="flex size-8 items-center justify-center text-[var(--ink-muted)]"
@@ -166,12 +194,19 @@ const heroImageUrl = (): string | null =>
                 <span
                     class="flex shrink-0 overflow-hidden rounded-md bg-[var(--ink)]/5"
                 >
-                    <img
+                    <button
                         v-if="challenge.goal_item?.image_url"
-                        :src="challenge.goal_item.image_url"
-                        :alt="challenge.goal_item?.title ?? 'Goal item'"
-                        class="size-8 object-cover"
-                    />
+                        type="button"
+                        class="size-8 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-md"
+                        aria-label="View full size"
+                        @click.stop.prevent="openLightbox(challenge.goal_item.image_url, challenge.goal_item?.title ?? 'Goal item')"
+                    >
+                        <img
+                            :src="challenge.goal_item.image_url"
+                            :alt="challenge.goal_item?.title ?? 'Goal item'"
+                            class="size-8 object-cover"
+                        />
+                    </button>
                     <span
                         v-else
                         class="flex size-8 items-center justify-center text-[var(--ink-muted)]"
@@ -226,5 +261,14 @@ const heroImageUrl = (): string | null =>
                 </span>
             </div>
         </div>
+
     </Link>
+        <ImageLightbox
+            v-if="lightboxImageUrl"
+            :open="lightboxOpen"
+            :image-url="lightboxImageUrl"
+            :title="lightboxTitle"
+            @update:open="onOpenChange"
+        />
+    </div>
 </template>
