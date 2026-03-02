@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Challenge extends Model
 {
@@ -22,10 +23,35 @@ class Challenge extends Model
         'status',
         'visibility',
         'title',
+        'slug',
         'story',
         'current_item_id',
         'goal_item_id',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Challenge $challenge) {
+            if (empty($challenge->slug)) {
+                $baseSlug = Str::slug($challenge->title ?? '');
+                if (empty($baseSlug)) {
+                    $baseSlug = 'challenge-'.Str::random(8);
+                }
+                $slug = $baseSlug;
+                $suffix = 2;
+                while (static::withTrashed()->where('slug', $slug)->where('id', '!=', $challenge->id ?? 0)->exists()) {
+                    $slug = $baseSlug.'-'.$suffix;
+                    $suffix++;
+                }
+                $challenge->slug = $slug;
+            }
+        });
+    }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

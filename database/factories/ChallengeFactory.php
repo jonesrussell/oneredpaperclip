@@ -29,6 +29,7 @@ class ChallengeFactory extends Factory
             'status' => ChallengeStatus::Active,
             'visibility' => ChallengeVisibility::Public,
             'title' => fake()->sentence(4),
+            'slug' => \Illuminate\Support\Str::slug(fake()->unique()->sentence(3)),
             'story' => '<p>'.fake()->paragraph().'</p>',
         ];
     }
