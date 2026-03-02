@@ -7,6 +7,7 @@ import {
     accept,
     decline,
 } from '@/actions/App/Http/Controllers/OfferController';
+import ImageLightbox from '@/components/ImageLightbox.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,6 +28,15 @@ const props = defineProps<{
 const showAcceptDialog = ref(false);
 const showDeclineDialog = ref(false);
 const processing = ref(false);
+const lightboxOpen = ref(false);
+const lightboxImageUrl = ref<string | null>(null);
+const lightboxTitle = ref('');
+
+function openLightbox(url: string, title: string): void {
+    lightboxImageUrl.value = url;
+    lightboxTitle.value = title;
+    lightboxOpen.value = true;
+}
 
 function acceptOffer() {
     processing.value = true;
@@ -70,12 +80,19 @@ function declineOffer() {
                 <div
                     class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[var(--sunny-yellow)]/20"
                 >
-                    <img
+                    <button
                         v-if="offer.offered_item?.image_url"
-                        :src="offer.offered_item.image_url"
-                        :alt="offer.offered_item?.title ?? 'Offered item'"
-                        class="size-12 rounded-xl object-cover"
-                    />
+                        type="button"
+                        class="size-12 cursor-pointer border-0 bg-transparent p-0 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-inset rounded-xl"
+                        aria-label="View full size"
+                        @click="openLightbox(offer.offered_item!.image_url!, offer.offered_item?.title ?? 'Offered item')"
+                    >
+                        <img
+                            :src="offer.offered_item.image_url"
+                            :alt="offer.offered_item?.title ?? 'Offered item'"
+                            class="size-12 rounded-xl object-cover"
+                        />
+                    </button>
                     <span v-else class="text-xl">📦</span>
                 </div>
                 <div>
@@ -181,4 +198,12 @@ function declineOffer() {
             </DialogFooter>
         </DialogContent>
     </Dialog>
+
+    <ImageLightbox
+        v-if="lightboxImageUrl"
+        :open="lightboxOpen"
+        :image-url="lightboxImageUrl"
+        :title="lightboxTitle"
+        @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+    />
 </template>
