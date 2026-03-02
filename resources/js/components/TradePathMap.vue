@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ImageIcon, Lock, Star, Trophy } from 'lucide-vue-next';
+import { ref } from 'vue';
 
+import ImageLightbox from '@/components/ImageLightbox.vue';
 import PaperclipMascot from '@/components/PaperclipMascot.vue';
 
 type PathNode = {
@@ -58,6 +60,17 @@ const getConnectorStyle = (fromNode: PathNode): string => {
     }
     return 'stroke-border';
 };
+
+const lightboxOpen = ref(false);
+const lightboxImageUrl = ref<string | null>(null);
+const lightboxTitle = ref('');
+
+function openLightbox(node: PathNode): void {
+    if (!node.imageUrl) return;
+    lightboxImageUrl.value = node.imageUrl;
+    lightboxTitle.value = node.title;
+    lightboxOpen.value = true;
+}
 </script>
 
 <template>
@@ -122,16 +135,19 @@ const getConnectorStyle = (fromNode: PathNode): string => {
                             ]"
                         >
                             <!-- Icon or image -->
-                            <div
+                            <button
                                 v-if="node.imageUrl"
-                                class="size-14 overflow-hidden rounded-full"
+                                type="button"
+                                class="size-14 cursor-pointer overflow-hidden rounded-full transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--hot-coral)] focus:ring-offset-2 focus:ring-offset-background"
+                                aria-label="View full size"
+                                @click="openLightbox(node)"
                             >
                                 <img
                                     :src="node.imageUrl"
                                     :alt="node.title"
                                     class="size-full object-cover"
                                 />
-                            </div>
+                            </button>
                             <div
                                 v-else-if="node.type === 'start'"
                                 class="flex size-full items-center justify-center"
@@ -255,6 +271,14 @@ const getConnectorStyle = (fromNode: PathNode): string => {
         >
             <PaperclipMascot mood="celebrating" :size="80" />
         </div>
+
+        <ImageLightbox
+            v-if="lightboxImageUrl"
+            :open="lightboxOpen"
+            :image-url="lightboxImageUrl"
+            :title="lightboxTitle"
+            @update:open="(v) => { lightboxOpen = v; if (!v) lightboxImageUrl = null; }"
+        />
     </div>
 </template>
 
