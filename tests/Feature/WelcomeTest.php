@@ -52,3 +52,12 @@ test('welcome page excludes unlisted challenges from featured', function () {
         ->has('featuredChallenges', 0)
     );
 });
+
+test('welcome page renders with absolute default OG image URL when no page image is set', function () {
+    $response = $this->get(route('home'));
+
+    $response->assertOk();
+    $defaultOgImageUrl = url(config('seo.default_og_image_path'));
+    $response->assertSee('property="og:image"', false);
+    $response->assertSee($defaultOgImageUrl, false);
+});
