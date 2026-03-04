@@ -116,6 +116,18 @@ test('show page provides SEO meta with og_type, description, and JSON-LD schema'
     );
 });
 
+test('show page meta description is at most 160 characters for social sharing', function () {
+    $this->challenge->update(['story' => str_repeat('Word ', 80)]);
+
+    $response = $this->get(route('challenges.show', $this->challenge));
+
+    $response->assertOk();
+    $html = $response->getContent();
+    preg_match('/<meta name="description" content="([^"]*)"/', $html, $matches);
+    expect(isset($matches[1]))->toBeTrue('meta description tag should be present');
+    expect(strlen($matches[1]))->toBeLessThanOrEqual(160);
+});
+
 test('show page renders for guest users without authentication', function () {
     $response = $this->get(route('challenges.show', $this->challenge));
 

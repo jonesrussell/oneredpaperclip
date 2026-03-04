@@ -8,9 +8,12 @@
         @php
             $pageMeta = $page['props']['meta'] ?? [];
             $sharedMeta = $page['props']['sharedMeta'] ?? [];
-            $metaTitle = $pageMeta['title'] ?? config('app.name');
+            $metaTitle = $pageMeta['title'] ?? config('seo.default_title') ?? config('app.name');
             $metaDescription = $pageMeta['description'] ?? config('seo.description');
-            $metaImage = $pageMeta['image'] ?? config('seo.og_image') ?? (config('app.url') . '/favicon.svg');
+            $rawImage = $pageMeta['image'] ?? config('seo.og_image');
+            $metaImage = $rawImage
+                ? (Illuminate\Support\Str::startsWith($rawImage, ['http://', 'https://']) ? $rawImage : url($rawImage))
+                : url(config('seo.default_og_image_path', 'favicon.svg'));
             $canonicalUrl = $pageMeta['canonical'] ?? url()->current();
             $ogType = $pageMeta['og_type'] ?? 'website';
             $robots = $pageMeta['robots'] ?? $sharedMeta['robots'] ?? null;
@@ -28,10 +31,8 @@
         <meta property="og:title" content="{{ $metaTitle }}">
         <meta property="og:description" content="{{ $metaDescription }}">
         <meta property="og:image" content="{{ $metaImage }}">
-        @if(config('seo.og_image') || ($pageMeta['image'] ?? null))
         <meta property="og:image:width" content="1200">
         <meta property="og:image:height" content="630">
-        @endif
         <meta property="og:url" content="{{ $canonicalUrl }}">
         <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
 

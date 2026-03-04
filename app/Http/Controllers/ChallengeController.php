@@ -160,7 +160,7 @@ class ChallengeController extends Controller
         });
 
         $description = $challenge->story
-            ? \Illuminate\Support\Str::limit(strip_tags($challenge->story), 160)
+            ? \Illuminate\Support\Str::limit(strip_tags($challenge->story), 155)
             : sprintf(
                 '%s → %s',
                 $challenge->currentItem?->title ?? 'Start',
@@ -168,7 +168,10 @@ class ChallengeController extends Controller
             );
 
         $challengeTitle = $challenge->title ?? 'Challenge';
-        $ogImage = $challenge->currentItem?->image_url ?? config('seo.og_image');
+        $ogImageRaw = $challenge->currentItem?->image_url ?? config('seo.og_image');
+        $ogImage = $ogImageRaw && ! str_starts_with($ogImageRaw, 'http')
+            ? url($ogImageRaw)
+            : $ogImageRaw;
 
         return Inertia::render('challenges/Show', [
             'challenge' => $challenge,
