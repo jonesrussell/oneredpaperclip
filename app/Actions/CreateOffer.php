@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\OfferReceivedNotification;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CreateOffer
 {
@@ -25,6 +26,18 @@ class CreateOffer
         $currentItem = $challenge->currentItem;
         if (! $currentItem) {
             throw new \InvalidArgumentException('Challenge has no current item.');
+        }
+
+        $existingOffer = Offer::query()
+            ->where('challenge_id', $challenge->id)
+            ->where('from_user_id', $user->id)
+            ->where('for_challenge_item_id', $currentItem->id)
+            ->exists();
+
+        if ($existingOffer) {
+            throw ValidationException::withMessages([
+                'offer' => 'You have already submitted an offer for this challenge item.',
+            ]);
         }
 
         $offer = DB::transaction(function () use ($validated, $challenge, $user, $currentItem) {

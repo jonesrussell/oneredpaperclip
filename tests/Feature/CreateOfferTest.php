@@ -91,6 +91,36 @@ test('guest cannot create offer', function () {
     $response->assertRedirect('/login');
 });
 
+test('user cannot submit duplicate offer for same challenge item', function () {
+    // First offer succeeds
+    $this->actingAs($this->offerer)->post(
+        route('challenges.offers.store', $this->challenge),
+        [
+            'offered_item' => [
+                'title' => 'A pen',
+                'description' => 'Blue ballpoint.',
+            ],
+            'message' => 'I offer my pen.',
+        ]
+    )->assertRedirect();
+
+    // Second offer for the same challenge item fails
+    $response = $this->actingAs($this->offerer)->post(
+        route('challenges.offers.store', $this->challenge),
+        [
+            'offered_item' => [
+                'title' => 'Another pen',
+                'description' => 'Red ballpoint.',
+            ],
+            'message' => 'I offer another pen.',
+        ]
+    );
+
+    $response->assertSessionHasErrors('offer');
+    expect(\App\Models\Offer::where('challenge_id', $this->challenge->id)
+        ->where('from_user_id', $this->offerer->id)->count())->toBe(1);
+});
+
 test('challenge owner cannot create offer on their own challenge', function () {
     $response = $this->actingAs($this->owner)->post(
         route('challenges.offers.store', $this->challenge),
