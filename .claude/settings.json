@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "waaseyaa": {
+      "command": "node",
+      "args": ["vendor/waaseyaa/mcp/server.js"],
+      "cwd": "."
+    }
+  }
+}
