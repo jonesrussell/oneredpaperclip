@@ -22,6 +22,12 @@ class AcceptOffer
     public function __invoke(Offer $offer): Trade
     {
         $trade = DB::transaction(function () use ($offer) {
+            $offer = Offer::lockForUpdate()->findOrFail($offer->id);
+
+            if ($offer->status !== OfferStatus::Pending) {
+                throw new \RuntimeException('Offer is no longer pending.');
+            }
+
             $challenge = $offer->challenge;
 
             $trade = Trade::create([

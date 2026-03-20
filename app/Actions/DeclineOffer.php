@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Enums\OfferStatus;
 use App\Models\Offer;
 use App\Notifications\OfferDeclinedNotification;
+use Illuminate\Support\Facades\DB;
 
 class DeclineOffer
 {
@@ -13,7 +14,17 @@ class DeclineOffer
      */
     public function __invoke(Offer $offer): Offer
     {
-        $offer->update(['status' => OfferStatus::Declined]);
+        $offer = DB::transaction(function () use ($offer) {
+            $offer = Offer::lockForUpdate()->findOrFail($offer->id);
+
+            if ($offer->status !== OfferStatus::Pending) {
+                throw new \RuntimeException('Offer is no longer pending.');
+            }
+
+            $offer->update(['status' => OfferStatus::Declined]);
+
+            return $offer;
+        });
 
         $offer->load(['fromUser', 'challenge']);
 

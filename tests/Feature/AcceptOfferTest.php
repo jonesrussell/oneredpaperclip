@@ -104,6 +104,26 @@ test('offer must be pending to accept', function () {
     expect(Trade::where('offer_id', $this->offer->id)->count())->toBe(0);
 });
 
+test('accepting already-accepted offer throws exception inside transaction', function () {
+    $action = app(App\Actions\AcceptOffer::class);
+
+    // Simulate race: offer was accepted by a concurrent request
+    $this->offer->update(['status' => OfferStatus::Accepted]);
+
+    expect(fn () => $action($this->offer->fresh()))
+        ->toThrow(RuntimeException::class, 'Offer is no longer pending.');
+});
+
+test('accepting already-declined offer throws exception inside transaction', function () {
+    $action = app(App\Actions\AcceptOffer::class);
+
+    // Simulate race: offer was declined by a concurrent request
+    $this->offer->update(['status' => OfferStatus::Declined]);
+
+    expect(fn () => $action($this->offer->fresh()))
+        ->toThrow(RuntimeException::class, 'Offer is no longer pending.');
+});
+
 test('cannot accept when challenge current item no longer matches offer for_challenge_item', function () {
     $otherItem = Item::create([
         'itemable_type' => Challenge::class,

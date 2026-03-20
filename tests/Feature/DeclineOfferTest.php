@@ -82,6 +82,26 @@ test('non-owner cannot decline offer', function () {
     expect($this->offer->fresh()->status)->toBe(OfferStatus::Pending);
 });
 
+test('declining already-declined offer throws exception inside transaction', function () {
+    $action = new App\Actions\DeclineOffer;
+
+    // Simulate race: offer was declined by a concurrent request
+    $this->offer->update(['status' => OfferStatus::Declined]);
+
+    expect(fn () => $action($this->offer->fresh()))
+        ->toThrow(RuntimeException::class, 'Offer is no longer pending.');
+});
+
+test('declining already-accepted offer throws exception inside transaction', function () {
+    $action = new App\Actions\DeclineOffer;
+
+    // Simulate race: offer was accepted by a concurrent request
+    $this->offer->update(['status' => OfferStatus::Accepted]);
+
+    expect(fn () => $action($this->offer->fresh()))
+        ->toThrow(RuntimeException::class, 'Offer is no longer pending.');
+});
+
 test('offer must be pending to decline', function () {
     $this->offer->update(['status' => OfferStatus::Accepted]);
 
