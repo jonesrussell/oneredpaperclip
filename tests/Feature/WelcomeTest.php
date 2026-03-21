@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Challenge;
+use Illuminate\Support\Facades\Cache;
 
 test('welcome page renders with correct inertia props', function () {
     $response = $this->get(route('home'));
@@ -51,6 +52,17 @@ test('welcome page excludes unlisted challenges from featured', function () {
         ->component('Welcome')
         ->has('featuredChallenges', 0)
     );
+});
+
+test('welcome page caches stats queries', function () {
+    Cache::flush();
+
+    $this->get(route('home'))->assertOk();
+
+    expect(Cache::has('welcome_stats'))->toBeTrue();
+
+    $cached = Cache::get('welcome_stats');
+    expect($cached)->toHaveKeys(['challengesCount', 'tradesCount', 'usersCount']);
 });
 
 test('welcome page renders with absolute default OG image URL when no page image is set', function () {
